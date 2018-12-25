@@ -8,9 +8,6 @@ void main() {
   print(
       '${fileSystem.currentDirectory.path} - ${fileSystem.systemTempDirectory.path}');
 
-  String appId = 'staredu_teacher';
-  String appSecret = 'abc7456e2d19953eaf86e362baf0f9e8';
-
   Directory directory = fileSystem.currentDirectory
       .childDirectory('build')
       .childDirectory('cache');
