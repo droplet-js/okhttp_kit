@@ -43,7 +43,7 @@ class HttpLoggingInterceptor implements Interceptor {
     bool hasRequestBody = requestBody != null;
     if (!logHeaders && hasRequestBody) {
       logger.start(request.method(), request.url().toString(),
-          message: '${requestBody.contentLength()}-byte body');
+          '${requestBody.contentLength()}-byte body');
     } else {
       logger.start(request.method(), request.url().toString());
     }
@@ -75,8 +75,7 @@ class HttpLoggingInterceptor implements Interceptor {
       if (!logBody || !hasRequestBody) {
         logger.requestOmitted(request.method());
       } else if (_bodyEncoded(request.headers())) {
-        logger.requestOmitted(request.method(),
-            message: 'encoded body omitted');
+        logger.requestOmitted(request.method(), 'encoded body omitted');
       } else {
         MediaType contentType = requestBody.contentType();
         int contentLength = requestBody.contentLength();
@@ -92,11 +91,11 @@ class HttpLoggingInterceptor implements Interceptor {
 
           if (_isPlainText(body)) {
             logger.requestPlaintextBody(body);
-            logger.requestOmitted(request.method(),
-                message: 'plaintext ${bytes.length}-byte body');
+            logger.requestOmitted(
+                request.method(), 'plaintext ${bytes.length}-byte body');
           } else {
-            logger.requestOmitted(request.method(),
-                message: 'binary ${bytes.length}-byte body');
+            logger.requestOmitted(
+                request.method(), 'binary ${bytes.length}-byte body');
           }
 
           request = request
@@ -106,8 +105,7 @@ class HttpLoggingInterceptor implements Interceptor {
               .build();
         } else {
           logger.requestOmitted(request.method(),
-              message:
-                  'binary ${contentLength != -1 ? '$contentLength-byte body' : 'unknown-length body'}');
+              'binary ${contentLength != -1 ? '$contentLength-byte body' : 'unknown-length body'}');
         }
       }
     }
@@ -155,8 +153,8 @@ class HttpLoggingInterceptor implements Interceptor {
       if (!logBody || !HttpHeadersExtension.hasBody(response)) {
         logger.responseOmitted(response.request().method());
       } else if (_bodyEncoded(response.headers())) {
-        logger.responseOmitted(response.request().method(),
-            message: 'encoded body omitted');
+        logger.responseOmitted(
+            response.request().method(), 'encoded body omitted');
       } else {
         MediaType contentType = responseBody.contentType();
 
@@ -168,10 +166,10 @@ class HttpLoggingInterceptor implements Interceptor {
           if (_isPlainText(body)) {
             logger.responsePlaintextBody(body);
             logger.responseOmitted(response.request().method(),
-                message: 'plaintext ${bytes.length}-byte body omitted');
+                'plaintext ${bytes.length}-byte body omitted');
           } else {
             logger.responseOmitted(response.request().method(),
-                message: 'binary ${bytes.length}-byte body omitted');
+                'binary ${bytes.length}-byte body omitted');
           }
 
           response = response
@@ -180,8 +178,7 @@ class HttpLoggingInterceptor implements Interceptor {
               .build();
         } else {
           logger.responseOmitted(response.request().method(),
-              message:
-                  'binary ${contentLength != -1 ? '$contentLength-byte body' : 'unknown-length body'}');
+              'binary ${contentLength != -1 ? '$contentLength-byte body' : 'unknown-length body'}');
         }
       }
     }
@@ -226,13 +223,13 @@ enum LoggerLevel {
 }
 
 abstract class Logger {
-  void start(String method, String url, {String message});
+  void start(String method, String url, [String message]);
 
   void requestHeaders(Map<String, List<String>> requestHeaders);
 
   void requestPlaintextBody(String plaintext);
 
-  void requestOmitted(String method, {String message});
+  void requestOmitted(String method, [String message]);
 
   void response();
 
@@ -245,7 +242,7 @@ abstract class Logger {
 
   void responsePlaintextBody(String plaintext);
 
-  void responseOmitted(String method, {String message});
+  void responseOmitted(String method, [String message]);
 
   void finish(int contentLength);
 
@@ -269,7 +266,7 @@ class _PlatformLoggerFactory implements LoggerFactory {
 
 class _PlatformLogger implements Logger {
   @override
-  void start(String method, String url, {String message}) {
+  void start(String method, String url, [String message]) {
     print('--> $method $url ${message != null ? message : ''}');
   }
 
@@ -290,7 +287,7 @@ class _PlatformLogger implements Logger {
   }
 
   @override
-  void requestOmitted(String method, {String message}) {
+  void requestOmitted(String method, [String message]) {
     print('--> END $method ${message != null ? message : ''}');
   }
 
@@ -325,7 +322,7 @@ class _PlatformLogger implements Logger {
   }
 
   @override
-  void responseOmitted(String method, {String message}) {
+  void responseOmitted(String method, [String message]) {
     print('<-- END $method ${message != null ? message : ''}');
   }
 
