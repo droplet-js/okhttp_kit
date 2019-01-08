@@ -10,10 +10,10 @@ class MediaType {
 
   MediaType(
     String primaryType,
-    String subType, {
+    String subType, [
     String charset,
     Map<String, String> parameters,
-  }) : _contentType = new ContentType(
+  ]) : _contentType = new ContentType(
           primaryType,
           subType,
           charset: charset,

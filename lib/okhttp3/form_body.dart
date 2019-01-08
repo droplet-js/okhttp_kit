@@ -12,8 +12,7 @@ class FormBody extends RequestBody {
 
   FormBody._(Encoding encoding, List<String> namesAndValues)
       : _encoding = encoding,
-        _contentType = new MediaType('application', 'x-www-form-urlencoded',
-            charset: encoding.name),
+        _contentType = new MediaType('application', 'x-www-form-urlencoded', encoding.name),
         _namesAndValues = namesAndValues,
         _bytes = encoding.encode(_pairsToQuery(namesAndValues));
 

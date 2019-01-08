@@ -17,9 +17,9 @@ class DiskCache implements RawCache {
 
   @override
   Future<Editor> edit(
-    String key, {
-    int expectedSequenceNumber: RawCache.ANY_SEQUENCE_NUMBER,
-  }) async {
+    String key, [
+    int expectedSequenceNumber,
+  ]) async {
     _Entry entry = new _Entry(await _directory(), _valueCount, key);
     return entry.editor();
   }

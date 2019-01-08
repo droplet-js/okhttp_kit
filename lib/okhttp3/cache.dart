@@ -32,12 +32,12 @@ class Cache {
   int _requestCount = 0;
 
   Cache(
-    RawCache cache, {
-    KeyExtractor keyExtractor: _defaultKeyExtractor,
-  })  : assert(cache != null),
+    RawCache cache, [
+    KeyExtractor keyExtractor,
+  ])  : assert(cache != null),
         assert(keyExtractor != null),
         _cache = cache,
-        _keyExtractor = keyExtractor;
+        _keyExtractor = keyExtractor ?? _defaultKeyExtractor;
 
   int networkCount() {
     return _networkCount;
@@ -63,7 +63,7 @@ class Cache {
     return key;
   }
 
-  Future<Response> get(Request request, {Encoding encoding: utf8}) async {
+  Future<Response> get(Request request, [Encoding encoding]) async {
     String key = _key(request.url());
     Snapshot snapshot;
     _Entry entry;
@@ -79,7 +79,7 @@ class Cache {
 
     try {
       entry = await _Entry.sourceEntry(
-          snapshot.getSource(ENTRY_META_DATA), encoding);
+          snapshot.getSource(ENTRY_META_DATA), encoding ?? utf8);
     } catch (e) {
       Util.closeQuietly(snapshot);
       return null;
@@ -95,7 +95,7 @@ class Cache {
     return response;
   }
 
-  Future<CacheRequest> put(Response response, {Encoding encoding: utf8}) async {
+  Future<CacheRequest> put(Response response, [Encoding encoding]) async {
     String requestMethod = response.request().method();
     if (HttpMethod.invalidatesCache(response.request().method())) {
       try {
@@ -123,8 +123,8 @@ class Cache {
       if (editor == null) {
         return null;
       }
-      await entry.writeTo(editor, encoding);
-      return new CacheRequest(editor, encoding);
+      await entry.writeTo(editor, encoding ?? utf8);
+      return new CacheRequest(editor, encoding ?? utf8);
     } catch (e) {
       await _abortQuietly(editor);
       return null;
@@ -142,8 +142,7 @@ class Cache {
     Snapshot snapshot = body.snapshot();
     Editor editor;
     try {
-      editor = await _cache.edit(snapshot.key(),
-          expectedSequenceNumber: snapshot.sequenceNumber());
+      editor = await _cache.edit(snapshot.key(), snapshot.sequenceNumber());
       if (editor != null) {
         await entry.writeTo(editor, encoding);
         editor.commit();
@@ -220,7 +219,7 @@ abstract class RawCache {
   Future<Snapshot> get(String key);
 
   Future<Editor> edit(String key,
-      {int expectedSequenceNumber: ANY_SEQUENCE_NUMBER});
+      [int expectedSequenceNumber]);
 
   Future<bool> remove(String key);
 }

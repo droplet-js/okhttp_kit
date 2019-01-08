@@ -27,11 +27,11 @@ class AssetBundleCache implements RawCache {
 
   @override
   Future<Editor> edit(
-    String key, {
-    int expectedSequenceNumber: RawCache.ANY_SEQUENCE_NUMBER,
-  }) async {
+    String key, [
+    int expectedSequenceNumber,
+  ]) async {
     throw new UnsupportedError(
-        '${this.runtimeType}#edit(key, {expectedSequenceNumber}) is not supported!');
+        '${this.runtimeType}#edit(key, [expectedSequenceNumber]) is not supported!');
   }
 
   @override
@@ -41,10 +41,10 @@ class AssetBundleCache implements RawCache {
   }
 
   static AssetBundleCache create(
-    String directory, {
+    String directory, [
     AssetBundle bundle,
     String package,
-  }) {
+  ]) {
     assert(directory != null && directory.isNotEmpty);
     return new AssetBundleCache._(
         bundle, package, directory, Cache.ENTRY_COUNT);
