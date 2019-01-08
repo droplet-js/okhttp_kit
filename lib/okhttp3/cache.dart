@@ -35,7 +35,6 @@ class Cache {
     RawCache cache, [
     KeyExtractor keyExtractor,
   ])  : assert(cache != null),
-        assert(keyExtractor != null),
         _cache = cache,
         _keyExtractor = keyExtractor ?? _defaultKeyExtractor;
 
