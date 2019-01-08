@@ -18,7 +18,7 @@ void main() {
       .cache(new Cache(DiskCache.create(() => Future.value(directory))))
       .cookieJar(PersistentCookieJar.persistent(CookiePersistor.MEMORY))
       .addInterceptor(new UserAgentInterceptor(() => Future.value('xxx')))
-      .addInterceptor(new OptimizedCacheInterceptor(() => Future.value(true)))
+      .addInterceptor(new OptimizedRequestInterceptor(() => Future.value(true)))
       .addNetworkInterceptor(new OptimizedResponseInterceptor())
       .addNetworkInterceptor(
           new HttpLoggingInterceptor(level: LoggerLevel.BODY))

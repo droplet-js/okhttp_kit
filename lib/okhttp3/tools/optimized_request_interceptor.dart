@@ -11,10 +11,10 @@ import 'package:flutter/foundation.dart';
 /// 应用层拦截器
 ///
 /// 有缓存情况下，如果无网络/请求失败，就使用缓存
-class OptimizedCacheInterceptor implements Interceptor {
+class OptimizedRequestInterceptor implements Interceptor {
   AsyncValueGetter<bool> _connectivity;
 
-  OptimizedCacheInterceptor(AsyncValueGetter<bool> connectivity)
+  OptimizedRequestInterceptor(AsyncValueGetter<bool> connectivity)
       : assert(connectivity != null),
         _connectivity = connectivity;
 

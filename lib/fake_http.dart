@@ -44,7 +44,7 @@ export 'okhttp3/internal/cache/asset_bundle_cache.dart';
 export 'okhttp3/internal/cache/disk_cache.dart';
 export 'okhttp3/internal/http/http_method.dart';
 export 'okhttp3/tools/http_logging_interceptor.dart';
-export 'okhttp3/tools/optimized_cache_interceptor.dart';
+export 'okhttp3/tools/optimized_request_interceptor.dart';
 export 'okhttp3/tools/optimized_response_interceptor.dart';
 export 'okhttp3/tools/persistent_cookie_jar.dart';
 export 'okhttp3/tools/progress_request_interceptor.dart';
