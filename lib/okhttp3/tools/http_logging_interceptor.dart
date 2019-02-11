@@ -29,23 +29,22 @@ class HttpLoggingInterceptor implements Interceptor {
 
   @override
   Future<Response> intercept(Chain chain) async {
+    Request request = chain.request();
     if (_level == LoggerLevel.NONE) {
-      return await chain.proceed(chain.request());
+      return await chain.proceed(request);
     }
 
-    Logger logger = _factory.logger();
+    Logger logger = _factory.logger(request.method(), request.url().toString());
 
     bool logBody = _level == LoggerLevel.BODY;
     bool logHeaders = logBody || _level == LoggerLevel.HEADERS;
 
-    Request request = chain.request();
     RequestBody requestBody = request.body();
     bool hasRequestBody = requestBody != null;
     if (!logHeaders && hasRequestBody) {
-      logger.start(request.method(), request.url().toString(),
-          '${requestBody.contentLength()}-byte body');
+      logger.start('${requestBody.contentLength()}-byte body');
     } else {
-      logger.start(request.method(), request.url().toString());
+      logger.start();
     }
 
     if (logHeaders) {
@@ -75,7 +74,7 @@ class HttpLoggingInterceptor implements Interceptor {
       if (!logBody || !hasRequestBody) {
         logger.requestOmitted(request.method());
       } else if (_bodyEncoded(request.headers())) {
-        logger.requestOmitted(request.method(), 'encoded body omitted');
+        logger.requestOmitted('encoded body omitted');
       } else {
         MediaType contentType = requestBody.contentType();
         int contentLength = requestBody.contentLength();
@@ -91,11 +90,9 @@ class HttpLoggingInterceptor implements Interceptor {
 
           if (_isPlainText(body)) {
             logger.requestPlaintextBody(body);
-            logger.requestOmitted(
-                request.method(), 'plaintext ${bytes.length}-byte body');
+            logger.requestOmitted('plaintext ${bytes.length}-byte body');
           } else {
-            logger.requestOmitted(
-                request.method(), 'binary ${bytes.length}-byte body');
+            logger.requestOmitted('binary ${bytes.length}-byte body');
           }
 
           request = request
@@ -104,7 +101,7 @@ class HttpLoggingInterceptor implements Interceptor {
                   request.method(), RequestBody.bytesBody(contentType, bytes))
               .build();
         } else {
-          logger.requestOmitted(request.method(),
+          logger.requestOmitted(
               'binary ${contentLength != -1 ? '$contentLength-byte body' : 'unknown-length body'}');
         }
       }
@@ -115,7 +112,7 @@ class HttpLoggingInterceptor implements Interceptor {
     try {
       response = await chain.proceed(request);
     } catch (e) {
-      logger.error(request.url().toString(), e);
+      logger.error(e);
       logger.end();
       rethrow;
     }
@@ -125,8 +122,8 @@ class HttpLoggingInterceptor implements Interceptor {
     String message = contentLength != -1
         ? '$contentLength-byte body'
         : 'unknown-length body';
-    logger.status(response.code(), response.message(),
-        response.request().url().toString(), tookMs, message);
+    logger.status(
+        response.code(), response.message(), contentLength, tookMs, message);
 
     if (logHeaders) {
       Map<String, List<String>> responseHeaders = {};
@@ -153,8 +150,7 @@ class HttpLoggingInterceptor implements Interceptor {
       if (!logBody || !HttpHeadersExtension.hasBody(response)) {
         logger.responseOmitted(response.request().method());
       } else if (_bodyEncoded(response.headers())) {
-        logger.responseOmitted(
-            response.request().method(), 'encoded body omitted');
+        logger.responseOmitted('encoded body omitted');
       } else {
         MediaType contentType = responseBody.contentType();
 
@@ -165,11 +161,10 @@ class HttpLoggingInterceptor implements Interceptor {
           String body = encoding.decode(bytes);
           if (_isPlainText(body)) {
             logger.responsePlaintextBody(body);
-            logger.responseOmitted(response.request().method(),
-                'plaintext ${bytes.length}-byte body omitted');
+            logger
+                .responseOmitted('plaintext ${bytes.length}-byte body omitted');
           } else {
-            logger.responseOmitted(response.request().method(),
-                'binary ${bytes.length}-byte body omitted');
+            logger.responseOmitted('binary ${bytes.length}-byte body omitted');
           }
 
           response = response
@@ -177,12 +172,11 @@ class HttpLoggingInterceptor implements Interceptor {
               .body(ResponseBody.bytesBody(contentType, bytes))
               .build();
         } else {
-          logger.responseOmitted(response.request().method(),
+          logger.responseOmitted(
               'binary ${contentLength != -1 ? '$contentLength-byte body' : 'unknown-length body'}');
         }
       }
     }
-    logger.finish(contentLength);
     logger.end();
     return response;
   }
@@ -223,28 +217,31 @@ enum LoggerLevel {
 }
 
 abstract class Logger {
-  void start(String method, String url, [String message]);
+  final String method;
+  final String url;
+
+  Logger(this.method, this.url);
+
+  void start([String message]);
 
   void requestHeaders(Map<String, List<String>> requestHeaders);
 
   void requestPlaintextBody(String plaintext);
 
-  void requestOmitted(String method, [String message]);
+  void requestOmitted([String message]);
 
   void response();
 
-  void error(String url, Object e);
+  void error(Object e);
 
-  void status(int statusCode, String reasonPhrase, String url, int tookMs,
-      String message);
+  void status(int statusCode, String reasonPhrase, int contentLength,
+      int tookMs, String message);
 
   void responseHeaders(Map<String, List<String>> responseHeaders);
 
   void responsePlaintextBody(String plaintext);
 
-  void responseOmitted(String method, [String message]);
-
-  void finish(int contentLength);
+  void responseOmitted([String message]);
 
   void end();
 }
@@ -252,21 +249,23 @@ abstract class Logger {
 abstract class LoggerFactory {
   static const LoggerFactory PLATFORM = _PlatformLoggerFactory();
 
-  Logger logger();
+  Logger logger(String method, String url);
 }
 
 class _PlatformLoggerFactory implements LoggerFactory {
   const _PlatformLoggerFactory();
 
   @override
-  Logger logger() {
-    return new _PlatformLogger();
+  Logger logger(String method, String url) {
+    return new _PlatformLogger(method, url);
   }
 }
 
-class _PlatformLogger implements Logger {
+class _PlatformLogger extends Logger {
+  _PlatformLogger(String method, String url) : super(method, url);
+
   @override
-  void start(String method, String url, [String message]) {
+  void start([String message]) {
     print('--> $method $url ${message != null ? message : ''}');
   }
 
@@ -287,7 +286,7 @@ class _PlatformLogger implements Logger {
   }
 
   @override
-  void requestOmitted(String method, [String message]) {
+  void requestOmitted([String message]) {
     print('--> END $method ${message != null ? message : ''}');
   }
 
@@ -295,13 +294,13 @@ class _PlatformLogger implements Logger {
   void response() {}
 
   @override
-  void error(String url, Object e) {
+  void error(Object e) {
     print('<-- HTTP FAILED: $url ${e.toString()}');
   }
 
   @override
-  void status(int statusCode, String reasonPhrase, String url, int tookMs,
-      String message) {
+  void status(int statusCode, String reasonPhrase, int contentLength,
+      int tookMs, String message) {
     print('<-- $statusCode $reasonPhrase $url (${tookMs}ms, $message)');
   }
 
@@ -322,12 +321,9 @@ class _PlatformLogger implements Logger {
   }
 
   @override
-  void responseOmitted(String method, [String message]) {
+  void responseOmitted([String message]) {
     print('<-- END $method ${message != null ? message : ''}');
   }
-
-  @override
-  void finish(int contentLength) {}
 
   @override
   void end() {}
