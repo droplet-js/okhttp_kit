@@ -8,11 +8,11 @@ import 'package:fake_http/okhttp3/media_type.dart';
 import 'package:fake_http/okhttp3/request_body.dart';
 
 class MultipartBody extends RequestBody {
-  static final MediaType MIXED = MediaType.parse("multipart/mixed");
-  static final MediaType ALTERNATIVE = MediaType.parse("multipart/alternative");
-  static final MediaType DIGEST = MediaType.parse("multipart/digest");
-  static final MediaType PARALLEL = MediaType.parse("multipart/parallel");
-  static final MediaType FORM = MediaType.parse("multipart/form-data");
+  static final MediaType MIXED = MediaType.parse('multipart/mixed');
+  static final MediaType ALTERNATIVE = MediaType.parse('multipart/alternative');
+  static final MediaType DIGEST = MediaType.parse('multipart/digest');
+  static final MediaType PARALLEL = MediaType.parse('multipart/parallel');
+  static final MediaType FORM = MediaType.parse('multipart/form-data');
 
   static const String _COLONSPACE = ': ';
   static const String _CRLF = '\r\n';
@@ -206,7 +206,7 @@ class Part {
     if (headers != null &&
         headers.value(HttpHeaders.contentLengthHeader) != null) {
       throw new ArgumentError(
-          "Unexpected header: ${HttpHeaders.contentLengthHeader}");
+          'Unexpected header: ${HttpHeaders.contentLengthHeader}');
     }
     return new Part._(headers, body);
   }
@@ -234,8 +234,8 @@ class Part {
     // `\r\n`; URL-encode `"`; and do nothing else (even for `%` or non-ASCII
     // characters). We follow their behavior.
     return value
-        .replaceAll(new RegExp(r"\r\n|\r|\n"), "%0D%0A")
-        .replaceAll('"', "%22");
+        .replaceAll(new RegExp(r'\r\n|\r|\n'), '%0D%0A')
+        .replaceAll('"', '%22');
   }
 }
 
