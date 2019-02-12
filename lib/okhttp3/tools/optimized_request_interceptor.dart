@@ -61,7 +61,7 @@ class OptimizedRequestInterceptor implements Interceptor {
           response = await chain.proceed(originalRequest);
         }
       } on SocketException catch (e) {
-        if (await shouldUseCacheIfServerError(originalRequest)) {
+        if (await shouldUseCacheIfWeakConnect(originalRequest)) {
           Request forceCacheRequest = originalRequest
               .newBuilder()
               .removeHeader(HttpHeaders.cacheControlHeader)
@@ -108,6 +108,10 @@ class OptimizedRequestInterceptor implements Interceptor {
       return response;
     }
     return await chain.proceed(originalRequest);
+  }
+
+  Future<bool> shouldUseCacheIfWeakConnect(Request originalRequest) async {
+    return true;
   }
 
   Future<bool> shouldUseCacheIfServerError(Request originalRequest) async {
