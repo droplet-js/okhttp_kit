@@ -39,6 +39,10 @@ class PersistentCookieJar implements CookieJar {
     return List.unmodifiable(cookies);
   }
 
+  static PersistentCookieJar memory() {
+    return persistent(CookiePersistor.MEMORY);
+  }
+
   static PersistentCookieJar persistent(CookiePersistor persistor) {
     return new PersistentCookieJar._internal(
         new _PersistentCookieStore._internal(persistor));
@@ -179,7 +183,10 @@ class _PersistentCookieStore {
   }
 
   HttpUrl _getEffectiveUrl(HttpUrl url) {
-    return HttpUrl.from(new Uri(scheme: 'http', host: url.host()));
+    return new HttpUrlBuilder()
+        .scheme('http')
+        .host(url.host())
+        .build();
   }
 }
 

@@ -16,7 +16,7 @@ void main() {
   }
   OkHttpClient client = new OkHttpClientBuilder()
       .cache(new Cache(DiskCache.create(() => Future.value(directory))))
-      .cookieJar(PersistentCookieJar.persistent(CookiePersistor.MEMORY))
+      .cookieJar(PersistentCookieJar.memory())
       .addInterceptor(new UserAgentInterceptor(() => Future.value('xxx')))
       .addInterceptor(new OptimizedRequestInterceptor(() => Future.value(true)))
       .addNetworkInterceptor(new OptimizedResponseInterceptor())

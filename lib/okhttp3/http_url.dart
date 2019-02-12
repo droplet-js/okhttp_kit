@@ -84,15 +84,13 @@ class HttpUrl {
   }
 
   static HttpUrl parse(String url) {
-    HttpUrlBuilder builder = new HttpUrlBuilder();
-    builder._uri = Uri.parse(url);
-    return builder.build();
+    return new HttpUrlBuilder(Uri.parse(url))
+        .build();
   }
 
   static HttpUrl from(Uri uri) {
-    HttpUrlBuilder builder = new HttpUrlBuilder();
-    builder._uri = uri;
-    return builder.build();
+    return new HttpUrlBuilder(uri)
+        .build();
   }
 
   static int defaultPort(String scheme) {
@@ -109,7 +107,7 @@ class HttpUrl {
 class HttpUrlBuilder {
   Uri _uri;
 
-  HttpUrlBuilder();
+  HttpUrlBuilder([Uri uri]): _uri = uri ?? Uri.parse("");
 
   HttpUrlBuilder._(HttpUrl url) : _uri = url._uri;
 
