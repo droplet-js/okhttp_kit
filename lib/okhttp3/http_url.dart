@@ -132,7 +132,7 @@ class HttpUrlBuilder {
   }
 
   HttpUrlBuilder addPathSegment(String pathSegment) {
-    List<String> pathSegments = List.from(_uri.pathSegments);
+    List<String> pathSegments = _uri.pathSegments.toList();
     pathSegments.add(pathSegment);
     _uri = _uri.replace(pathSegments: pathSegments);
     return this;

@@ -142,7 +142,7 @@ class _PersistentCookieStore {
           await _persistor.load(index);
       List<PersistentCookie> effectivePersistentCookies =
           persistPersistentCookies != null
-              ? List.from(persistPersistentCookies)
+              ? persistPersistentCookies.toList()
               : [];
 
       List<PersistentCookie> shouldRemovePersistentCookies = [];
@@ -176,7 +176,7 @@ class _PersistentCookieStore {
         await _persistor.load(index);
     List<PersistentCookie> effectivePersistentCookies =
         persistPersistentCookies != null
-            ? List.from(persistPersistentCookies)
+            ? persistPersistentCookies.toList()
             : [];
 
     return List.unmodifiable(effectivePersistentCookies);
