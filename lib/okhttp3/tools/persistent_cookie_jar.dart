@@ -6,26 +6,28 @@ import 'package:fake_http/okhttp3/http_url.dart';
 import 'package:fake_http/okhttp3/lang/integer.dart';
 
 class PersistentCookieJar implements CookieJar {
-  final _PersistentCookieStore _cookieStore;
+  PersistentCookieJar._(
+    _PersistentCookieStore cookieStore,
+  ) : _cookieStore = cookieStore;
 
-  PersistentCookieJar._internal(_PersistentCookieStore cookieStore)
-      : _cookieStore = cookieStore;
+  final _PersistentCookieStore _cookieStore;
 
   @override
   Future<void> saveFromResponse(HttpUrl url, List<Cookie> cookies) async {
     if (_cookieStore != null) {
       if (cookies != null && cookies.isNotEmpty) {
         List<PersistentCookie> persistentCookies = cookies.map((Cookie cookie) {
-          return PersistentCookie._internal(cookie);
+          return PersistentCookie._(cookie);
         }).toList();
-        await _cookieStore.put(url, List.unmodifiable(persistentCookies));
+        await _cookieStore.put(
+            url, List<PersistentCookie>.unmodifiable(persistentCookies));
       }
     }
   }
 
   @override
   Future<List<Cookie>> loadForRequest(HttpUrl url) async {
-    List<Cookie> cookies = [];
+    List<Cookie> cookies = <Cookie>[];
     if (_cookieStore != null) {
       List<PersistentCookie> persistentCookies = await _cookieStore.get(url);
       if (persistentCookies != null && persistentCookies.isNotEmpty) {
@@ -36,7 +38,7 @@ class PersistentCookieJar implements CookieJar {
         });
       }
     }
-    return List.unmodifiable(cookies);
+    return List<Cookie>.unmodifiable(cookies);
   }
 
   static PersistentCookieJar memory() {
@@ -44,19 +46,14 @@ class PersistentCookieJar implements CookieJar {
   }
 
   static PersistentCookieJar persistent(CookiePersistor persistor) {
-    return PersistentCookieJar._internal(
-        _PersistentCookieStore._internal(persistor));
+    return PersistentCookieJar._(_PersistentCookieStore._(persistor));
   }
 }
 
 class PersistentCookie {
-  static const String _COOKIE_CTS = '_CTS';
-
-  Cookie _cookie;
-  int _createTimestamp;
-
-  PersistentCookie._internal(Cookie cookie)
-      : assert(cookie != null),
+  PersistentCookie._(
+    Cookie cookie,
+  )   : assert(cookie != null),
         _cookie = cookie,
         _createTimestamp = (DateTime.now().millisecondsSinceEpoch ~/
                 Duration.millisecondsPerSecond)
@@ -67,6 +64,11 @@ class PersistentCookie {
     _cookie = Cookie.fromSetCookieValue(params[0]);
     _createTimestamp = int.parse(params[1]);
   }
+
+  static const String _COOKIE_CTS = '_CTS';
+
+  Cookie _cookie;
+  int _createTimestamp;
 
   String name() {
     return _cookie.name;
@@ -106,7 +108,7 @@ class PersistentCookie {
   }
 
   @override
-  bool operator ==(other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
@@ -127,11 +129,12 @@ class PersistentCookie {
 }
 
 class _PersistentCookieStore {
-  final CookiePersistor _persistor;
-
-  _PersistentCookieStore._internal(CookiePersistor persistor)
-      : assert(persistor != null),
+  _PersistentCookieStore._(
+    CookiePersistor persistor,
+  )   : assert(persistor != null),
         _persistor = persistor;
+
+  final CookiePersistor _persistor;
 
   Future<void> put(
       HttpUrl url, List<PersistentCookie> persistentCookies) async {
@@ -143,9 +146,10 @@ class _PersistentCookieStore {
       List<PersistentCookie> effectivePersistentCookies =
           persistPersistentCookies != null
               ? persistPersistentCookies.toList()
-              : [];
+              : <PersistentCookie>[];
 
-      List<PersistentCookie> shouldRemovePersistentCookies = [];
+      List<PersistentCookie> shouldRemovePersistentCookies =
+          <PersistentCookie>[];
       persistentCookies.forEach((PersistentCookie persistentCookie) {
         effectivePersistentCookies
             .forEach((PersistentCookie effectivePersistentCookie) {
@@ -177,16 +181,13 @@ class _PersistentCookieStore {
     List<PersistentCookie> effectivePersistentCookies =
         persistPersistentCookies != null
             ? persistPersistentCookies.toList()
-            : [];
+            : <PersistentCookie>[];
 
-    return List.unmodifiable(effectivePersistentCookies);
+    return List<PersistentCookie>.unmodifiable(effectivePersistentCookies);
   }
 
   HttpUrl _getEffectiveUrl(HttpUrl url) {
-    return HttpUrlBuilder()
-        .scheme('http')
-        .host(url.host())
-        .build();
+    return HttpUrlBuilder().scheme('http').host(url.host()).build();
   }
 }
 
@@ -201,15 +202,14 @@ abstract class CookiePersistor {
 }
 
 class _MemoryCookiePersistor implements CookiePersistor {
-  final Map<HttpUrl, List<PersistentCookie>> _urlIndex = {};
-
-  _MemoryCookiePersistor();
+  final Map<HttpUrl, List<PersistentCookie>> _urlIndex =
+      <HttpUrl, List<PersistentCookie>>{};
 
   @override
   Future<List<PersistentCookie>> load(HttpUrl index) async {
     List<PersistentCookie> persistentCookies = _urlIndex[index];
     return persistentCookies != null
-        ? List.unmodifiable(persistentCookies)
+        ? List<PersistentCookie>.unmodifiable(persistentCookies)
         : null;
   }
 

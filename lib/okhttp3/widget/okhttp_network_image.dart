@@ -13,16 +13,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide NetworkImage;
 
 class OkHttpNetworkImage extends ImageProvider<OkHttpNetworkImage> {
-  final OkHttpClient _client;
-  final String _url;
-  final double _scale;
-  final Map<String, List<String>> _headers;
-
   OkHttpNetworkImage(
     OkHttpClient client,
     String url, {
-    double scale: 1.0,
-    Map<String, List<String>> headers: const {},
+    double scale = 1.0,
+    Map<String, List<String>> headers = const <String, List<String>>{},
   })  : assert(client != null),
         assert(url != null),
         assert(headers != null),
@@ -30,6 +25,11 @@ class OkHttpNetworkImage extends ImageProvider<OkHttpNetworkImage> {
         _url = url,
         _scale = scale,
         _headers = headers;
+
+  final OkHttpClient _client;
+  final String _url;
+  final double _scale;
+  final Map<String, List<String>> _headers;
 
   @override
   Future<OkHttpNetworkImage> obtainKey(ImageConfiguration configuration) {

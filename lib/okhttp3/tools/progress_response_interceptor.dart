@@ -9,9 +9,11 @@ import 'package:fake_http/okhttp3/tools/progress_interceptor.dart';
 
 /// 网络层拦截器
 class ProgressResponseInterceptor implements ProgressInterceptor {
-  final ProgressListener _listener;
+  ProgressResponseInterceptor(
+    ProgressListener listener,
+  ) : _listener = listener;
 
-  ProgressResponseInterceptor(ProgressListener listener) : _listener = listener;
+  final ProgressListener _listener;
 
   @override
   Future<Response> intercept(Chain chain) async {
@@ -34,11 +36,15 @@ abstract class _Callback {
 }
 
 class _CallbackAdapter implements _Callback {
+  _CallbackAdapter(
+    this.url,
+    this.method,
+    this.listener,
+  );
+
   final String url;
   final String method;
   final ProgressListener listener;
-
-  _CallbackAdapter(this.url, this.method, this.listener);
 
   @override
   void onRead(int progressBytes, int totalBytes) {
@@ -56,10 +62,13 @@ class _CallbackAdapter implements _Callback {
 }
 
 class _ProgressResponseBody extends ResponseBody {
+  _ProgressResponseBody(
+    this.wrapped,
+    this.callback,
+  );
+
   final ResponseBody wrapped;
   final _Callback callback;
-
-  _ProgressResponseBody(this.wrapped, this.callback);
 
   @override
   MediaType contentType() {
@@ -76,7 +85,7 @@ class _ProgressResponseBody extends ResponseBody {
     int totalBytes = contentLength();
     int progressBytes = 0;
     StreamTransformer<List<int>, List<int>> streamTransformer =
-        StreamTransformer.fromHandlers(handleData:
+        StreamTransformer<List<int>, List<int>>.fromHandlers(handleData:
             (List<int> data, EventSink<List<int>> sink) {
       sink.add(data);
       progressBytes += data.length;

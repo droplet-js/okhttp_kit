@@ -88,8 +88,9 @@ class _Entry {
 }
 
 class _EditorImpl implements Editor {
-  _EditorImpl(_Entry entry)
-      : _cleanFiles = entry.cacheFiles(),
+  _EditorImpl(
+    _Entry entry,
+  )   : _cleanFiles = entry.cacheFiles(),
         _dirtyFiles = entry.cacheFiles().map((File cacheFile) {
           return cacheFile.parent.childFile(
               '${cacheFile.basename}.${DateTime.now().millisecondsSinceEpoch}');

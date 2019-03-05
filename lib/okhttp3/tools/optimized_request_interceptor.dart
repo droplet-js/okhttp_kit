@@ -12,11 +12,12 @@ import 'package:flutter/foundation.dart';
 ///
 /// 有缓存情况下，如果无网络/请求失败，就使用缓存
 class OptimizedRequestInterceptor implements Interceptor {
-  AsyncValueGetter<bool> _connectivity;
-
-  OptimizedRequestInterceptor(AsyncValueGetter<bool> connectivity)
-      : assert(connectivity != null),
+  OptimizedRequestInterceptor(
+    AsyncValueGetter<bool> connectivity,
+  )   : assert(connectivity != null),
         _connectivity = connectivity;
+
+  AsyncValueGetter<bool> _connectivity;
 
   @override
   Future<Response> intercept(Chain chain) async {

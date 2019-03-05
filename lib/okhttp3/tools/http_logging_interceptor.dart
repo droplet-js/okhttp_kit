@@ -16,16 +16,14 @@ import 'package:quiver/async.dart';
 
 /// 网络层拦截器
 class HttpLoggingInterceptor implements Interceptor {
+  HttpLoggingInterceptor({
+    LoggerLevel level = LoggerLevel.BASIC,
+    LoggerFactory factory = LoggerFactory.PLATFORM,
+  })  : _level = level,
+        _factory = factory;
+
   final LoggerLevel _level;
   final LoggerFactory _factory;
-
-  HttpLoggingInterceptor({
-    LoggerLevel level: LoggerLevel.BASIC,
-    LoggerFactory factory: LoggerFactory.PLATFORM,
-  })  : assert(level != null),
-        assert(factory != null),
-        _level = level,
-        _factory = factory;
 
   @override
   Future<Response> intercept(Chain chain) async {
@@ -48,16 +46,16 @@ class HttpLoggingInterceptor implements Interceptor {
     }
 
     if (logHeaders) {
-      Map<String, List<String>> requestHeaders = {};
+      Map<String, List<String>> requestHeaders = <String, List<String>>{};
       if (hasRequestBody) {
         if (requestBody.contentType() != null) {
           requestHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
-              () => [requestBody.contentType().toString()]);
+              () => <String>[requestBody.contentType().toString()]);
         }
         int contentLength = requestBody.contentLength();
         if (contentLength != -1) {
           requestHeaders.putIfAbsent(HttpHeaders.contentLengthHeader,
-              () => [contentLength.toString()]);
+              () => <String>[contentLength.toString()]);
         }
       }
 
@@ -80,7 +78,7 @@ class HttpLoggingInterceptor implements Interceptor {
         int contentLength = requestBody.contentLength();
 
         if (_isPlainContentType(contentType)) {
-          StreamBuffer<int> buffer = StreamBuffer();
+          StreamBuffer<int> buffer = StreamBuffer<int>();
           StreamSink<List<int>> sink = IOSink(buffer);
           await requestBody.writeTo(sink);
           List<int> bytes = await buffer.read(buffer.buffered);
@@ -126,15 +124,15 @@ class HttpLoggingInterceptor implements Interceptor {
         response.code(), response.message(), contentLength, tookMs, message);
 
     if (logHeaders) {
-      Map<String, List<String>> responseHeaders = {};
+      Map<String, List<String>> responseHeaders = <String, List<String>>{};
       if (responseBody.contentType() != null) {
         responseHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
-            () => [responseBody.contentType().toString()]);
+            () => <String>[responseBody.contentType().toString()]);
       }
       int contentLength = responseBody.contentLength();
       if (contentLength != -1) {
-        responseHeaders.putIfAbsent(
-            HttpHeaders.contentLengthHeader, () => [contentLength.toString()]);
+        responseHeaders.putIfAbsent(HttpHeaders.contentLengthHeader,
+            () => <String>[contentLength.toString()]);
       }
 
       Headers headers = response.headers();
@@ -217,10 +215,13 @@ enum LoggerLevel {
 }
 
 abstract class Logger {
+  Logger(
+    this.method,
+    this.url,
+  );
+
   final String method;
   final String url;
-
-  Logger(this.method, this.url);
 
   void start([String message]);
 
@@ -249,7 +250,10 @@ abstract class Logger {
 abstract class LoggerFactory {
   static const LoggerFactory PLATFORM = _PlatformLoggerFactory();
 
-  Logger logger(String method, String url);
+  Logger logger(
+    String method,
+    String url,
+  );
 }
 
 class _PlatformLoggerFactory implements LoggerFactory {
@@ -262,7 +266,10 @@ class _PlatformLoggerFactory implements LoggerFactory {
 }
 
 class _PlatformLogger extends Logger {
-  _PlatformLogger(String method, String url) : super(method, url);
+  _PlatformLogger(
+    String method,
+    String url,
+  ) : super(method, url);
 
   @override
   void start([String message]) {

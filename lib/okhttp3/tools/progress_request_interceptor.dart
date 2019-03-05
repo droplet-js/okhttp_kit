@@ -9,9 +9,11 @@ import 'package:fake_http/okhttp3/tools/progress_interceptor.dart';
 
 /// 网络层拦截器
 class ProgressRequestInterceptor implements ProgressInterceptor {
-  final ProgressListener _listener;
+  ProgressRequestInterceptor(
+    ProgressListener listener,
+  ) : _listener = listener;
 
-  ProgressRequestInterceptor(ProgressListener listener) : _listener = listener;
+  final ProgressListener _listener;
 
   @override
   Future<Response> intercept(Chain chain) {
@@ -40,11 +42,15 @@ abstract class _Callback {
 }
 
 class _CallbackAdapter implements _Callback {
+  _CallbackAdapter(
+    this.url,
+    this.method,
+    this.listener,
+  );
+
   final String url;
   final String method;
   final ProgressListener listener;
-
-  _CallbackAdapter(this.url, this.method, this.listener);
 
   @override
   void onWrite(int progressBytes, int totalBytes) {
@@ -62,10 +68,13 @@ class _CallbackAdapter implements _Callback {
 }
 
 class _ProgressRequestBody extends RequestBody {
+  _ProgressRequestBody(
+    this.wrapped,
+    this.callback,
+  );
+
   final RequestBody wrapped;
   final _Callback callback;
-
-  _ProgressRequestBody(this.wrapped, this.callback);
 
   @override
   MediaType contentType() {
@@ -87,13 +96,17 @@ class _ProgressRequestBody extends RequestBody {
 }
 
 class _ProgressByteStreamSink extends StreamSink<List<int>> {
-  final StreamSink wrapped;
+  _ProgressByteStreamSink(
+      this.wrapped,
+      this.totalBytes,
+      this.callback,
+      );
+
+  final StreamSink<List<int>> wrapped;
   final int totalBytes;
   final _Callback callback;
 
   int progressBytes = 0;
-
-  _ProgressByteStreamSink(this.wrapped, this.totalBytes, this.callback);
 
   @override
   void add(List<int> event) {
@@ -112,7 +125,7 @@ class _ProgressByteStreamSink extends StreamSink<List<int>> {
   @override
   Future addStream(Stream<List<int>> stream) {
     StreamTransformer<List<int>, List<int>> streamTransformer =
-        StreamTransformer.fromHandlers(handleData:
+        StreamTransformer<List<int>, List<int>>.fromHandlers(handleData:
             (List<int> data, EventSink<List<int>> sink) {
       sink.add(data);
       progressBytes += data.length;
@@ -138,5 +151,5 @@ class _ProgressByteStreamSink extends StreamSink<List<int>> {
 
   @override
   Future get done =>
-      Future.error(UnsupportedError('$runtimeType#done is not supported!'));
+      Future<UnsupportedError>.error(UnsupportedError('$runtimeType#done is not supported!'));
 }

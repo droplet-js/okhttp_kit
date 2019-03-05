@@ -8,11 +8,12 @@ import 'package:flutter/foundation.dart';
 
 /// 应用层拦截器
 class UserAgentInterceptor implements Interceptor {
-  final AsyncValueGetter<String> _userAgent;
-
-  UserAgentInterceptor(AsyncValueGetter<String> userAgent)
-      : assert(userAgent != null),
+  UserAgentInterceptor(
+    AsyncValueGetter<String> userAgent,
+  )   : assert(userAgent != null),
         _userAgent = userAgent;
+
+  final AsyncValueGetter<String> _userAgent;
 
   @override
   Future<Response> intercept(Chain chain) async {

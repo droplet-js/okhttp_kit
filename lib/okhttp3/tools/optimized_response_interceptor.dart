@@ -12,10 +12,11 @@ import 'package:fake_http/okhttp3/response.dart';
 ///
 /// https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ
 class OptimizedResponseInterceptor implements Interceptor {
-  final int _maxAgeSeconds;
+  OptimizedResponseInterceptor({
+    int maxAgeSeconds = 3,
+  }) : _maxAgeSeconds = maxAgeSeconds;
 
-  OptimizedResponseInterceptor({int maxAgeSeconds: 3})
-      : _maxAgeSeconds = maxAgeSeconds;
+  final int _maxAgeSeconds;
 
   @override
   Future<Response> intercept(Chain chain) async {
