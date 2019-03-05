@@ -54,7 +54,7 @@ class _SimpleRequestBody extends RequestBody {
 
   @override
   Future<void> writeTo(StreamSink<List<int>> sink) {
-    return sink.addStream(Stream.fromIterable([_bytes]));
+    return sink.addStream(Stream<List<int>>.fromIterable(<List<int>>[_bytes]));
   }
 }
 

@@ -35,7 +35,7 @@ class FormBody extends RequestBody {
   }
 
   static String _pairsToQuery(List<String> namesAndValues) {
-    return List.generate(namesAndValues.length ~/ 2, (int index) {
+    return List<String>.generate(namesAndValues.length ~/ 2, (int index) {
       return '${namesAndValues[index * 2]}=${namesAndValues[index * 2 + 1]}';
     }).join('&');
   }
@@ -48,7 +48,7 @@ class FormBodyBuilder {
         _encoding = encoding;
 
   final Encoding _encoding;
-  final List<String> _namesAndValues = [];
+  final List<String> _namesAndValues = <String>[];
 
   FormBodyBuilder add(String name, String value) {
     assert(name != null);
@@ -59,6 +59,6 @@ class FormBodyBuilder {
   }
 
   FormBody build() {
-    return FormBody._(_encoding, List.unmodifiable(_namesAndValues));
+    return FormBody._(_encoding, List<String>.unmodifiable(_namesAndValues));
   }
 }

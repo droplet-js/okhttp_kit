@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   charcode: ^1.1.2
   quiver: ^2.0.0+1
   convert: ^2.0.2
@@ -19,6 +20,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  pedantic: '>=1.4.0 <3.0.0'
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

@@ -2,7 +2,7 @@ import 'package:fake_http/fake_http.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  FileSystem fileSystem = LocalFileSystem();
+  FileSystem fileSystem = const LocalFileSystem();
 
   print(
       '${fileSystem.currentDirectory.path} - ${fileSystem.systemTempDirectory.path}');
@@ -14,10 +14,10 @@ void main() {
     directory.createSync(recursive: true);
   }
   OkHttpClient client = OkHttpClientBuilder()
-      .cache(Cache(DiskCache.create(() => Future.value(directory))))
+      .cache(Cache(DiskCache.create(() => Future<Directory>.value(directory))))
       .cookieJar(PersistentCookieJar.memory())
-      .addInterceptor(UserAgentInterceptor(() => Future.value('xxx')))
-      .addInterceptor(OptimizedRequestInterceptor(() => Future.value(true)))
+      .addInterceptor(UserAgentInterceptor(() => Future<String>.value('xxx')))
+      .addInterceptor(OptimizedRequestInterceptor(() => Future<bool>.value(true)))
       .addNetworkInterceptor(OptimizedResponseInterceptor())
       .addNetworkInterceptor(
           HttpLoggingInterceptor(level: LoggerLevel.BODY))
@@ -39,7 +39,7 @@ void main() {
     Request request = RequestBuilder().url(url).get().build();
     await client.newCall(request).enqueue().then((Response response) async {
       print('resp: ${response.code()} - ${response.message()} - ${(await response.body().string())}');
-    }).catchError((error) {
+    }).catchError((dynamic error) {
       print('error: $error');
     });
     print('${DateTime.now().toLocal()}');
@@ -53,7 +53,7 @@ void main() {
     await client.newCall(request).enqueue().then((Response response) async {
       print(
           'resp: ${response.code()} - ${response.message()} - ${(await response.body().string())}');
-    }).catchError((error) {
+    }).catchError((dynamic error) {
       print('error: $error');
     });
     print('${DateTime.now().toLocal()}');
@@ -73,7 +73,7 @@ void main() {
     Request request = RequestBuilder().url(url).header(HttpHeaders.refererHeader, 'http://fanyi.baidu.com/').post(body).build();
     await client.newCall(request).enqueue().then((Response response) async {
       print('resp: ${response.code()} - ${response.message()} - ${await response.body().string()}');
-    }).catchError((error) {
+    }).catchError((dynamic error) {
       print('error: $error');
     });
     print('${DateTime.now().toLocal()}');
