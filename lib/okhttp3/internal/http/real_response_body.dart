@@ -4,10 +4,6 @@ import 'package:fake_http/okhttp3/media_type.dart';
 import 'package:fake_http/okhttp3/response_body.dart';
 
 class RealResponseBody extends ResponseBody {
-  final String _contentType;
-  final int _contentLength;
-  final Stream<List<int>> _source;
-
   RealResponseBody(
     String contentType,
     int contentLength,
@@ -15,6 +11,10 @@ class RealResponseBody extends ResponseBody {
   )   : _contentType = contentType,
         _contentLength = contentLength,
         _source = source;
+
+  final String _contentType;
+  final int _contentLength;
+  final Stream<List<int>> _source;
 
   @override
   MediaType contentType() {

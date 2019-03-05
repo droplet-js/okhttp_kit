@@ -13,9 +13,11 @@ import 'package:fake_http/okhttp3/request_body.dart';
 import 'package:fake_http/okhttp3/response.dart';
 
 class BridgeInterceptor implements Interceptor {
-  final CookieJar _cookieJar;
+  BridgeInterceptor(
+    CookieJar cookieJar,
+  ) : _cookieJar = cookieJar;
 
-  BridgeInterceptor(CookieJar cookieJar) : _cookieJar = cookieJar;
+  final CookieJar _cookieJar;
 
   @override
   Future<Response> intercept(Chain chain) async {

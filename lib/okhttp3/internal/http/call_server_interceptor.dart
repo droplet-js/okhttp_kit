@@ -11,9 +11,11 @@ import 'package:fake_http/okhttp3/request.dart';
 import 'package:fake_http/okhttp3/response.dart';
 
 class CallServerInterceptor implements Interceptor {
-  final OkHttpClient _client;
+  CallServerInterceptor(
+    OkHttpClient client,
+  ) : _client = client;
 
-  CallServerInterceptor(OkHttpClient client) : _client = client;
+  final OkHttpClient _client;
 
   @override
   Future<Response> intercept(Chain chain) async {

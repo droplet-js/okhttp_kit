@@ -12,14 +12,16 @@ import 'package:fake_http/okhttp3/request.dart';
 import 'package:fake_http/okhttp3/response.dart';
 
 class RetryAndFollowUpInterceptor implements Interceptor {
+  RetryAndFollowUpInterceptor(
+    OkHttpClient client,
+  ) : _client = client;
+
   static const int _MAX_FOLLOW_UPS = 20;
 
   final OkHttpClient _client;
 
   HttpClient _httpClient;
   bool canceled = false;
-
-  RetryAndFollowUpInterceptor(OkHttpClient client) : _client = client;
 
   @override
   Future<Response> intercept(Chain chain) async {
@@ -81,8 +83,7 @@ class RetryAndFollowUpInterceptor implements Interceptor {
       if (followUp.body() != null &&
           followUp.body() is UnrepeatableRequestBody) {
         _httpClient.close(force: true);
-        throw Exception(
-            'Cannot retry streamed HTTP body ${response.code()}');
+        throw Exception('Cannot retry streamed HTTP body ${response.code()}');
       }
 
       request = followUp;
@@ -95,7 +96,7 @@ class RetryAndFollowUpInterceptor implements Interceptor {
       throw AssertionError();
     }
     final int responseCode = userResponse.code();
-    final String method = userResponse.request().method();
+//    final String method = userResponse.request().method();
     switch (responseCode) {
       case HttpStatus.proxyAuthenticationRequired:
         // HttpClient 实现

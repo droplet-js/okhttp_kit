@@ -7,12 +7,6 @@ import 'package:fake_http/okhttp3/request.dart';
 import 'package:fake_http/okhttp3/response.dart';
 
 class RealInterceptorChain implements Chain {
-  final List<Interceptor> _interceptors;
-  final HttpClient _httpClient;
-  final int _index;
-  final Request _request;
-  final Call _call;
-
   RealInterceptorChain(
     List<Interceptor> interceptors,
     HttpClient httpClient,
@@ -24,6 +18,12 @@ class RealInterceptorChain implements Chain {
         _index = index,
         _request = request,
         _call = call;
+
+  final List<Interceptor> _interceptors;
+  final HttpClient _httpClient;
+  final int _index;
+  final Request _request;
+  final Call _call;
 
   HttpClient httpClient() {
     return _httpClient;
