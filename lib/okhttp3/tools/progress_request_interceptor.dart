@@ -123,7 +123,7 @@ class _ProgressByteStreamSink extends StreamSink<List<int>> {
   }
 
   @override
-  Future addStream(Stream<List<int>> stream) {
+  Future<dynamic> addStream(Stream<List<int>> stream) {
     StreamTransformer<List<int>, List<int>> streamTransformer =
         StreamTransformer<List<int>, List<int>>.fromHandlers(handleData:
             (List<int> data, EventSink<List<int>> sink) {
@@ -142,7 +142,7 @@ class _ProgressByteStreamSink extends StreamSink<List<int>> {
   }
 
   @override
-  Future close() async {
+  Future<dynamic> close() async {
     if (callback != null) {
       callback.onClose(progressBytes, totalBytes);
     }
@@ -150,6 +150,6 @@ class _ProgressByteStreamSink extends StreamSink<List<int>> {
   }
 
   @override
-  Future get done =>
+  Future<dynamic> get done =>
       Future<UnsupportedError>.error(UnsupportedError('$runtimeType#done is not supported!'));
 }
