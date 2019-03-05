@@ -17,7 +17,7 @@ class HttpHeadersExtension {
 
   static int skipUntil(String input, int pos, String characters) {
     for (; pos < input.length; pos++) {
-      if (characters.indexOf(input[pos]) != -1) {
+      if (characters.contains(input[pos])) {
         break;
       }
     }
@@ -87,7 +87,7 @@ class HttpHeadersExtension {
         return false;
       }
       for (String cachedVaryHeaderValue in cachedVaryHeaderValues) {
-        if (newRequestHeaderValues.indexOf(cachedVaryHeaderValue) == -1) {
+        if (!newRequestHeaderValues.contains(cachedVaryHeaderValue)) {
           return false;
         }
       }
