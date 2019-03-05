@@ -14,7 +14,7 @@ class _NoneAuthenticator implements Authenticator {
   @override
   Future<bool> authenticate(
       HttpClient client, Uri url, String scheme, String realm) {
-    return Future.value(false);
+    return Future<bool>.value(false);
   }
 }
 
@@ -31,6 +31,6 @@ class _NoneProxyAuthenticator implements ProxyAuthenticator {
   @override
   Future<bool> authenticate(
       HttpClient client, String host, int port, String scheme, String realm) {
-    return Future.value(false);
+    return Future<bool>.value(false);
   }
 }

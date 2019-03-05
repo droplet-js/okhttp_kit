@@ -18,25 +18,25 @@ import 'package:fake_http/okhttp3/response_body.dart';
 import 'package:quiver/async.dart';
 
 class Cache {
+  Cache(
+    RawCache cache, [
+    KeyExtractor keyExtractor = _defaultKeyExtractor,
+  ])  : assert(cache != null),
+        _cache = cache,
+        _keyExtractor = keyExtractor;
+
   static const int VERSION = 201105;
   static const int ENTRY_META_DATA = 0;
   static const int ENTRY_BODY = 1;
   static const int ENTRY_COUNT = 2;
 
-  static final RegExp LEGAL_KEY_PATTERN = RegExp('[a-z0-9_-]{1,120}');
+  static final RegExp _LEGAL_KEY_PATTERN = RegExp('[a-z0-9_-]{1,120}');
 
   final RawCache _cache;
   final KeyExtractor _keyExtractor;
   int _networkCount = 0;
   int _hitCount = 0;
   int _requestCount = 0;
-
-  Cache(
-    RawCache cache, [
-    KeyExtractor keyExtractor,
-  ])  : assert(cache != null),
-        _cache = cache,
-        _keyExtractor = keyExtractor ?? _defaultKeyExtractor;
 
   int networkCount() {
     return _networkCount;
@@ -55,14 +55,13 @@ class Cache {
     if (key == null || key.isEmpty) {
       throw AssertionError('key is null or empty');
     }
-    if (LEGAL_KEY_PATTERN.stringMatch(key) != key) {
-      throw AssertionError(
-          'keys must match regex [a-z0-9_-]{1,120}: \"$key\"');
+    if (_LEGAL_KEY_PATTERN.stringMatch(key) != key) {
+      throw AssertionError('keys must match regex [a-z0-9_-]{1,120}: \"$key\"');
     }
     return key;
   }
 
-  Future<Response> get(Request request, [Encoding encoding]) async {
+  Future<Response> get(Request request, [Encoding encoding = utf8]) async {
     String key = _key(request.url());
     Snapshot snapshot;
     _Entry entry;
@@ -78,7 +77,7 @@ class Cache {
 
     try {
       entry = await _Entry.sourceEntry(
-          snapshot.getSource(ENTRY_META_DATA), encoding ?? utf8);
+          snapshot.getSource(ENTRY_META_DATA), encoding);
     } catch (e) {
       Util.closeQuietly(snapshot);
       return null;
@@ -94,7 +93,7 @@ class Cache {
     return response;
   }
 
-  Future<CacheRequest> put(Response response, [Encoding encoding]) async {
+  Future<CacheRequest> put(Response response, [Encoding encoding = utf8]) async {
     String requestMethod = response.request().method();
     if (HttpMethod.invalidatesCache(response.request().method())) {
       try {
@@ -122,8 +121,8 @@ class Cache {
       if (editor == null) {
         return null;
       }
-      await entry.writeTo(editor, encoding ?? utf8);
-      return CacheRequest(editor, encoding ?? utf8);
+      await entry.writeTo(editor, encoding);
+      return CacheRequest(editor, encoding);
     } catch (e) {
       await _abortQuietly(editor);
       return null;
@@ -135,7 +134,7 @@ class Cache {
   }
 
   Future<void> update(Response cached, Response network,
-      {Encoding encoding: utf8}) async {
+      [Encoding encoding = utf8]) async {
     _Entry entry = _Entry.responseEntry(network);
     _CacheResponseBody body = cached.body() as _CacheResponseBody;
     Snapshot snapshot = body.snapshot();
@@ -217,8 +216,7 @@ abstract class RawCache {
 
   Future<Snapshot> get(String key);
 
-  Future<Editor> edit(String key,
-      [int expectedSequenceNumber]);
+  Future<Editor> edit(String key, [int expectedSequenceNumber]);
 
   Future<bool> remove(String key);
 }

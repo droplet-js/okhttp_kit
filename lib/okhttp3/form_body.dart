@@ -12,7 +12,8 @@ class FormBody extends RequestBody {
 
   FormBody._(Encoding encoding, List<String> namesAndValues)
       : _encoding = encoding,
-        _contentType = MediaType('application', 'x-www-form-urlencoded', encoding.name),
+        _contentType =
+            MediaType('application', 'x-www-form-urlencoded', encoding.name),
         _namesAndValues = namesAndValues,
         _bytes = encoding.encode(_pairsToQuery(namesAndValues));
 
@@ -42,7 +43,7 @@ class FormBodyBuilder {
   final Encoding _encoding;
   final List<String> _namesAndValues = [];
 
-  FormBodyBuilder({Encoding encoding: utf8})
+  FormBodyBuilder([Encoding encoding = utf8])
       : assert(encoding != null),
         _encoding = encoding;
 
