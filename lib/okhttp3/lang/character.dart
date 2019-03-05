@@ -1,4 +1,6 @@
 class Character {
+  Character._();
+
   static bool isIsoControl(int rune) {
     return (rune >= 0x00 && rune <= 0x1F) || (rune >= 0x7F && rune <= 0x9F);
   }

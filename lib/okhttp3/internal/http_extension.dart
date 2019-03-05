@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:charcode/ascii.dart' as Ascii;
+import 'package:charcode/ascii.dart' as ascii;
 import 'package:fake_http/okhttp3/cookie_jar.dart';
 import 'package:fake_http/okhttp3/headers.dart';
 import 'package:fake_http/okhttp3/http_url.dart';
@@ -125,7 +125,7 @@ class HttpHeadersExtension {
   }
 
   static Set<String> varyFields(Headers responseHeaders) {
-    Set<String> result = Set();
+    Set<String> result = Set<String>();
     for (int i = 0, size = responseHeaders.size(); i < size; i++) {
       if (HttpHeaders.varyHeader != responseHeaders.nameAt(i)) {
         continue;
@@ -143,7 +143,7 @@ class CookieExtension {
   CookieExtension._();
 
   static List<Cookie> parseAllCookies(HttpUrl url, Headers headers) {
-    List<Cookie> cookies = [];
+    List<Cookie> cookies = <Cookie>[];
     List<String> cookieStrings = headers.values(HttpHeaders.setCookieHeader);
     cookieStrings.forEach((String value) {
       Cookie cookie = Cookie.fromSetCookieValue(value);
@@ -151,7 +151,7 @@ class CookieExtension {
         cookies.add(cookie);
       }
     });
-    return List.unmodifiable(cookies);
+    return List<Cookie>.unmodifiable(cookies);
   }
 
   static bool domainMatch(String urlHost, String domain) {
@@ -159,7 +159,7 @@ class CookieExtension {
       return true;
     }
     if (urlHost.endsWith(domain) &&
-        urlHost.codeUnitAt(urlHost.length - domain.length - 1) == Ascii.$dot &&
+        urlHost.codeUnitAt(urlHost.length - domain.length - 1) == ascii.$dot &&
         !Util.verifyAsIpAddress(urlHost)) {
       return true; // As in 'example.com' matching 'www.example.com'.
     }
@@ -168,5 +168,7 @@ class CookieExtension {
 }
 
 class HttpStatusExtension {
+  HttpStatusExtension._();
+
   static const int permanentRedirect = 308;
 }
