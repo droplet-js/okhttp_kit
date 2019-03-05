@@ -1,5 +1,7 @@
 # fake_http
 
+[![GitHub tag](https://img.shields.io/github/tag/v7lin/fake_http.svg)](https://github.com/v7lin/fake_http/releases)
+
 flutter版okhttp3
 
 ## fake 系列 libraries
@@ -14,6 +16,27 @@ flutter版okhttp3
 
 还是原来的配方，还是熟悉的味道
 
+## flutter
+
+#### snapshot
+````
+dependencies:
+  fake_http:
+    git:
+      url: https://github.com/v7lin/fake_http.git
+````
+
+#### release
+````
+latestVersion = 0.0.1+2
+````
+
+````
+dependencies:
+  fake_http: ^${latestVersion}
+````
+
+#### example
 [示例](./test/fake_http_test.dart)
 
 ## Getting Started
