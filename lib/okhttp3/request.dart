@@ -48,7 +48,7 @@ class Request {
   }
 
   RequestBuilder newBuilder() {
-    return new RequestBuilder._(this);
+    return RequestBuilder._(this);
   }
 }
 
@@ -60,7 +60,7 @@ class RequestBuilder {
 
   RequestBuilder()
       : _method = HttpMethod.GET,
-        _headers = new HeadersBuilder();
+        _headers = HeadersBuilder();
 
   RequestBuilder._(Request request)
       : _url = request._url,
@@ -128,10 +128,10 @@ class RequestBuilder {
   RequestBuilder method(String method, RequestBody body) {
     assert(method != null && method.isNotEmpty);
     if (body != null && !HttpMethod.permitsRequestBody(method)) {
-      throw new AssertionError('method $method must not have a request body.');
+      throw AssertionError('method $method must not have a request body.');
     }
     if (body == null && HttpMethod.requiresRequestBody(method)) {
-      throw new AssertionError('method $method must have a request body.');
+      throw AssertionError('method $method must have a request body.');
     }
     _method = method;
     _body = body;
@@ -140,6 +140,6 @@ class RequestBuilder {
 
   Request build() {
     assert(_url != null);
-    return new Request._(this);
+    return Request._(this);
   }
 }

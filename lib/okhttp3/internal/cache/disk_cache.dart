@@ -20,25 +20,25 @@ class DiskCache implements RawCache {
     String key, [
     int expectedSequenceNumber,
   ]) async {
-    _Entry entry = new _Entry(await _directory(), _valueCount, key);
+    _Entry entry = _Entry(await _directory(), _valueCount, key);
     return entry.editor();
   }
 
   @override
   Future<Snapshot> get(String key) async {
-    _Entry entry = new _Entry(await _directory(), _valueCount, key);
+    _Entry entry = _Entry(await _directory(), _valueCount, key);
     return entry.snapshot();
   }
 
   @override
   Future<bool> remove(String key) async {
-    _Entry entry = new _Entry(await _directory(), _valueCount, key);
+    _Entry entry = _Entry(await _directory(), _valueCount, key);
     return await entry.remove();
   }
 
   static DiskCache create(AsyncValueGetter<Directory> directory) {
     assert(directory != null);
-    return new DiskCache._(directory, Cache.ENTRY_COUNT);
+    return DiskCache._(directory, Cache.ENTRY_COUNT);
   }
 }
 
@@ -51,7 +51,7 @@ class _Entry {
     int valueCount,
     String key,
   )   : _key = key,
-        _cacheFiles = new List.generate(valueCount, (int index) {
+        _cacheFiles = List.generate(valueCount, (int index) {
           return directory.childFile('$key.$index');
         });
 
@@ -64,7 +64,7 @@ class _Entry {
   }
 
   Editor editor() {
-    return new _EditorImpl(this);
+    return _EditorImpl(this);
   }
 
   Snapshot snapshot() {
@@ -74,7 +74,7 @@ class _Entry {
     List<int> lengths = _cacheFiles.map((File cacheFile) {
       return cacheFile.lengthSync();
     }).toList();
-    return new Snapshot(_key, RawCache.ANY_SEQUENCE_NUMBER, sources, lengths);
+    return Snapshot(_key, RawCache.ANY_SEQUENCE_NUMBER, sources, lengths);
   }
 
   Future<bool> remove() async {
@@ -97,13 +97,13 @@ class _EditorImpl implements Editor {
       : _cleanFiles = entry.cacheFiles(),
         _dirtyFiles = entry.cacheFiles().map((File cacheFile) {
           return cacheFile.parent.childFile(
-              '${cacheFile.basename}.${new DateTime.now().millisecondsSinceEpoch}');
+              '${cacheFile.basename}.${DateTime.now().millisecondsSinceEpoch}');
         }).toList();
 
   @override
   StreamSink<List<int>> newSink(int index, Encoding encoding) {
     if (_done) {
-      throw new AssertionError();
+      throw AssertionError();
     }
     File dirtyFile = _dirtyFiles[index];
     if (dirtyFile.existsSync()) {
@@ -116,11 +116,11 @@ class _EditorImpl implements Editor {
   @override
   Stream<List<int>> newSource(int index, Encoding encoding) {
     if (!_done) {
-      throw new AssertionError();
+      throw AssertionError();
     }
     File cleanFile = _cleanFiles[index];
     if (!cleanFile.existsSync()) {
-      throw new AssertionError('cleanFile is not exists.');
+      throw AssertionError('cleanFile is not exists.');
     }
     return cleanFile.openRead();
   }
@@ -128,7 +128,7 @@ class _EditorImpl implements Editor {
   @override
   void commit() {
     if (_done) {
-      throw new AssertionError();
+      throw AssertionError();
     }
     _complete(true);
     _done = true;
@@ -137,7 +137,7 @@ class _EditorImpl implements Editor {
   @override
   void abort() {
     if (_done) {
-      throw new AssertionError();
+      throw AssertionError();
     }
     _complete(false);
     _done = true;

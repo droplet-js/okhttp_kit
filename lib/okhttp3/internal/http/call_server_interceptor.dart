@@ -21,7 +21,7 @@ class CallServerInterceptor implements Interceptor {
     HttpClient httpClient = realChain.httpClient();
     Request request = chain.request();
 
-    int sentRequestMillis = new DateTime.now().millisecondsSinceEpoch;
+    int sentRequestMillis = DateTime.now().millisecondsSinceEpoch;
 
     HttpClientRequest ioRequest =
         await httpClient.openUrl(request.method(), request.url().uri());
@@ -46,7 +46,7 @@ class CallServerInterceptor implements Interceptor {
 
     HttpClientResponse ioResponse = await ioRequest.close();
 
-    ResponseBuilder responseBuilder = new ResponseBuilder();
+    ResponseBuilder responseBuilder = ResponseBuilder();
     responseBuilder.code(ioResponse.statusCode);
     responseBuilder.message(ioResponse.reasonPhrase);
 
@@ -61,13 +61,13 @@ class CallServerInterceptor implements Interceptor {
     Response response = responseBuilder
         .request(request)
         .sentRequestAtMillis(sentRequestMillis)
-        .receivedResponseAtMillis(new DateTime.now().millisecondsSinceEpoch)
+        .receivedResponseAtMillis(DateTime.now().millisecondsSinceEpoch)
         .build();
 
     String contentType = response.header(HttpHeaders.contentTypeHeader);
     response = response
         .newBuilder()
-        .body(new RealResponseBody(contentType,
+        .body(RealResponseBody(contentType,
             HttpHeadersExtension.contentLength(response), ioResponse))
         .build();
 
@@ -75,7 +75,7 @@ class CallServerInterceptor implements Interceptor {
             response.code() == HttpStatus.resetContent) &&
         response.body() != null &&
         response.body().contentLength() > 0) {
-      throw new Exception(
+      throw Exception(
           'HTTP ${response.code()} had non-zero Content-Length: ${response.body().contentLength()}');
     }
     return response;

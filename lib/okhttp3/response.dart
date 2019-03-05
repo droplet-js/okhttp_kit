@@ -87,7 +87,7 @@ class Response {
   }
 
   ResponseBuilder newBuilder() {
-    return new ResponseBuilder._(this);
+    return ResponseBuilder._(this);
   }
 }
 
@@ -103,7 +103,7 @@ class ResponseBuilder {
   int _sentRequestAtMillis = 0;
   int _receivedResponseAtMillis = 0;
 
-  ResponseBuilder() : _headers = new HeadersBuilder();
+  ResponseBuilder() : _headers = HeadersBuilder();
 
   ResponseBuilder._(Response response)
       : _request = response._request,
@@ -185,9 +185,9 @@ class ResponseBuilder {
   Response build() {
     assert(_request != null);
     if (_code < 0) {
-      throw new AssertionError('code < 0: $_code');
+      throw AssertionError('code < 0: $_code');
     }
     assert(_message != null);
-    return new Response._(this);
+    return Response._(this);
   }
 }

@@ -46,9 +46,9 @@ class RealInterceptorChain implements Chain {
 
   Future<Response> proceedRequest(Request request, HttpClient httpClient) {
     if (_index >= _interceptors.length) {
-      throw new AssertionError();
+      throw AssertionError();
     }
-    RealInterceptorChain next = new RealInterceptorChain(
+    RealInterceptorChain next = RealInterceptorChain(
         _interceptors, httpClient, _index + 1, request, _call);
     Interceptor interceptor = _interceptors[_index];
     return interceptor.intercept(next);

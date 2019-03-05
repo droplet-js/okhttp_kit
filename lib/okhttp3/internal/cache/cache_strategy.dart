@@ -109,7 +109,7 @@ class CacheStrategyFactory {
     CacheStrategy candidate = _getCandidate();
     if (candidate.networkRequest != null &&
         request.cacheControl().onlyIfCached()) {
-      return new CacheStrategy._(null, null);
+      return CacheStrategy._(null, null);
     }
     return candidate;
   }
@@ -117,24 +117,24 @@ class CacheStrategyFactory {
   CacheStrategy _getCandidate() {
     // No cached response.
     if (cacheResponse == null) {
-      return new CacheStrategy._(request, null);
+      return CacheStrategy._(request, null);
     }
 
     // If this response shouldn't have been stored, it should never be used
     // as a response source. This check should be redundant as long as the
     // persistence store is well-behaved and the rules are constant.
     if (!CacheStrategy.isCacheable(cacheResponse, request)) {
-      return new CacheStrategy._(request, null);
+      return CacheStrategy._(request, null);
     }
 
     CacheControl requestCaching = request.cacheControl();
     if (requestCaching.noCache() || _hasConditions(request)) {
-      return new CacheStrategy._(request, null);
+      return CacheStrategy._(request, null);
     }
 
     CacheControl responseCaching = cacheResponse.cacheControl();
     if (responseCaching.immutable()) {
-      return new CacheStrategy._(null, cacheResponse);
+      return CacheStrategy._(null, cacheResponse);
     }
 
     int ageMillis = _cacheResponseAge();
@@ -142,19 +142,19 @@ class CacheStrategyFactory {
 
     if (requestCaching.maxAgeSeconds() != -1) {
       freshMillis = Math.min(freshMillis,
-          new Duration(seconds: requestCaching.maxAgeSeconds()).inMilliseconds);
+          Duration(seconds: requestCaching.maxAgeSeconds()).inMilliseconds);
     }
 
     int minFreshMillis = 0;
     if (requestCaching.minFreshSeconds() != -1) {
-      minFreshMillis = new Duration(seconds: requestCaching.minFreshSeconds())
+      minFreshMillis = Duration(seconds: requestCaching.minFreshSeconds())
           .inMilliseconds;
     }
 
     int maxStaleMillis = 0;
     if (!responseCaching.mustRevalidate() &&
         requestCaching.maxStaleSeconds() != -1) {
-      maxStaleMillis = new Duration(seconds: requestCaching.maxStaleSeconds())
+      maxStaleMillis = Duration(seconds: requestCaching.maxStaleSeconds())
           .inMilliseconds;
     }
 
@@ -165,12 +165,12 @@ class CacheStrategyFactory {
         builder.addHeader(HttpHeaders.warningHeader,
             "110 HttpURLConnection \"Response is stale\"");
       }
-      int oneDayMillis = new Duration(days: 1).inMilliseconds;
+      int oneDayMillis = Duration(days: 1).inMilliseconds;
       if (ageMillis > oneDayMillis && _isFreshnessLifetimeHeuristic()) {
         builder.addHeader(HttpHeaders.warningHeader,
             "113 HttpURLConnection \"Heuristic expiration\"");
       }
-      return new CacheStrategy._(null, builder.build());
+      return CacheStrategy._(null, builder.build());
     }
 
     // Find a condition to add to the request. If the condition is satisfied, the response body
@@ -187,7 +187,7 @@ class CacheStrategyFactory {
       conditionName = HttpHeaders.ifModifiedSinceHeader;
       conditionValue = _servedDateString;
     } else {
-      return new CacheStrategy._(
+      return CacheStrategy._(
           request, null); // No condition! Make a regular request.
     }
 
@@ -196,13 +196,13 @@ class CacheStrategyFactory {
 
     Request conditionalRequest =
         request.newBuilder().headers(conditionalRequestHeaders.build()).build();
-    return new CacheStrategy._(conditionalRequest, cacheResponse);
+    return CacheStrategy._(conditionalRequest, cacheResponse);
   }
 
   int _computeFreshnessLifetime() {
     CacheControl responseCaching = cacheResponse.cacheControl();
     if (responseCaching.maxAgeSeconds() != -1) {
-      return new Duration(seconds: responseCaching.maxAgeSeconds())
+      return Duration(seconds: responseCaching.maxAgeSeconds())
           .inMilliseconds;
     } else if (_expires != null) {
       int servedMillis = _servedDate != null
@@ -232,7 +232,7 @@ class CacheStrategyFactory {
         : 0;
     int receivedAge = _ageSeconds != -1
         ? Math.max(apparentReceivedAge,
-            new Duration(seconds: _ageSeconds).inMilliseconds)
+            Duration(seconds: _ageSeconds).inMilliseconds)
         : apparentReceivedAge;
     int responseDuration = _receivedResponseMillis - _sentRequestMillis;
     int residentDuration = nowMillis - _receivedResponseMillis;

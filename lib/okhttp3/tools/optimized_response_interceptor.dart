@@ -43,8 +43,8 @@ class OptimizedResponseInterceptor implements Interceptor {
                 .removeHeader(HttpHeaders.pragmaHeader)
                 .header(
                     HttpHeaders.cacheControlHeader,
-                    new CacheControlBuilder()
-                        .maxAge(new Duration(seconds: _maxAgeSeconds))
+                    CacheControlBuilder()
+                        .maxAge(Duration(seconds: _maxAgeSeconds))
                         .build()
                         .toString())
                 .build();

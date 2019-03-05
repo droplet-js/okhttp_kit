@@ -51,7 +51,7 @@ class OptimizedRequestInterceptor implements Interceptor {
         response = await chain.proceed(originalRequest);
         // 用户手动调时间，让当前时间小于缓存创建时间，这时候缓存不会过期
         if (response.receivedResponseAtMillis() >
-            new DateTime.now().millisecondsSinceEpoch) {
+            DateTime.now().millisecondsSinceEpoch) {
           originalRequest = originalRequest
               .newBuilder()
               .removeHeader(HttpHeaders.cacheControlHeader)

@@ -56,7 +56,7 @@ class HttpUrl {
   }
 
   HttpUrlBuilder newBuilder() {
-    return new HttpUrlBuilder._(this);
+    return HttpUrlBuilder._(this);
   }
 
   Uri uri() {
@@ -84,12 +84,12 @@ class HttpUrl {
   }
 
   static HttpUrl parse(String url) {
-    return new HttpUrlBuilder(Uri.parse(url))
+    return HttpUrlBuilder(Uri.parse(url))
         .build();
   }
 
   static HttpUrl from(Uri uri) {
-    return new HttpUrlBuilder(uri)
+    return HttpUrlBuilder(uri)
         .build();
   }
 
@@ -171,6 +171,6 @@ class HttpUrlBuilder {
   }
 
   HttpUrl build() {
-    return new HttpUrl._(this);
+    return HttpUrl._(this);
   }
 }

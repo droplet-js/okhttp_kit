@@ -15,7 +15,7 @@ abstract class RequestBody {
   Future<void> writeTo(StreamSink<List<int>> sink);
 
   static RequestBody bytesBody(MediaType contentType, List<int> bytes) {
-    return new _SimpleRequestBody(contentType, bytes.length, bytes);
+    return _SimpleRequestBody(contentType, bytes.length, bytes);
   }
 
   static RequestBody textBody(MediaType contentType, String text) {
@@ -25,7 +25,7 @@ abstract class RequestBody {
   }
 
   static RequestBody fileBody(MediaType contentType, File file) {
-    return new _FileRequestBody(contentType, file);
+    return _FileRequestBody(contentType, file);
   }
 }
 
@@ -51,7 +51,7 @@ class _SimpleRequestBody extends RequestBody {
 
   @override
   Future<void> writeTo(StreamSink<List<int>> sink) {
-    return sink.addStream(new Stream.fromIterable([_bytes]));
+    return sink.addStream(Stream.fromIterable([_bytes]));
   }
 }
 

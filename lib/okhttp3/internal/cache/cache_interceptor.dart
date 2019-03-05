@@ -22,10 +22,10 @@ class CacheInterceptor implements Interceptor {
     Response cacheCandidate =
         _cache != null ? await _cache.get(chain.request()) : null;
 
-    int now = new DateTime.now().millisecondsSinceEpoch;
+    int now = DateTime.now().millisecondsSinceEpoch;
 
     CacheStrategy strategy =
-        new CacheStrategyFactory(now, chain.request(), cacheCandidate).get();
+        CacheStrategyFactory(now, chain.request(), cacheCandidate).get();
     Request networkRequest = strategy.networkRequest;
     Response cacheResponse = strategy.cacheResponse;
 
@@ -40,13 +40,13 @@ class CacheInterceptor implements Interceptor {
 
     // If we're forbidden from using the network and the cache is insufficient, fail.
     if (networkRequest == null && cacheResponse == null) {
-      return new ResponseBuilder()
+      return ResponseBuilder()
           .request(chain.request())
           .code(HttpStatus.gatewayTimeout)
           .message("Unsatisfiable Request (only-if-cached)")
           .body(Util.EMPTY_RESPONSE)
           .sentRequestAtMillis(-1)
-          .receivedResponseAtMillis(new DateTime.now().millisecondsSinceEpoch)
+          .receivedResponseAtMillis(DateTime.now().millisecondsSinceEpoch)
           .build();
     }
 
@@ -127,7 +127,7 @@ class CacheInterceptor implements Interceptor {
 
   /// Combines cached headers with a network headers as defined by RFC 7234, 4.3.4.
   static Headers _combine(Headers cachedHeaders, Headers networkHeaders) {
-    HeadersBuilder result = new HeadersBuilder();
+    HeadersBuilder result = HeadersBuilder();
 
     for (int i = 0, size = cachedHeaders.size(); i < size; i++) {
       String name = cachedHeaders.nameAt(i);
@@ -183,7 +183,7 @@ class CacheInterceptor implements Interceptor {
     Stream<List<int>> source = response.body().source();
 
     StreamTransformer<List<int>, List<int>> streamTransformer =
-        new StreamTransformer.fromHandlers(handleData:
+        StreamTransformer.fromHandlers(handleData:
             (List<int> data, EventSink<List<int>> sink) {
       sink.add(data);
       cacheBody.add(data);
@@ -204,7 +204,7 @@ class CacheInterceptor implements Interceptor {
     int contentLength = response.body().contentLength();
     return response
         .newBuilder()
-        .body(new RealResponseBody(
+        .body(RealResponseBody(
             contentType, contentLength, cacheWritingSource))
         .build();
   }

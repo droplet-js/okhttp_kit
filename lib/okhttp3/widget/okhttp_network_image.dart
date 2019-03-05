@@ -33,12 +33,12 @@ class OkHttpNetworkImage extends ImageProvider<OkHttpNetworkImage> {
 
   @override
   Future<OkHttpNetworkImage> obtainKey(ImageConfiguration configuration) {
-    return new SynchronousFuture<OkHttpNetworkImage>(this);
+    return SynchronousFuture<OkHttpNetworkImage>(this);
   }
 
   @override
   ImageStreamCompleter load(OkHttpNetworkImage key) {
-    return new MultiFrameImageStreamCompleter(
+    return MultiFrameImageStreamCompleter(
         codec: _loadAsync(key),
         scale: key._scale,
         informationCollector: (StringBuffer information) {
@@ -52,7 +52,7 @@ class OkHttpNetworkImage extends ImageProvider<OkHttpNetworkImage> {
 
     final Uri resolved = Uri.base.resolve(key._url);
     Response response = await _client
-        .newCall(new RequestBuilder()
+        .newCall(RequestBuilder()
             .url(HttpUrl.from(resolved))
             .headers(Headers.of(_headers))
             .get()
@@ -60,13 +60,13 @@ class OkHttpNetworkImage extends ImageProvider<OkHttpNetworkImage> {
         .enqueue();
 
     if (response.code() != HttpStatus.ok) {
-      throw new Exception(
+      throw Exception(
           'HTTP request failed, statusCode: ${response.code()}, $resolved');
     }
 
     final Uint8List bytes = Uint8List.fromList(await response.body().bytes());
     if (bytes.lengthInBytes == 0) {
-      throw new Exception('FakeNetworkImage is an empty file: $resolved');
+      throw Exception('FakeNetworkImage is an empty file: $resolved');
     }
 
     return await ui.instantiateImageCodec(bytes);

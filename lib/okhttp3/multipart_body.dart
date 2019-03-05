@@ -200,27 +200,27 @@ class Part {
     }
     if (headers != null &&
         headers.value(HttpHeaders.contentTypeHeader) != null) {
-      throw new ArgumentError(
+      throw ArgumentError(
           'Unexpected header: ${HttpHeaders.contentTypeHeader}');
     }
     if (headers != null &&
         headers.value(HttpHeaders.contentLengthHeader) != null) {
-      throw new ArgumentError(
+      throw ArgumentError(
           'Unexpected header: ${HttpHeaders.contentLengthHeader}');
     }
-    return new Part._(headers, body);
+    return Part._(headers, body);
   }
 
   static Part createFormData(String name, String filename, RequestBody body) {
     if (name == null) {
-      throw new ArgumentError.notNull('name');
+      throw ArgumentError.notNull('name');
     }
 
     String disposition = 'form-data; name="${_browserEncode(name)}"';
     if (filename != null) {
       disposition = '$disposition; filename="${_browserEncode(filename)}"';
     }
-    Headers headers = new HeadersBuilder()
+    Headers headers = HeadersBuilder()
         .add(HttpHeadersExtension.contentDispositionHeader,
             disposition.toString())
         .build();
@@ -234,7 +234,7 @@ class Part {
     // `\r\n`; URL-encode `"`; and do nothing else (even for `%` or non-ASCII
     // characters). We follow their behavior.
     return value
-        .replaceAll(new RegExp(r'\r\n|\r|\n'), '%0D%0A')
+        .replaceAll(RegExp(r'\r\n|\r|\n'), '%0D%0A')
         .replaceAll('"', '%22');
   }
 }
@@ -250,10 +250,10 @@ class MultipartBodyBuilder {
 
   MultipartBodyBuilder setType(MediaType type) {
     if (type == null) {
-      throw new ArgumentError.notNull('type');
+      throw ArgumentError.notNull('type');
     }
     if (type.type() != 'multipart') {
-      throw new ArgumentError('${type.type()} != multipart');
+      throw ArgumentError('${type.type()} != multipart');
     }
     _type = type;
     return this;
@@ -270,7 +270,7 @@ class MultipartBodyBuilder {
 
   MultipartBodyBuilder _addPart(Part part) {
     if (part == null) {
-      throw new ArgumentError.notNull('part');
+      throw ArgumentError.notNull('part');
     }
     _parts.add(part);
     return this;
@@ -278,8 +278,8 @@ class MultipartBodyBuilder {
 
   MultipartBody build() {
     if (_parts.isEmpty) {
-      throw new ArgumentError('Multipart body must have at least one part.');
+      throw ArgumentError('Multipart body must have at least one part.');
     }
-    return new MultipartBody._(_boundary, _type, List.unmodifiable(_parts));
+    return MultipartBody._(_boundary, _type, List.unmodifiable(_parts));
   }
 }

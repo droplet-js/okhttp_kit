@@ -19,9 +19,9 @@ class ProgressResponseInterceptor implements ProgressInterceptor {
     Response originalResponse = await chain.proceed(originalRequest);
     return originalResponse
         .newBuilder()
-        .body(new _ProgressResponseBody(
+        .body(_ProgressResponseBody(
             originalResponse.body(),
-            new _CallbackAdapter(originalResponse.request().url().toString(),
+            _CallbackAdapter(originalResponse.request().url().toString(),
                 originalResponse.request().method(), _listener)))
         .build();
   }
@@ -76,7 +76,7 @@ class _ProgressResponseBody extends ResponseBody {
     int totalBytes = contentLength();
     int progressBytes = 0;
     StreamTransformer<List<int>, List<int>> streamTransformer =
-        new StreamTransformer.fromHandlers(handleData:
+        StreamTransformer.fromHandlers(handleData:
             (List<int> data, EventSink<List<int>> sink) {
       sink.add(data);
       progressBytes += data.length;

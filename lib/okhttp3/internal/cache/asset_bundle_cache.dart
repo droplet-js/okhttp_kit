@@ -21,7 +21,7 @@ class AssetBundleCache implements RawCache {
 
   @override
   Future<Snapshot> get(String key) {
-    _Entry entry = new _Entry(_bundle, _package, _directory, _valueCount, key);
+    _Entry entry = _Entry(_bundle, _package, _directory, _valueCount, key);
     return entry.snapshot();
   }
 
@@ -30,13 +30,13 @@ class AssetBundleCache implements RawCache {
     String key, [
     int expectedSequenceNumber,
   ]) async {
-    throw new UnsupportedError(
+    throw UnsupportedError(
         '${this.runtimeType}#edit(key, [expectedSequenceNumber]) is not supported!');
   }
 
   @override
   Future<bool> remove(String key) async {
-    throw new UnsupportedError(
+    throw UnsupportedError(
         '${this.runtimeType}#remove(key) is not supported!');
   }
 
@@ -46,7 +46,7 @@ class AssetBundleCache implements RawCache {
     String package,
   ]) {
     assert(directory != null && directory.isNotEmpty);
-    return new AssetBundleCache._(
+    return AssetBundleCache._(
         bundle, package, directory, Cache.ENTRY_COUNT);
   }
 }
@@ -76,12 +76,12 @@ class _Entry {
     for (int i = 0; i < _valueCount; i++) {
       String keyName = _keyName(_key, i);
       ByteData byteData = await _chosenBundle().load(keyName);
-      sources.add(new Stream.fromIterable([
+      sources.add(Stream.fromIterable([
         byteData.buffer.asUint8List(),
       ]));
       lengths.add(byteData.lengthInBytes);
     }
-    return new Snapshot(_key, RawCache.ANY_SEQUENCE_NUMBER, sources, lengths);
+    return Snapshot(_key, RawCache.ANY_SEQUENCE_NUMBER, sources, lengths);
   }
 
   AssetBundle _chosenBundle() {

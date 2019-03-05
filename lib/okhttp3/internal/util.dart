@@ -18,7 +18,7 @@ class Util {
   }
 
   static bool verifyAsIpAddress(String host) {
-    return new RegExp('([0-9a-fA-F]*:[0-9a-fA-F:.]*)|([\\d.]+)')
+    return RegExp('([0-9a-fA-F]*:[0-9a-fA-F:.]*)|([\\d.]+)')
             .stringMatch(host) ==
         host;
   }

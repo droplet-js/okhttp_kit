@@ -26,7 +26,7 @@ class RetryAndFollowUpInterceptor implements Interceptor {
     Request request = chain.request();
     RealInterceptorChain realChain = chain as RealInterceptorChain;
 
-    _httpClient = new HttpClient();
+    _httpClient = HttpClient();
     _httpClient.idleTimeout = _client.idleTimeout();
     _httpClient.connectionTimeout = _client.connectionTimeout();
     _httpClient.authenticate = (Uri url, String scheme, String realm) {
@@ -46,7 +46,7 @@ class RetryAndFollowUpInterceptor implements Interceptor {
     while (true) {
       if (canceled) {
         _httpClient.close(force: true);
-        throw new Exception('Canceled');
+        throw Exception('Canceled');
       }
 
       Response response;
@@ -75,13 +75,13 @@ class RetryAndFollowUpInterceptor implements Interceptor {
 
       if (++followUpCount > _MAX_FOLLOW_UPS) {
         _httpClient.close(force: true);
-        throw new Exception('Too many follow-up requests: $followUpCount');
+        throw Exception('Too many follow-up requests: $followUpCount');
       }
 
       if (followUp.body() != null &&
           followUp.body() is UnrepeatableRequestBody) {
         _httpClient.close(force: true);
-        throw new Exception(
+        throw Exception(
             'Cannot retry streamed HTTP body ${response.code()}');
       }
 
@@ -92,7 +92,7 @@ class RetryAndFollowUpInterceptor implements Interceptor {
 
   Request _followUpRequest(Response userResponse) {
     if (userResponse == null) {
-      throw new AssertionError();
+      throw AssertionError();
     }
     final int responseCode = userResponse.code();
     final String method = userResponse.request().method();
@@ -162,7 +162,7 @@ class RetryAndFollowUpInterceptor implements Interceptor {
 
     // https://tools.ietf.org/html/rfc7231#section-7.1.3
     // currently ignores a HTTP-date, and assumes any non int 0 is a delay
-    if (new RegExp('\\d+').stringMatch(header) == header) {
+    if (RegExp('\\d+').stringMatch(header) == header) {
       return int.parse(header);
     }
 

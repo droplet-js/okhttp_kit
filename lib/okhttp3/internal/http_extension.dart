@@ -107,10 +107,10 @@ class HttpHeadersExtension {
   static Headers _varyHeaders(Headers requestHeaders, Headers responseHeaders) {
     Set<String> fields = varyFields(responseHeaders);
     if (fields.isEmpty) {
-      return new HeadersBuilder().build();
+      return HeadersBuilder().build();
     }
 
-    HeadersBuilder result = new HeadersBuilder();
+    HeadersBuilder result = HeadersBuilder();
     for (int i = 0, size = requestHeaders.size(); i < size; i++) {
       String name = requestHeaders.nameAt(i);
       if (fields.contains(name)) {
@@ -125,7 +125,7 @@ class HttpHeadersExtension {
   }
 
   static Set<String> varyFields(Headers responseHeaders) {
-    Set<String> result = new Set();
+    Set<String> result = Set();
     for (int i = 0, size = responseHeaders.size(); i < size; i++) {
       if (HttpHeaders.varyHeader != responseHeaders.nameAt(i)) {
         continue;

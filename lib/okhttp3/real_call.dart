@@ -19,7 +19,7 @@ class RealCall implements Call {
   RealCall.newRealCall(OkHttpClient client, Request originalRequest)
       : _client = client,
         _originalRequest = originalRequest,
-        _retryAndFollowUpInterceptor = new RetryAndFollowUpInterceptor(client);
+        _retryAndFollowUpInterceptor = RetryAndFollowUpInterceptor(client);
 
   @override
   Request request() {
@@ -31,12 +31,12 @@ class RealCall implements Call {
     List<Interceptor> interceptors = [];
     interceptors.addAll(_client.interceptors());
     interceptors.add(_retryAndFollowUpInterceptor);
-    interceptors.add(new BridgeInterceptor(_client.cookieJar()));
-    interceptors.add(new CacheInterceptor(_client.cache()));
+    interceptors.add(BridgeInterceptor(_client.cookieJar()));
+    interceptors.add(CacheInterceptor(_client.cache()));
     interceptors.addAll(_client.networkInterceptors());
-    interceptors.add(new CallServerInterceptor(_client));
+    interceptors.add(CallServerInterceptor(_client));
     Chain chain =
-        new RealInterceptorChain(interceptors, null, 0, _originalRequest, this);
+        RealInterceptorChain(interceptors, null, 0, _originalRequest, this);
     return chain.proceed(_originalRequest);
   }
 

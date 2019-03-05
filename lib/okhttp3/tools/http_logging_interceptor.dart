@@ -80,8 +80,8 @@ class HttpLoggingInterceptor implements Interceptor {
         int contentLength = requestBody.contentLength();
 
         if (_isPlainContentType(contentType)) {
-          StreamBuffer<int> buffer = new StreamBuffer();
-          StreamSink<List<int>> sink = new IOSink(buffer);
+          StreamBuffer<int> buffer = StreamBuffer();
+          StreamSink<List<int>> sink = IOSink(buffer);
           await requestBody.writeTo(sink);
           List<int> bytes = await buffer.read(buffer.buffered);
 
@@ -107,7 +107,7 @@ class HttpLoggingInterceptor implements Interceptor {
       }
     }
 
-    Stopwatch watch = new Stopwatch()..start();
+    Stopwatch watch = Stopwatch()..start();
     Response response;
     try {
       response = await chain.proceed(request);
@@ -257,7 +257,7 @@ class _PlatformLoggerFactory implements LoggerFactory {
 
   @override
   Logger logger(String method, String url) {
-    return new _PlatformLogger(method, url);
+    return _PlatformLogger(method, url);
   }
 }
 

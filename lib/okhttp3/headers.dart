@@ -21,7 +21,7 @@ class Headers {
     for (int i = 0; i < _namesAndValues.length; i += 2) {
       names.add(_namesAndValues[i]);
     }
-    return new Set.from(names);
+    return Set.from(names);
   }
 
   String value(String name) {
@@ -60,11 +60,11 @@ class Headers {
   }
 
   HeadersBuilder newBuilder() {
-    return new HeadersBuilder._(this);
+    return HeadersBuilder._(this);
   }
 
   static Headers of(Map<String, List<String>> multimap) {
-    HeadersBuilder builder = new HeadersBuilder();
+    HeadersBuilder builder = HeadersBuilder();
     if (multimap != null && multimap.isNotEmpty) {
       multimap.forEach((String name, List<String> values) {
         if (values != null && values.isNotEmpty) {
@@ -136,6 +136,6 @@ class HeadersBuilder {
   }
 
   Headers build() {
-    return new Headers._(this);
+    return Headers._(this);
   }
 }

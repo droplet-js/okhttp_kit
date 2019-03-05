@@ -24,9 +24,9 @@ class ProgressRequestInterceptor implements ProgressInterceptor {
         .newBuilder()
         .method(
             originalRequest.method(),
-            new _ProgressRequestBody(
+            _ProgressRequestBody(
                 originalRequest.body(),
-                new _CallbackAdapter(originalRequest.url().toString(),
+                _CallbackAdapter(originalRequest.url().toString(),
                     originalRequest.method(), _listener)))
         .build();
     return chain.proceed(progressRequest);
@@ -80,7 +80,7 @@ class _ProgressRequestBody extends RequestBody {
   @override
   Future<void> writeTo(StreamSink<List<int>> sink) async {
     _ProgressByteStreamSink progressSink =
-        new _ProgressByteStreamSink(sink, contentLength(), callback);
+        _ProgressByteStreamSink(sink, contentLength(), callback);
     await wrapped.writeTo(progressSink);
     await progressSink.close();
   }
@@ -112,7 +112,7 @@ class _ProgressByteStreamSink extends StreamSink<List<int>> {
   @override
   Future addStream(Stream<List<int>> stream) {
     StreamTransformer<List<int>, List<int>> streamTransformer =
-        new StreamTransformer.fromHandlers(handleData:
+        StreamTransformer.fromHandlers(handleData:
             (List<int> data, EventSink<List<int>> sink) {
       sink.add(data);
       progressBytes += data.length;
@@ -138,5 +138,5 @@ class _ProgressByteStreamSink extends StreamSink<List<int>> {
 
   @override
   Future get done =>
-      Future.error(new UnsupportedError('$runtimeType#done is not supported!'));
+      Future.error(UnsupportedError('$runtimeType#done is not supported!'));
 }

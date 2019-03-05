@@ -76,11 +76,11 @@ class OkHttpClient implements Factory {
 
   @override
   Call newCall(Request request) {
-    return new RealCall.newRealCall(this, request);
+    return RealCall.newRealCall(this, request);
   }
 
   OkHttpClientBuilder newBuilder() {
-    return new OkHttpClientBuilder._(this);
+    return OkHttpClientBuilder._(this);
   }
 }
 
@@ -97,8 +97,8 @@ class OkHttpClientBuilder {
   bool _followRedirects = true;
   bool _retryOnConnectionFailure = true;
 
-  Duration _idleTimeout = new Duration(seconds: 15);
-  Duration _connectionTimeout = new Duration(seconds: 10);
+  Duration _idleTimeout = Duration(seconds: 15);
+  Duration _connectionTimeout = Duration(seconds: 10);
 
   OkHttpClientBuilder();
 
@@ -172,6 +172,6 @@ class OkHttpClientBuilder {
   }
 
   OkHttpClient build() {
-    return new OkHttpClient._(this);
+    return OkHttpClient._(this);
   }
 }

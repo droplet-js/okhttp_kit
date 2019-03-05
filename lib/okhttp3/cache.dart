@@ -23,7 +23,7 @@ class Cache {
   static const int ENTRY_BODY = 1;
   static const int ENTRY_COUNT = 2;
 
-  static final RegExp LEGAL_KEY_PATTERN = new RegExp('[a-z0-9_-]{1,120}');
+  static final RegExp LEGAL_KEY_PATTERN = RegExp('[a-z0-9_-]{1,120}');
 
   final RawCache _cache;
   final KeyExtractor _keyExtractor;
@@ -53,10 +53,10 @@ class Cache {
   String _key(HttpUrl url) {
     String key = _keyExtractor(url);
     if (key == null || key.isEmpty) {
-      throw new AssertionError('key is null or empty');
+      throw AssertionError('key is null or empty');
     }
     if (LEGAL_KEY_PATTERN.stringMatch(key) != key) {
-      throw new AssertionError(
+      throw AssertionError(
           'keys must match regex [a-z0-9_-]{1,120}: \"$key\"');
     }
     return key;
@@ -123,7 +123,7 @@ class Cache {
         return null;
       }
       await entry.writeTo(editor, encoding ?? utf8);
-      return new CacheRequest(editor, encoding ?? utf8);
+      return CacheRequest(editor, encoding ?? utf8);
     } catch (e) {
       await _abortQuietly(editor);
       return null;
@@ -297,7 +297,7 @@ class _Entry {
 
   Future<void> writeTo(Editor editor, Encoding encoding) async {
     assert(encoding != null);
-    StringBuffer builder = new StringBuffer();
+    StringBuffer builder = StringBuffer();
     builder.writeln(_url);
     builder.writeln(_requestMethod);
     builder.writeln(_varyHeaders.size().toString());
@@ -337,17 +337,17 @@ class _Entry {
         _responseHeaders.value(HttpHeaders.contentLengthHeader);
     int contentLength =
         contentLengthString != null ? int.parse(contentLengthString) : -1;
-    Request cacheRequest = new RequestBuilder()
+    Request cacheRequest = RequestBuilder()
         .url(HttpUrl.parse(_url))
         .method(_requestMethod, null)
         .headers(_varyHeaders)
         .build();
-    return new ResponseBuilder()
+    return ResponseBuilder()
         .request(cacheRequest)
         .code(_code)
         .message(_message)
         .headers(_responseHeaders)
-        .body(new _CacheResponseBody(contentType, contentLength, snapshot))
+        .body(_CacheResponseBody(contentType, contentLength, snapshot))
         .sentRequestAtMillis(_sentRequestMillis)
         .receivedResponseAtMillis(_receivedResponseMillis)
         .build();
@@ -364,7 +364,7 @@ class _Entry {
     Encoding encoding,
   ) async {
     assert(encoding != null);
-    StreamBuffer<int> sink = new StreamBuffer();
+    StreamBuffer<int> sink = StreamBuffer();
     await sink.addStream(source);
 
     List<String> lines = await sink.read(sink.buffered).then((List<int> bytes) {
@@ -374,7 +374,7 @@ class _Entry {
     int cursor = 0;
     String url = lines[cursor++];
     String requestMethod = lines[cursor++];
-    HeadersBuilder varyHeadersBuilder = new HeadersBuilder();
+    HeadersBuilder varyHeadersBuilder = HeadersBuilder();
     int varyRequestHeaderLineCount = int.parse(lines[cursor++]);
     for (int i = 0; i < varyRequestHeaderLineCount; i++) {
       varyHeadersBuilder.addLenientLine(lines[cursor++]);
@@ -388,7 +388,7 @@ class _Entry {
     int code = int.parse(statusLine.substring(0, 3));
     String message = statusLine.substring(3).replaceFirst(' ', '');
 
-    HeadersBuilder responseHeadersBuilder = new HeadersBuilder();
+    HeadersBuilder responseHeadersBuilder = HeadersBuilder();
     int responseHeaderLineCount = int.parse(lines[cursor++]);
     for (int i = 0; i < responseHeaderLineCount; i++) {
       responseHeadersBuilder.addLenientLine(lines[cursor++]);
@@ -412,7 +412,7 @@ class _Entry {
         ? int.parse(receivedResponseMillisString)
         : 0;
 
-    return new _Entry(url, requestMethod, varyHeaders, code, message,
+    return _Entry(url, requestMethod, varyHeaders, code, message,
         responseHeaders, sentRequestMillis, receivedResponseMillis);
   }
 
@@ -425,7 +425,7 @@ class _Entry {
     Headers responseHeaders = response.headers();
     int sentRequestMillis = response.sentRequestAtMillis();
     int receivedResponseMillis = response.receivedResponseAtMillis();
-    return new _Entry(url, requestMethod, varyHeaders, code, message,
+    return _Entry(url, requestMethod, varyHeaders, code, message,
         responseHeaders, sentRequestMillis, receivedResponseMillis);
   }
 }

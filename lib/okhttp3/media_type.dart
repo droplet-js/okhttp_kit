@@ -1,10 +1,10 @@
 import 'dart:io';
 
 class MediaType {
-  static final MediaType TEXT = new MediaType._(ContentType.text);
-  static final MediaType HTML = new MediaType._(ContentType.html);
-  static final MediaType JSON = new MediaType._(ContentType.json);
-  static final MediaType BINARY = new MediaType._(ContentType.binary);
+  static final MediaType TEXT = MediaType._(ContentType.text);
+  static final MediaType HTML = MediaType._(ContentType.html);
+  static final MediaType JSON = MediaType._(ContentType.json);
+  static final MediaType BINARY = MediaType._(ContentType.binary);
 
   final ContentType _contentType;
 
@@ -13,7 +13,7 @@ class MediaType {
     String subType, [
     String charset,
     Map<String, String> parameters,
-  ]) : _contentType = new ContentType(
+  ]) : _contentType = ContentType(
           primaryType,
           subType,
           charset: charset,
@@ -63,6 +63,6 @@ class MediaType {
 
   static MediaType parse(String value) {
     ContentType contentType = ContentType.parse(value);
-    return new MediaType._(contentType);
+    return MediaType._(contentType);
   }
 }

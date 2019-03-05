@@ -16,7 +16,7 @@ class PersistentCookieJar implements CookieJar {
     if (_cookieStore != null) {
       if (cookies != null && cookies.isNotEmpty) {
         List<PersistentCookie> persistentCookies = cookies.map((Cookie cookie) {
-          return new PersistentCookie._internal(cookie);
+          return PersistentCookie._internal(cookie);
         }).toList();
         await _cookieStore.put(url, List.unmodifiable(persistentCookies));
       }
@@ -44,8 +44,8 @@ class PersistentCookieJar implements CookieJar {
   }
 
   static PersistentCookieJar persistent(CookiePersistor persistor) {
-    return new PersistentCookieJar._internal(
-        new _PersistentCookieStore._internal(persistor));
+    return PersistentCookieJar._internal(
+        _PersistentCookieStore._internal(persistor));
   }
 }
 
@@ -58,13 +58,13 @@ class PersistentCookie {
   PersistentCookie._internal(Cookie cookie)
       : assert(cookie != null),
         _cookie = cookie,
-        _createTimestamp = (new DateTime.now().millisecondsSinceEpoch ~/
+        _createTimestamp = (DateTime.now().millisecondsSinceEpoch ~/
                 Duration.millisecondsPerSecond)
             .toInt();
 
   PersistentCookie.fromValue(String value) {
     List<String> params = value.split('; $_COOKIE_CTS=');
-    _cookie = new Cookie.fromSetCookieValue(params[0]);
+    _cookie = Cookie.fromSetCookieValue(params[0]);
     _createTimestamp = int.parse(params[1]);
   }
 
@@ -99,7 +99,7 @@ class PersistentCookie {
   }
 
   bool isExpired() {
-    return (new DateTime.now().millisecondsSinceEpoch ~/
+    return (DateTime.now().millisecondsSinceEpoch ~/
                 Duration.millisecondsPerSecond)
             .toInt() >
         expiresAt();
@@ -183,7 +183,7 @@ class _PersistentCookieStore {
   }
 
   HttpUrl _getEffectiveUrl(HttpUrl url) {
-    return new HttpUrlBuilder()
+    return HttpUrlBuilder()
         .scheme('http')
         .host(url.host())
         .build();
@@ -191,7 +191,7 @@ class _PersistentCookieStore {
 }
 
 abstract class CookiePersistor {
-  static final CookiePersistor MEMORY = new _MemoryCookiePersistor();
+  static final CookiePersistor MEMORY = _MemoryCookiePersistor();
 
   Future<List<PersistentCookie>> load(HttpUrl index);
 

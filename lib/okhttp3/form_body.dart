@@ -12,7 +12,7 @@ class FormBody extends RequestBody {
 
   FormBody._(Encoding encoding, List<String> namesAndValues)
       : _encoding = encoding,
-        _contentType = new MediaType('application', 'x-www-form-urlencoded', encoding.name),
+        _contentType = MediaType('application', 'x-www-form-urlencoded', encoding.name),
         _namesAndValues = namesAndValues,
         _bytes = encoding.encode(_pairsToQuery(namesAndValues));
 
@@ -32,7 +32,7 @@ class FormBody extends RequestBody {
   }
 
   static String _pairsToQuery(List<String> namesAndValues) {
-    return new List.generate(namesAndValues.length ~/ 2, (int index) {
+    return List.generate(namesAndValues.length ~/ 2, (int index) {
       return '${namesAndValues[index * 2]}=${namesAndValues[index * 2 + 1]}';
     }).join('&');
   }
@@ -55,6 +55,6 @@ class FormBodyBuilder {
   }
 
   FormBody build() {
-    return new FormBody._(_encoding, List.unmodifiable(_namesAndValues));
+    return FormBody._(_encoding, List.unmodifiable(_namesAndValues));
   }
 }

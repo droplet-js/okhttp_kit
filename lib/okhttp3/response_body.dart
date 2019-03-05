@@ -15,15 +15,15 @@ abstract class ResponseBody implements Closeable {
   Stream<List<int>> source();
 
 //  Future<List<int>> bytes() async {
-//    StreamBuffer<int> sink = new StreamBuffer();
+//    StreamBuffer<int> sink = StreamBuffer();
 //    await sink.addStream(source());
 //    return await sink.read(sink.buffered);
 //  }
 
   Future<List<int>> bytes() {
-    Completer completer = new Completer<List<int>>();
+    Completer<List<int>> completer = Completer<List<int>>();
     ByteConversionSink sink =
-        new ByteConversionSink.withCallback((List<int> accumulated) {
+        ByteConversionSink.withCallback((List<int> accumulated) {
       completer.complete(accumulated);
     });
     source().listen(sink.add,
@@ -41,12 +41,12 @@ abstract class ResponseBody implements Closeable {
 
   static ResponseBody bytesBody(MediaType contentType, List<int> bytes) {
     return streamBody(
-        contentType, bytes.length, new Stream.fromIterable([bytes]));
+        contentType, bytes.length, Stream.fromIterable([bytes]));
   }
 
   static ResponseBody streamBody(
       MediaType contentType, int contentLength, Stream<List<int>> source) {
-    return new _SimpleResponseBody(contentType, contentLength, source);
+    return _SimpleResponseBody(contentType, contentLength, source);
   }
 }
 

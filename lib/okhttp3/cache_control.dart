@@ -6,10 +6,10 @@ import 'package:fake_http/okhttp3/lang/integer.dart';
 
 class CacheControl {
   static final CacheControl FORCE_NETWORK =
-      new CacheControlBuilder().noCache().build();
-  static final CacheControl FORCE_CACHE = new CacheControlBuilder()
+      CacheControlBuilder().noCache().build();
+  static final CacheControl FORCE_CACHE = CacheControlBuilder()
       .onlyIfCached()
-      .maxStale(new Duration(seconds: Integer.MAX_VALUE))
+      .maxStale(Duration(seconds: Integer.MAX_VALUE))
       .build();
 
   static const String _PARAMS_NO_CACHE = 'no-cache';
@@ -132,7 +132,7 @@ class CacheControl {
   }
 
   String _headerValue() {
-    StringBuffer result = new StringBuffer();
+    StringBuffer result = StringBuffer();
     if (_noCache) {
       result.write('$_PARAMS_NO_CACHE, ');
     }
@@ -252,7 +252,7 @@ class CacheControl {
         }
       }
     }
-    return new CacheControl._(
+    return CacheControl._(
       noCache,
       noStore,
       maxAgeSeconds,
@@ -335,6 +335,6 @@ class CacheControlBuilder {
   }
 
   CacheControl build() {
-    return new CacheControl._builder(this);
+    return CacheControl._builder(this);
   }
 }
