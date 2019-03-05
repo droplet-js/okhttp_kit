@@ -1,13 +1,6 @@
 import 'dart:io';
 
 class MediaType {
-  static final MediaType TEXT = MediaType._(ContentType.text);
-  static final MediaType HTML = MediaType._(ContentType.html);
-  static final MediaType JSON = MediaType._(ContentType.json);
-  static final MediaType BINARY = MediaType._(ContentType.binary);
-
-  final ContentType _contentType;
-
   MediaType(
     String primaryType,
     String subType, [
@@ -20,7 +13,16 @@ class MediaType {
           parameters: parameters,
         );
 
-  MediaType._(ContentType contentType) : _contentType = contentType;
+  MediaType._(
+    ContentType contentType,
+  ) : _contentType = contentType;
+
+  static final MediaType TEXT = MediaType._(ContentType.text);
+  static final MediaType HTML = MediaType._(ContentType.html);
+  static final MediaType JSON = MediaType._(ContentType.json);
+  static final MediaType BINARY = MediaType._(ContentType.binary);
+
+  final ContentType _contentType;
 
   String type() {
     return _contentType.primaryType;
@@ -52,7 +54,7 @@ class MediaType {
   }
 
   @override
-  bool operator ==(other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }

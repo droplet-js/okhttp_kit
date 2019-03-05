@@ -40,8 +40,7 @@ abstract class ResponseBody implements Closeable {
   }
 
   static ResponseBody bytesBody(MediaType contentType, List<int> bytes) {
-    return streamBody(
-        contentType, bytes.length, Stream.fromIterable([bytes]));
+    return streamBody(contentType, bytes.length, Stream<List<int>>.fromIterable(<List<int>>[bytes]));
   }
 
   static ResponseBody streamBody(
@@ -51,10 +50,6 @@ abstract class ResponseBody implements Closeable {
 }
 
 class _SimpleResponseBody extends ResponseBody {
-  final MediaType _contentType;
-  final int _contentLength;
-  final Stream<List<int>> _source;
-
   _SimpleResponseBody(
     MediaType contentType,
     int contentLength,
@@ -62,6 +57,10 @@ class _SimpleResponseBody extends ResponseBody {
   )   : _contentType = contentType,
         _contentLength = contentLength,
         _source = source;
+
+  final MediaType _contentType;
+  final int _contentLength;
+  final Stream<List<int>> _source;
 
   @override
   MediaType contentType() {

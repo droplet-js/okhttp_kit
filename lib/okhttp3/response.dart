@@ -6,6 +6,19 @@ import 'package:fake_http/okhttp3/request.dart';
 import 'package:fake_http/okhttp3/response_body.dart';
 
 class Response {
+  Response._(
+    ResponseBuilder builder,
+  )   : _request = builder._request,
+        _code = builder._code,
+        _message = builder._message,
+        _headers = builder._headers.build(),
+        _body = builder._body,
+        _networkResponse = builder._networkResponse,
+        _cacheResponse = builder._cacheResponse,
+        _priorResponse = builder._priorResponse,
+        _sentRequestAtMillis = builder._sentRequestAtMillis,
+        _receivedResponseAtMillis = builder._receivedResponseAtMillis;
+
   final Request _request;
   final int _code;
   final String _message;
@@ -18,18 +31,6 @@ class Response {
   final int _receivedResponseAtMillis;
 
   CacheControl _cacheControl;
-
-  Response._(ResponseBuilder builder)
-      : _request = builder._request,
-        _code = builder._code,
-        _message = builder._message,
-        _headers = builder._headers.build(),
-        _body = builder._body,
-        _networkResponse = builder._networkResponse,
-        _cacheResponse = builder._cacheResponse,
-        _priorResponse = builder._priorResponse,
-        _sentRequestAtMillis = builder._sentRequestAtMillis,
-        _receivedResponseAtMillis = builder._receivedResponseAtMillis;
 
   Request request() {
     return _request;
@@ -92,6 +93,21 @@ class Response {
 }
 
 class ResponseBuilder {
+  ResponseBuilder() : _headers = HeadersBuilder();
+
+  ResponseBuilder._(
+    Response response,
+  )   : _request = response._request,
+        _code = response._code,
+        _message = response._message,
+        _headers = response._headers.newBuilder(),
+        _body = response._body,
+        _networkResponse = response._networkResponse,
+        _cacheResponse = response._cacheResponse,
+        _priorResponse = response._priorResponse,
+        _sentRequestAtMillis = response._sentRequestAtMillis,
+        _receivedResponseAtMillis = response._receivedResponseAtMillis;
+
   Request _request;
   int _code = -1;
   String _message;
@@ -102,20 +118,6 @@ class ResponseBuilder {
   Response _priorResponse;
   int _sentRequestAtMillis = 0;
   int _receivedResponseAtMillis = 0;
-
-  ResponseBuilder() : _headers = HeadersBuilder();
-
-  ResponseBuilder._(Response response)
-      : _request = response._request,
-        _code = response._code,
-        _message = response._message,
-        _headers = response._headers.newBuilder(),
-        _body = response._body,
-        _networkResponse = response._networkResponse,
-        _cacheResponse = response._cacheResponse,
-        _priorResponse = response._priorResponse,
-        _sentRequestAtMillis = response._sentRequestAtMillis,
-        _receivedResponseAtMillis = response._receivedResponseAtMillis;
 
   ResponseBuilder request(Request value) {
     _request = value;

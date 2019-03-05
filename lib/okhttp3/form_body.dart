@@ -5,17 +5,19 @@ import 'package:fake_http/okhttp3/media_type.dart';
 import 'package:fake_http/okhttp3/request_body.dart';
 
 class FormBody extends RequestBody {
-  final Encoding _encoding;
-  final MediaType _contentType;
-  final List<String> _namesAndValues;
-  final List<int> _bytes;
-
-  FormBody._(Encoding encoding, List<String> namesAndValues)
-      : _encoding = encoding,
+  FormBody._(
+    Encoding encoding,
+    List<String> namesAndValues,
+  )   : _encoding = encoding,
         _contentType =
             MediaType('application', 'x-www-form-urlencoded', encoding.name),
         _namesAndValues = namesAndValues,
         _bytes = encoding.encode(_pairsToQuery(namesAndValues));
+
+  final Encoding _encoding;
+  final MediaType _contentType;
+  final List<String> _namesAndValues;
+  final List<int> _bytes;
 
   @override
   MediaType contentType() {
@@ -40,12 +42,13 @@ class FormBody extends RequestBody {
 }
 
 class FormBodyBuilder {
+  FormBodyBuilder([
+    Encoding encoding = utf8,
+  ])  : assert(encoding != null),
+        _encoding = encoding;
+
   final Encoding _encoding;
   final List<String> _namesAndValues = [];
-
-  FormBodyBuilder([Encoding encoding = utf8])
-      : assert(encoding != null),
-        _encoding = encoding;
 
   FormBodyBuilder add(String name, String value) {
     assert(name != null);

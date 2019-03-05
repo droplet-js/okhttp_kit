@@ -7,18 +7,19 @@ import 'package:fake_http/okhttp3/internal/http/http_method.dart';
 import 'package:fake_http/okhttp3/request_body.dart';
 
 class Request {
+  Request._(
+    RequestBuilder builder,
+  )   : _url = builder._url,
+        _method = builder._method,
+        _headers = builder._headers.build(),
+        _body = builder._body;
+
   final HttpUrl _url;
   final String _method;
   final Headers _headers;
   final RequestBody _body;
 
   CacheControl _cacheControl;
-
-  Request._(RequestBuilder builder)
-      : _url = builder._url,
-        _method = builder._method,
-        _headers = builder._headers.build(),
-        _body = builder._body;
 
   HttpUrl url() {
     return _url;
@@ -53,20 +54,21 @@ class Request {
 }
 
 class RequestBuilder {
-  HttpUrl _url;
-  String _method;
-  HeadersBuilder _headers;
-  RequestBody _body;
-
   RequestBuilder()
       : _method = HttpMethod.GET,
         _headers = HeadersBuilder();
 
-  RequestBuilder._(Request request)
-      : _url = request._url,
+  RequestBuilder._(
+    Request request,
+  )   : _url = request._url,
         _method = request._method,
         _headers = request._headers.newBuilder(),
         _body = request._body;
+
+  HttpUrl _url;
+  String _method;
+  HeadersBuilder _headers;
+  RequestBody _body;
 
   RequestBuilder url(HttpUrl value) {
     _url = value;

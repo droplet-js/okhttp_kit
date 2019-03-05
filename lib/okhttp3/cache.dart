@@ -93,7 +93,8 @@ class Cache {
     return response;
   }
 
-  Future<CacheRequest> put(Response response, [Encoding encoding = utf8]) async {
+  Future<CacheRequest> put(Response response,
+      [Encoding encoding = utf8]) async {
     String requestMethod = response.request().method();
     if (HttpMethod.invalidatesCache(response.request().method())) {
       try {
@@ -156,7 +157,9 @@ class Cache {
       if (editor != null) {
         editor.abort();
       }
-    } catch (e) {}
+    } catch (e) {
+      // do nothing
+    }
   }
 
   Future<void> trackConditionalCacheHit() async {
@@ -177,12 +180,14 @@ class Cache {
 }
 
 class CacheRequest {
+  CacheRequest(
+    Editor editor,
+    Encoding encoding,
+  )   : _editor = editor,
+        _encoding = encoding;
+
   final Editor _editor;
   final Encoding _encoding;
-
-  CacheRequest(Editor editor, Encoding encoding)
-      : _editor = editor,
-        _encoding = encoding;
 
   StreamSink<List<int>> body() {
     return _editor.newSink(Cache.ENTRY_BODY, _encoding);
@@ -191,7 +196,9 @@ class CacheRequest {
   void abort() {
     try {
       _editor.abort();
-    } catch (e) {}
+    } catch (e) {
+      // do nothing
+    }
   }
 
   void commit() {
@@ -227,11 +234,6 @@ String _defaultKeyExtractor(HttpUrl url) =>
     hex.encode(md5.convert(utf8.encode(url.toString())).bytes);
 
 class Snapshot implements Closeable {
-  final String _key;
-  final int _sequenceNumber;
-  final List<Stream<List<int>>> _sources;
-  final List<int> _lengths;
-
   Snapshot(
     String key,
     int sequenceNumber,
@@ -241,6 +243,11 @@ class Snapshot implements Closeable {
         _sequenceNumber = sequenceNumber,
         _sources = sources,
         _lengths = lengths;
+
+  final String _key;
+  final int _sequenceNumber;
+  final List<Stream<List<int>>> _sources;
+  final List<int> _lengths;
 
   String key() {
     return _key;
@@ -263,18 +270,6 @@ class Snapshot implements Closeable {
 }
 
 class _Entry {
-  static const String _SENT_MILLIS = 'OkHttp-Sent-Millis';
-  static const String _RECEIVED_MILLIS = 'OkHttp-Received-Millis';
-
-  final String _url;
-  final String _requestMethod;
-  final Headers _varyHeaders;
-  final int _code;
-  final String _message;
-  final Headers _responseHeaders;
-  final int _sentRequestMillis;
-  final int _receivedResponseMillis;
-
   _Entry(
     String url,
     String requestMethod,
@@ -292,6 +287,18 @@ class _Entry {
         _responseHeaders = responseHeaders,
         _sentRequestMillis = sentRequestMillis,
         _receivedResponseMillis = receivedResponseMillis;
+
+  static const String _SENT_MILLIS = 'OkHttp-Sent-Millis';
+  static const String _RECEIVED_MILLIS = 'OkHttp-Received-Millis';
+
+  final String _url;
+  final String _requestMethod;
+  final Headers _varyHeaders;
+  final int _code;
+  final String _message;
+  final Headers _responseHeaders;
+  final int _sentRequestMillis;
+  final int _receivedResponseMillis;
 
   Future<void> writeTo(Editor editor, Encoding encoding) async {
     assert(encoding != null);
@@ -362,7 +369,7 @@ class _Entry {
     Encoding encoding,
   ) async {
     assert(encoding != null);
-    StreamBuffer<int> sink = StreamBuffer();
+    StreamBuffer<int> sink = StreamBuffer<int>();
     await sink.addStream(source);
 
     List<String> lines = await sink.read(sink.buffered).then((List<int> bytes) {
@@ -429,10 +436,6 @@ class _Entry {
 }
 
 class _CacheResponseBody extends ResponseBody {
-  final MediaType _contentType;
-  final int _contentLength;
-  final Snapshot _snapshot;
-
   _CacheResponseBody(
     MediaType contentType,
     int contentLength,
@@ -440,6 +443,10 @@ class _CacheResponseBody extends ResponseBody {
   )   : _contentType = contentType,
         _contentLength = contentLength,
         _snapshot = snapshot;
+
+  final MediaType _contentType;
+  final int _contentLength;
+  final Snapshot _snapshot;
 
   @override
   MediaType contentType() {

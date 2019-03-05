@@ -12,14 +12,14 @@ import 'package:fake_http/okhttp3/request.dart';
 import 'package:fake_http/okhttp3/response.dart';
 
 class RealCall implements Call {
-  final OkHttpClient _client;
-  final Request _originalRequest;
-  final RetryAndFollowUpInterceptor _retryAndFollowUpInterceptor;
-
   RealCall.newRealCall(OkHttpClient client, Request originalRequest)
       : _client = client,
         _originalRequest = originalRequest,
         _retryAndFollowUpInterceptor = RetryAndFollowUpInterceptor(client);
+
+  final OkHttpClient _client;
+  final Request _originalRequest;
+  final RetryAndFollowUpInterceptor _retryAndFollowUpInterceptor;
 
   @override
   Request request() {
@@ -28,7 +28,7 @@ class RealCall implements Call {
 
   @override
   Future<Response> enqueue() {
-    List<Interceptor> interceptors = [];
+    List<Interceptor> interceptors = <Interceptor>[];
     interceptors.addAll(_client.interceptors());
     interceptors.add(_retryAndFollowUpInterceptor);
     interceptors.add(BridgeInterceptor(_client.cookieJar()));

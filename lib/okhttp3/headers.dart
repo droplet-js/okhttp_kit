@@ -1,8 +1,8 @@
 class Headers {
-  final List<String> _namesAndValues;
-
   Headers._(HeadersBuilder builder)
-      : _namesAndValues = List.unmodifiable(builder._namesAndValues);
+      : _namesAndValues = List<String>.unmodifiable(builder._namesAndValues);
+
+  final List<String> _namesAndValues;
 
   int size() {
     return _namesAndValues.length ~/ 2;
@@ -17,11 +17,11 @@ class Headers {
   }
 
   Set<String> names() {
-    List<String> names = [];
+    List<String> names = <String>[];
     for (int i = 0; i < _namesAndValues.length; i += 2) {
       names.add(_namesAndValues[i]);
     }
-    return Set.from(names);
+    return Set<String>.from(names);
   }
 
   String value(String name) {
@@ -36,27 +36,27 @@ class Headers {
 
   List<String> values(String name) {
     assert(name != null);
-    List<String> values = [];
+    List<String> values = <String>[];
     for (int i = 0; i < _namesAndValues.length; i += 2) {
       if (name.toLowerCase() == _namesAndValues[i]) {
         values.add(_namesAndValues[i + 1]);
       }
     }
-    return List.unmodifiable(values);
+    return List<String>.unmodifiable(values);
   }
 
   Map<String, List<String>> toMultimap() {
-    Map<String, List<String>> multimap = {};
+    Map<String, List<String>> multimap = <String, List<String>>{};
     for (int i = 0; i < _namesAndValues.length; i += 2) {
       String name = _namesAndValues[i];
       List<String> values = multimap[name];
       if (values == null) {
-        values = [];
+        values = <String>[];
         multimap.putIfAbsent(name, () => values);
       }
       values.add(_namesAndValues[i + 1]);
     }
-    return Map.unmodifiable(multimap);
+    return Map<String, List<String>>.unmodifiable(multimap);
   }
 
   HeadersBuilder newBuilder() {
@@ -79,13 +79,15 @@ class Headers {
 }
 
 class HeadersBuilder {
-  final List<String> _namesAndValues = [];
-
   HeadersBuilder();
 
-  HeadersBuilder._(Headers headers) {
+  HeadersBuilder._(
+    Headers headers,
+  ) {
     _namesAndValues.addAll(headers._namesAndValues);
   }
+
+  final List<String> _namesAndValues = <String>[];
 
   HeadersBuilder add(String name, String value) {
     _checkNameAndValue(name, value);

@@ -7,6 +7,20 @@ import 'package:fake_http/okhttp3/real_call.dart';
 import 'package:fake_http/okhttp3/request.dart';
 
 class OkHttpClient implements Factory {
+  OkHttpClient._(
+    OkHttpClientBuilder builder,
+  )   : _interceptors = List<Interceptor>.unmodifiable(builder._interceptors),
+        _networkInterceptors =
+            List<Interceptor>.unmodifiable(builder._networkInterceptors),
+        _cookieJar = builder._cookieJar,
+        _cache = builder._cache,
+        _authenticator = builder._authenticator,
+        _proxyAuthenticator = builder._proxyAuthenticator,
+        _followRedirects = builder._followRedirects,
+        _retryOnConnectionFailure = builder._retryOnConnectionFailure,
+        _idleTimeout = builder._idleTimeout,
+        _connectionTimeout = builder._connectionTimeout;
+
   final List<Interceptor> _interceptors;
   final List<Interceptor> _networkInterceptors;
 
@@ -21,18 +35,6 @@ class OkHttpClient implements Factory {
 
   final Duration _idleTimeout;
   final Duration _connectionTimeout;
-
-  OkHttpClient._(OkHttpClientBuilder builder)
-      : _interceptors = List.unmodifiable(builder._interceptors),
-        _networkInterceptors = List.unmodifiable(builder._networkInterceptors),
-        _cookieJar = builder._cookieJar,
-        _cache = builder._cache,
-        _authenticator = builder._authenticator,
-        _proxyAuthenticator = builder._proxyAuthenticator,
-        _followRedirects = builder._followRedirects,
-        _retryOnConnectionFailure = builder._retryOnConnectionFailure,
-        _idleTimeout = builder._idleTimeout,
-        _connectionTimeout = builder._connectionTimeout;
 
   List<Interceptor> interceptors() {
     return _interceptors;
@@ -85,21 +87,6 @@ class OkHttpClient implements Factory {
 }
 
 class OkHttpClientBuilder {
-  final List<Interceptor> _interceptors = [];
-  final List<Interceptor> _networkInterceptors = [];
-
-  CookieJar _cookieJar = CookieJar.NO_COOKIES;
-  Cache _cache;
-
-  Authenticator _authenticator = Authenticator.NONE;
-  ProxyAuthenticator _proxyAuthenticator = ProxyAuthenticator.NONE;
-
-  bool _followRedirects = true;
-  bool _retryOnConnectionFailure = true;
-
-  Duration _idleTimeout = Duration(seconds: 15);
-  Duration _connectionTimeout = Duration(seconds: 10);
-
   OkHttpClientBuilder();
 
   OkHttpClientBuilder._(OkHttpClient client)
@@ -114,6 +101,21 @@ class OkHttpClientBuilder {
     _interceptors.addAll(client._interceptors);
     _networkInterceptors.addAll(client._networkInterceptors);
   }
+
+  final List<Interceptor> _interceptors = <Interceptor>[];
+  final List<Interceptor> _networkInterceptors = <Interceptor>[];
+
+  CookieJar _cookieJar = CookieJar.NO_COOKIES;
+  Cache _cache;
+
+  Authenticator _authenticator = Authenticator.NONE;
+  ProxyAuthenticator _proxyAuthenticator = ProxyAuthenticator.NONE;
+
+  bool _followRedirects = true;
+  bool _retryOnConnectionFailure = true;
+
+  Duration _idleTimeout = Duration(seconds: 15);
+  Duration _connectionTimeout = Duration(seconds: 10);
 
   OkHttpClientBuilder addInterceptor(Interceptor interceptor) {
     assert(interceptor != null);

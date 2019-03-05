@@ -8,6 +8,16 @@ import 'package:fake_http/okhttp3/media_type.dart';
 import 'package:fake_http/okhttp3/request_body.dart';
 
 class MultipartBody extends RequestBody {
+  MultipartBody._(
+    String boundary,
+    MediaType type,
+    List<Part> parts,
+  )   : _boundary = boundary,
+        _originalType = type,
+        _contentType =
+            MediaType.parse('${type.toString()}; boundary=$boundary'),
+        _parts = parts;
+
   static final MediaType MIXED = MediaType.parse('multipart/mixed');
   static final MediaType ALTERNATIVE = MediaType.parse('multipart/alternative');
   static final MediaType DIGEST = MediaType.parse('multipart/digest');
@@ -23,13 +33,6 @@ class MultipartBody extends RequestBody {
   final MediaType _contentType;
   final List<Part> _parts;
   int _contentLength = -1;
-
-  MultipartBody._(String boundary, MediaType type, List<Part> parts)
-      : _boundary = boundary,
-        _originalType = type,
-        _contentType =
-            MediaType.parse('${type.toString()}; boundary=$boundary'),
-        _parts = parts;
 
   MediaType type() {
     return _originalType;
@@ -179,12 +182,14 @@ class MultipartBody extends RequestBody {
 }
 
 class Part {
+  Part._(
+    Headers headers,
+    RequestBody body,
+  )   : _headers = headers,
+        _body = body;
+
   final Headers _headers;
   final RequestBody _body;
-
-  Part._(Headers headers, RequestBody body)
-      : _headers = headers,
-        _body = body;
 
   Headers headers() {
     return _headers;
@@ -240,13 +245,14 @@ class Part {
 }
 
 class MultipartBodyBuilder {
+  MultipartBodyBuilder(
+    String boundary,
+  )   : assert(boundary != null && boundary.isNotEmpty),
+        _boundary = boundary;
+
   final String _boundary;
   MediaType _type = MultipartBody.MIXED;
-  final List<Part> _parts = [];
-
-  MultipartBodyBuilder(String boundary)
-      : assert(boundary != null && boundary.isNotEmpty),
-        _boundary = boundary;
+  final List<Part> _parts = <Part>[];
 
   MultipartBodyBuilder setType(MediaType type) {
     if (type == null) {
@@ -280,6 +286,6 @@ class MultipartBodyBuilder {
     if (_parts.isEmpty) {
       throw ArgumentError('Multipart body must have at least one part.');
     }
-    return MultipartBody._(_boundary, _type, List.unmodifiable(_parts));
+    return MultipartBody._(_boundary, _type, List<Part>.unmodifiable(_parts));
   }
 }

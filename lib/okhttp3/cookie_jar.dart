@@ -19,6 +19,6 @@ class _NoCookieJar implements CookieJar {
 
   @override
   Future<List<Cookie>> loadForRequest(HttpUrl url) async {
-    return List.unmodifiable(<Cookie>[]);
+    return List<Cookie>.unmodifiable(<Cookie>[]);
   }
 }

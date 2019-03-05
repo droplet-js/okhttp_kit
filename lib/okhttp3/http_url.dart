@@ -1,10 +1,12 @@
 class HttpUrl {
+  HttpUrl._(
+    HttpUrlBuilder builder,
+  ) : _uri = builder._uri;
+
   static const String SCHEME_HTTP = 'http';
   static const String SCHEME_HTTPS = 'https';
 
   final Uri _uri;
-
-  HttpUrl._(HttpUrlBuilder builder) : _uri = builder._uri;
 
   String scheme() {
     return _uri.scheme;
@@ -44,7 +46,7 @@ class HttpUrl {
   }
 
   Set<String> queryParameterNames() {
-    return Set.from(_uri.queryParametersAll.keys);
+    return Set<String>.from(_uri.queryParametersAll.keys);
   }
 
   List<String> queryParameterValues(String name) {
@@ -64,7 +66,7 @@ class HttpUrl {
   }
 
   @override
-  bool operator ==(other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
@@ -84,13 +86,11 @@ class HttpUrl {
   }
 
   static HttpUrl parse(String url) {
-    return HttpUrlBuilder(Uri.parse(url))
-        .build();
+    return HttpUrlBuilder(Uri.parse(url)).build();
   }
 
   static HttpUrl from(Uri uri) {
-    return HttpUrlBuilder(uri)
-        .build();
+    return HttpUrlBuilder(uri).build();
   }
 
   static int defaultPort(String scheme) {
@@ -105,11 +105,15 @@ class HttpUrl {
 }
 
 class HttpUrlBuilder {
+  HttpUrlBuilder([
+    Uri uri,
+  ]) : _uri = uri ?? Uri.parse("");
+
+  HttpUrlBuilder._(
+    HttpUrl url,
+  ) : _uri = url._uri;
+
   Uri _uri;
-
-  HttpUrlBuilder([Uri uri]): _uri = uri ?? Uri.parse("");
-
-  HttpUrlBuilder._(HttpUrl url) : _uri = url._uri;
 
   HttpUrlBuilder scheme(String scheme) {
     _uri = _uri.replace(scheme: scheme);
@@ -140,10 +144,10 @@ class HttpUrlBuilder {
 
   HttpUrlBuilder addQueryParameter(String name, String value) {
     Map<String, List<String>> queryParametersAll =
-        Map.of(_uri.queryParametersAll);
+        Map<String, List<String>>.of(_uri.queryParametersAll);
     List<String> values = queryParametersAll[name];
     if (values == null) {
-      values = [];
+      values = <String>[];
       queryParametersAll.putIfAbsent(name, () => values);
     }
     values.add(value);
@@ -153,7 +157,7 @@ class HttpUrlBuilder {
 
   HttpUrlBuilder removeAllQueryParameters(String name) {
     Map<String, List<String>> queryParametersAll =
-        Map.of(_uri.queryParametersAll);
+        Map<String, List<String>>.of(_uri.queryParametersAll);
     queryParametersAll.remove(name);
     _uri = _uri.replace(queryParameters: queryParametersAll);
     return this;

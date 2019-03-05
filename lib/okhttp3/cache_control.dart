@@ -5,6 +5,47 @@ import 'package:fake_http/okhttp3/internal/http_extension.dart';
 import 'package:fake_http/okhttp3/lang/integer.dart';
 
 class CacheControl {
+  CacheControl._(
+    bool noCache,
+    bool noStore,
+    int maxAgeSeconds,
+    int sMaxAgeSeconds,
+    bool isPrivate,
+    bool isPublic,
+    bool mustRevalidate,
+    int maxStaleSeconds,
+    int minFreshSeconds,
+    bool onlyIfCached,
+    bool noTransform,
+    bool immutable,
+  )   : _noCache = noCache,
+        _noStore = noStore,
+        _maxAgeSeconds = maxAgeSeconds,
+        _sMaxAgeSeconds = sMaxAgeSeconds,
+        _isPrivate = isPrivate,
+        _isPublic = isPublic,
+        _mustRevalidate = mustRevalidate,
+        _maxStaleSeconds = maxStaleSeconds,
+        _minFreshSeconds = minFreshSeconds,
+        _onlyIfCached = onlyIfCached,
+        _noTransform = noTransform,
+        _immutable = immutable;
+
+  CacheControl._fromBuilder(
+    CacheControlBuilder builder,
+  )   : _noCache = builder._noCache,
+        _noStore = builder._noStore,
+        _maxAgeSeconds = builder._maxAgeSeconds,
+        _sMaxAgeSeconds = -1,
+        _isPrivate = false,
+        _isPublic = false,
+        _mustRevalidate = false,
+        _maxStaleSeconds = builder._maxStaleSeconds,
+        _minFreshSeconds = builder._minFreshSeconds,
+        _onlyIfCached = builder._onlyIfCached,
+        _noTransform = builder._noTransform,
+        _immutable = builder._immutable;
+
   static final CacheControl FORCE_NETWORK =
       CacheControlBuilder().noCache().build();
   static final CacheControl FORCE_CACHE = CacheControlBuilder()
@@ -37,46 +78,6 @@ class CacheControl {
   final bool _onlyIfCached;
   final bool _noTransform;
   final bool _immutable;
-
-  CacheControl._(
-    bool noCache,
-    bool noStore,
-    int maxAgeSeconds,
-    int sMaxAgeSeconds,
-    bool isPrivate,
-    bool isPublic,
-    bool mustRevalidate,
-    int maxStaleSeconds,
-    int minFreshSeconds,
-    bool onlyIfCached,
-    bool noTransform,
-    bool immutable,
-  )   : _noCache = noCache,
-        _noStore = noStore,
-        _maxAgeSeconds = maxAgeSeconds,
-        _sMaxAgeSeconds = sMaxAgeSeconds,
-        _isPrivate = isPrivate,
-        _isPublic = isPublic,
-        _mustRevalidate = mustRevalidate,
-        _maxStaleSeconds = maxStaleSeconds,
-        _minFreshSeconds = minFreshSeconds,
-        _onlyIfCached = onlyIfCached,
-        _noTransform = noTransform,
-        _immutable = immutable;
-
-  CacheControl._builder(CacheControlBuilder builder)
-      : _noCache = builder._noCache,
-        _noStore = builder._noStore,
-        _maxAgeSeconds = builder._maxAgeSeconds,
-        _sMaxAgeSeconds = -1,
-        _isPrivate = false,
-        _isPublic = false,
-        _mustRevalidate = false,
-        _maxStaleSeconds = builder._maxStaleSeconds,
-        _minFreshSeconds = builder._minFreshSeconds,
-        _onlyIfCached = builder._onlyIfCached,
-        _noTransform = builder._noTransform,
-        _immutable = builder._immutable;
 
   bool noCache() {
     return _noCache;
@@ -270,6 +271,19 @@ class CacheControl {
 }
 
 class CacheControlBuilder {
+  CacheControlBuilder();
+
+  CacheControlBuilder._(
+    CacheControl cacheControl,
+  )   : _noCache = cacheControl._noCache,
+        _noStore = cacheControl._noStore,
+        _maxAgeSeconds = cacheControl._maxAgeSeconds,
+        _maxStaleSeconds = cacheControl._maxStaleSeconds,
+        _minFreshSeconds = cacheControl._minFreshSeconds,
+        _onlyIfCached = cacheControl._onlyIfCached,
+        _noTransform = cacheControl._noTransform,
+        _immutable = cacheControl._immutable;
+
   bool _noCache = false;
   bool _noStore = false;
   int _maxAgeSeconds = -1;
@@ -278,18 +292,6 @@ class CacheControlBuilder {
   bool _onlyIfCached = false;
   bool _noTransform = false;
   bool _immutable = false;
-
-  CacheControlBuilder();
-
-  CacheControlBuilder._(CacheControl cacheControl)
-      : _noCache = cacheControl._noCache,
-        _noStore = cacheControl._noStore,
-        _maxAgeSeconds = cacheControl._maxAgeSeconds,
-        _maxStaleSeconds = cacheControl._maxStaleSeconds,
-        _minFreshSeconds = cacheControl._minFreshSeconds,
-        _onlyIfCached = cacheControl._onlyIfCached,
-        _noTransform = cacheControl._noTransform,
-        _immutable = cacheControl._immutable;
 
   CacheControlBuilder noCache() {
     _noCache = true;
@@ -335,6 +337,6 @@ class CacheControlBuilder {
   }
 
   CacheControl build() {
-    return CacheControl._builder(this);
+    return CacheControl._fromBuilder(this);
   }
 }

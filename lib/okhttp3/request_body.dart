@@ -30,14 +30,17 @@ abstract class RequestBody {
 }
 
 class _SimpleRequestBody extends RequestBody {
+  _SimpleRequestBody(
+    MediaType contentType,
+    int contentLength,
+    List<int> bytes,
+  )   : _contentType = contentType,
+        _contentLength = contentLength,
+        _bytes = bytes;
+
   final MediaType _contentType;
   final int _contentLength;
   final List<int> _bytes;
-
-  _SimpleRequestBody(MediaType contentType, int contentLength, List<int> bytes)
-      : _contentType = contentType,
-        _contentLength = contentLength,
-        _bytes = bytes;
 
   @override
   MediaType contentType() {
@@ -56,12 +59,14 @@ class _SimpleRequestBody extends RequestBody {
 }
 
 class _FileRequestBody extends RequestBody {
+  _FileRequestBody(
+    MediaType contentType,
+    File file,
+  )   : _contentType = contentType,
+        _file = file;
+
   final MediaType _contentType;
   final File _file;
-
-  _FileRequestBody(MediaType contentType, File file)
-      : _contentType = contentType,
-        _file = file;
 
   @override
   MediaType contentType() {
