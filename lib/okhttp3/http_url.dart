@@ -140,7 +140,7 @@ class HttpUrlBuilder {
 
   HttpUrlBuilder addQueryParameter(String name, String value) {
     Map<String, List<String>> queryParametersAll =
-        Map.from(_uri.queryParametersAll);
+        Map.of(_uri.queryParametersAll);
     List<String> values = queryParametersAll[name];
     if (values == null) {
       values = [];
@@ -153,7 +153,7 @@ class HttpUrlBuilder {
 
   HttpUrlBuilder removeAllQueryParameters(String name) {
     Map<String, List<String>> queryParametersAll =
-        Map.from(_uri.queryParametersAll);
+        Map.of(_uri.queryParametersAll);
     queryParametersAll.remove(name);
     _uri = _uri.replace(queryParameters: queryParametersAll);
     return this;
