@@ -4,11 +4,6 @@ import 'package:fake_http/okhttp3/cache.dart';
 import 'package:flutter/services.dart';
 
 class AssetBundleCache implements RawCache {
-  final AssetBundle _bundle;
-  final String _package;
-  final String _directory;
-  final int _valueCount;
-
   AssetBundleCache._(
     AssetBundle bundle,
     String package,
@@ -18,6 +13,11 @@ class AssetBundleCache implements RawCache {
         _package = package,
         _directory = directory,
         _valueCount = valueCount;
+
+  final AssetBundle _bundle;
+  final String _package;
+  final String _directory;
+  final int _valueCount;
 
   @override
   Future<Snapshot> get(String key) {
@@ -31,13 +31,12 @@ class AssetBundleCache implements RawCache {
     int expectedSequenceNumber,
   ]) async {
     throw UnsupportedError(
-        '${this.runtimeType}#edit(key, [expectedSequenceNumber]) is not supported!');
+        '$runtimeType#edit(key, [expectedSequenceNumber]) is not supported!');
   }
 
   @override
   Future<bool> remove(String key) async {
-    throw UnsupportedError(
-        '${this.runtimeType}#remove(key) is not supported!');
+    throw UnsupportedError('$runtimeType#remove(key) is not supported!');
   }
 
   static AssetBundleCache create(
@@ -46,18 +45,11 @@ class AssetBundleCache implements RawCache {
     String package,
   ]) {
     assert(directory != null && directory.isNotEmpty);
-    return AssetBundleCache._(
-        bundle, package, directory, Cache.ENTRY_COUNT);
+    return AssetBundleCache._(bundle, package, directory, Cache.ENTRY_COUNT);
   }
 }
 
 class _Entry {
-  final AssetBundle _bundle;
-  final String _package;
-  final String _directory;
-  final int _valueCount;
-  final String _key;
-
   _Entry(
     AssetBundle bundle,
     String package,
@@ -70,15 +62,20 @@ class _Entry {
         _valueCount = valueCount,
         _key = key;
 
+  final AssetBundle _bundle;
+  final String _package;
+  final String _directory;
+  final int _valueCount;
+  final String _key;
+
   Future<Snapshot> snapshot() async {
-    List<Stream<List<int>>> sources = [];
-    List<int> lengths = [];
+    List<Stream<List<int>>> sources = <Stream<List<int>>>[];
+    List<int> lengths = <int>[];
     for (int i = 0; i < _valueCount; i++) {
       String keyName = _keyName(_key, i);
       ByteData byteData = await _chosenBundle().load(keyName);
-      sources.add(Stream.fromIterable([
-        byteData.buffer.asUint8List(),
-      ]));
+      sources.add(Stream<List<int>>.fromIterable(
+          <List<int>>[byteData.buffer.asUint8List()]));
       lengths.add(byteData.lengthInBytes);
     }
     return Snapshot(_key, RawCache.ANY_SEQUENCE_NUMBER, sources, lengths);

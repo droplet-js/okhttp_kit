@@ -6,14 +6,14 @@ import 'package:flutter/foundation.dart';
 import 'package:file/file.dart';
 
 class DiskCache implements RawCache {
-  final AsyncValueGetter<Directory> _directory;
-  final int _valueCount;
-
   DiskCache._(
     AsyncValueGetter<Directory> directory,
     int valueCount,
   )   : _directory = directory,
         _valueCount = valueCount;
+
+  final AsyncValueGetter<Directory> _directory;
+  final int _valueCount;
 
   @override
   Future<Editor> edit(
@@ -43,17 +43,17 @@ class DiskCache implements RawCache {
 }
 
 class _Entry {
-  final String _key;
-  final List<File> _cacheFiles;
-
   _Entry(
     Directory directory,
     int valueCount,
     String key,
   )   : _key = key,
-        _cacheFiles = List.generate(valueCount, (int index) {
+        _cacheFiles = List<File>.generate(valueCount, (int index) {
           return directory.childFile('$key.$index');
         });
+
+  final String _key;
+  final List<File> _cacheFiles;
 
   String key() {
     return _key;
@@ -88,17 +88,17 @@ class _Entry {
 }
 
 class _EditorImpl implements Editor {
-  final List<File> _cleanFiles;
-  final List<File> _dirtyFiles;
-
-  bool _done = false;
-
   _EditorImpl(_Entry entry)
       : _cleanFiles = entry.cacheFiles(),
         _dirtyFiles = entry.cacheFiles().map((File cacheFile) {
           return cacheFile.parent.childFile(
               '${cacheFile.basename}.${DateTime.now().millisecondsSinceEpoch}');
         }).toList();
+
+  final List<File> _cleanFiles;
+  final List<File> _dirtyFiles;
+
+  bool _done = false;
 
   @override
   StreamSink<List<int>> newSink(int index, Encoding encoding) {

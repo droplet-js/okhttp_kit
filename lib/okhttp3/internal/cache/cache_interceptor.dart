@@ -13,9 +13,11 @@ import 'package:fake_http/okhttp3/request.dart';
 import 'package:fake_http/okhttp3/response.dart';
 
 class CacheInterceptor implements Interceptor {
-  final Cache _cache;
+  CacheInterceptor(
+    Cache cache,
+  ) : _cache = cache;
 
-  CacheInterceptor(Cache cache) : _cache = cache;
+  final Cache _cache;
 
   @override
   Future<Response> intercept(Chain chain) async {
@@ -183,7 +185,7 @@ class CacheInterceptor implements Interceptor {
     Stream<List<int>> source = response.body().source();
 
     StreamTransformer<List<int>, List<int>> streamTransformer =
-        StreamTransformer.fromHandlers(handleData:
+        StreamTransformer<List<int>, List<int>>.fromHandlers(handleData:
             (List<int> data, EventSink<List<int>> sink) {
       sink.add(data);
       cacheBody.add(data);
@@ -204,8 +206,7 @@ class CacheInterceptor implements Interceptor {
     int contentLength = response.body().contentLength();
     return response
         .newBuilder()
-        .body(RealResponseBody(
-            contentType, contentLength, cacheWritingSource))
+        .body(RealResponseBody(contentType, contentLength, cacheWritingSource))
         .build();
   }
 }

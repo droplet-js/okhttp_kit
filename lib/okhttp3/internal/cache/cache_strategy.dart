@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:math' as Math;
+import 'dart:math' as math;
 
 import 'package:fake_http/okhttp3/cache_control.dart';
 import 'package:fake_http/okhttp3/headers.dart';
@@ -8,13 +8,13 @@ import 'package:fake_http/okhttp3/request.dart';
 import 'package:fake_http/okhttp3/response.dart';
 
 class CacheStrategy {
-  final Request networkRequest;
-  final Response cacheResponse;
-
   CacheStrategy._(
     this.networkRequest,
     this.cacheResponse,
   );
+
+  final Request networkRequest;
+  final Response cacheResponse;
 
   static bool isCacheable(Response response, Request request) {
     // Always go to network for uncacheable response codes (RFC 7231 section 6.1),
@@ -56,26 +56,6 @@ class CacheStrategy {
 }
 
 class CacheStrategyFactory {
-  final int nowMillis;
-  final Request request;
-  final Response cacheResponse;
-
-  DateTime _servedDate;
-  String _servedDateString;
-
-  DateTime _lastModified;
-  String _lastModifiedString;
-
-  DateTime _expires;
-
-  int _sentRequestMillis;
-
-  int _receivedResponseMillis;
-
-  String _etag;
-
-  int _ageSeconds = -1;
-
   CacheStrategyFactory(
     this.nowMillis,
     this.request,
@@ -104,6 +84,26 @@ class CacheStrategyFactory {
       }
     }
   }
+
+  final int nowMillis;
+  final Request request;
+  final Response cacheResponse;
+
+  DateTime _servedDate;
+  String _servedDateString;
+
+  DateTime _lastModified;
+  String _lastModifiedString;
+
+  DateTime _expires;
+
+  int _sentRequestMillis;
+
+  int _receivedResponseMillis;
+
+  String _etag;
+
+  int _ageSeconds = -1;
 
   CacheStrategy get() {
     CacheStrategy candidate = _getCandidate();
@@ -141,21 +141,21 @@ class CacheStrategyFactory {
     int freshMillis = _computeFreshnessLifetime();
 
     if (requestCaching.maxAgeSeconds() != -1) {
-      freshMillis = Math.min(freshMillis,
+      freshMillis = math.min(freshMillis,
           Duration(seconds: requestCaching.maxAgeSeconds()).inMilliseconds);
     }
 
     int minFreshMillis = 0;
     if (requestCaching.minFreshSeconds() != -1) {
-      minFreshMillis = Duration(seconds: requestCaching.minFreshSeconds())
-          .inMilliseconds;
+      minFreshMillis =
+          Duration(seconds: requestCaching.minFreshSeconds()).inMilliseconds;
     }
 
     int maxStaleMillis = 0;
     if (!responseCaching.mustRevalidate() &&
         requestCaching.maxStaleSeconds() != -1) {
-      maxStaleMillis = Duration(seconds: requestCaching.maxStaleSeconds())
-          .inMilliseconds;
+      maxStaleMillis =
+          Duration(seconds: requestCaching.maxStaleSeconds()).inMilliseconds;
     }
 
     if (!responseCaching.noCache() &&
@@ -202,8 +202,7 @@ class CacheStrategyFactory {
   int _computeFreshnessLifetime() {
     CacheControl responseCaching = cacheResponse.cacheControl();
     if (responseCaching.maxAgeSeconds() != -1) {
-      return Duration(seconds: responseCaching.maxAgeSeconds())
-          .inMilliseconds;
+      return Duration(seconds: responseCaching.maxAgeSeconds()).inMilliseconds;
     } else if (_expires != null) {
       int servedMillis = _servedDate != null
           ? _servedDate.millisecondsSinceEpoch
@@ -227,12 +226,12 @@ class CacheStrategyFactory {
 
   int _cacheResponseAge() {
     int apparentReceivedAge = _servedDate != null
-        ? Math.max(
+        ? math.max(
             0, _receivedResponseMillis - _servedDate.millisecondsSinceEpoch)
         : 0;
     int receivedAge = _ageSeconds != -1
-        ? Math.max(apparentReceivedAge,
-            Duration(seconds: _ageSeconds).inMilliseconds)
+        ? math.max(
+            apparentReceivedAge, Duration(seconds: _ageSeconds).inMilliseconds)
         : apparentReceivedAge;
     int responseDuration = _receivedResponseMillis - _sentRequestMillis;
     int residentDuration = nowMillis - _receivedResponseMillis;
