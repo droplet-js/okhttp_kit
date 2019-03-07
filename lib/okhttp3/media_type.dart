@@ -54,7 +54,7 @@ class MediaType {
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(dynamic other) {
     if (identical(this, other)) {
       return true;
     }

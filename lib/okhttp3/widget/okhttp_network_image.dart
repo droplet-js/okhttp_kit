@@ -75,6 +75,7 @@ class OkHttpNetworkImage extends ImageProvider<OkHttpNetworkImage> {
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
+    // ignore: invalid_assignment
     final OkHttpNetworkImage typedOther = other;
     return _url == typedOther._url && _scale == typedOther._scale;
   }
