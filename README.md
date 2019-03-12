@@ -13,6 +13,9 @@ flutter版okhttp3
 4. [flutter版新浪微博SDK](https://github.com/v7lin/fake_weibo)
 5. [flutter版支付宝SDK](https://github.com/v7lin/fake_alipay)
 
+## dart/flutter 私服
+[simple_pub_server](https://github.com/v7lin/simple_pub_server)
+
 ## OkHttpClient
 
 还是原来的配方，还是熟悉的味道
