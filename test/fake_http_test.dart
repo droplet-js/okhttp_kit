@@ -1,4 +1,6 @@
 import 'package:fake_http/fake_http.dart';
+import 'package:file/file.dart';
+import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

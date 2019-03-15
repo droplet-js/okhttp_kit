@@ -1,7 +1,5 @@
 library fake_http;
 
-export 'dart:async';
-export 'dart:convert';
 export 'dart:io'
     show
         HttpStatus,
@@ -17,11 +15,6 @@ export 'dart:io'
         HttpException,
         HttpOverrides,
         RedirectException;
-export 'package:convert/convert.dart';
-export 'package:crypto/crypto.dart';
-export 'package:file/file.dart';
-export 'package:file/local.dart';
-export 'package:file/memory.dart';
 
 export 'okhttp3/authenticator.dart';
 export 'okhttp3/cache.dart';
