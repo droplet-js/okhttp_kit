@@ -2,7 +2,7 @@ import 'package:fake_http/fake_http.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  FileSystem fileSystem = const LocalFileSystem();
+  FileSystem fileSystem = MemoryFileSystem();// const LocalFileSystem();
 
   print(
       '${fileSystem.currentDirectory.path} - ${fileSystem.systemTempDirectory.path}');
@@ -77,5 +77,13 @@ void main() {
       print('error: $error');
     });
     print('${DateTime.now().toLocal()}');
+  });
+
+  test('smoke test - cache', () async {
+    directory.listSync().forEach((FileSystemEntity entity) {
+      print('xxx - ${entity.path} - ${entity.basename} - ${entity
+          .statSync()
+          .size}');
+    });
   });
 }
