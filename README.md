@@ -5,6 +5,10 @@
 
 flutter版okhttp3
 
+## 配套 cookie_jar
+
+[fake_http_cookie_jar](https://github.com/v7lin/fake_http_cookie_jar)
+
 ## fake 系列 libraries
 
 1. [flutter版okhttp3](https://github.com/v7lin/fake_http)
