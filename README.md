@@ -36,7 +36,7 @@ dependencies:
 
 #### release
 ````
-latestVersion = 0.0.1+3
+latestVersion = 0.0.1+4
 ````
 
 ````
