@@ -4,7 +4,7 @@ import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  FileSystem fileSystem = MemoryFileSystem();// const LocalFileSystem();
+  FileSystem fileSystem = MemoryFileSystem(); // const LocalFileSystem();
 
   print(
       '${fileSystem.currentDirectory.path} - ${fileSystem.systemTempDirectory.path}');
@@ -19,28 +19,27 @@ void main() {
       .cache(Cache(DiskCache.create(() => Future<Directory>.value(directory))))
       .cookieJar(PersistentCookieJar.memory())
       .addInterceptor(UserAgentInterceptor(() => Future<String>.value('xxx')))
-      .addInterceptor(OptimizedRequestInterceptor(() => Future<bool>.value(true)))
+      .addInterceptor(
+          OptimizedRequestInterceptor(() => Future<bool>.value(true)))
       .addNetworkInterceptor(OptimizedResponseInterceptor())
-      .addNetworkInterceptor(
-          HttpLoggingInterceptor(level: LoggerLevel.BODY))
+      .addNetworkInterceptor(HttpLoggingInterceptor(level: LoggerLevel.BODY))
       .addNetworkInterceptor(ProgressRequestInterceptor((String url,
           String method, int progressBytes, int totalBytes, bool isDone) {
-        print(
-            'progress request - $method $url $progressBytes/$totalBytes done:$isDone');
-      }))
-      .addNetworkInterceptor(ProgressResponseInterceptor((String url,
+    print(
+        'progress request - $method $url $progressBytes/$totalBytes done:$isDone');
+  })).addNetworkInterceptor(ProgressResponseInterceptor((String url,
           String method, int progressBytes, int totalBytes, bool isDone) {
-        print(
-            'progress response - $method $url $progressBytes/$totalBytes done:$isDone');
-      }))
-      .build();
+    print(
+        'progress response - $method $url $progressBytes/$totalBytes done:$isDone');
+  })).build();
 
   test('smoke test - http get', () async {
     print('${DateTime.now().toLocal()}');
     HttpUrl url = HttpUrl.parse('https://www.baidu.com/');
     Request request = RequestBuilder().url(url).get().build();
     await client.newCall(request).enqueue().then((Response response) async {
-      print('resp: ${response.code()} - ${response.message()} - ${(await response.body().string())}');
+      print(
+          'resp: ${response.code()} - ${response.message()} - ${(await response.body().string())}');
     }).catchError((dynamic error) {
       print('error: $error');
     });
@@ -72,9 +71,14 @@ void main() {
         .add('sign', '763725.1000572')
         .add('token', 'ace5889a5474fc144c730ce9e95878a8')
         .build();
-    Request request = RequestBuilder().url(url).header(HttpHeaders.refererHeader, 'http://fanyi.baidu.com/').post(body).build();
+    Request request = RequestBuilder()
+        .url(url)
+        .header(HttpHeaders.refererHeader, 'http://fanyi.baidu.com/')
+        .post(body)
+        .build();
     await client.newCall(request).enqueue().then((Response response) async {
-      print('resp: ${response.code()} - ${response.message()} - ${await response.body().string()}');
+      print(
+          'resp: ${response.code()} - ${response.message()} - ${await response.body().string()}');
     }).catchError((dynamic error) {
       print('error: $error');
     });
@@ -83,9 +87,8 @@ void main() {
 
   test('smoke test - cache', () async {
     directory.listSync().forEach((FileSystemEntity entity) {
-      print('xxx - ${entity.path} - ${entity.basename} - ${entity
-          .statSync()
-          .size}');
+      print(
+          'xxx - ${entity.path} - ${entity.basename} - ${entity.statSync().size}');
     });
   });
 }

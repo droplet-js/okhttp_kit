@@ -111,7 +111,8 @@ class OptimizedRequestInterceptor implements Interceptor {
     return await chain.proceed(originalRequest);
   }
 
-  Future<bool> shouldUseCacheIfWeakConnect(Request originalRequest, Exception e) async {
+  Future<bool> shouldUseCacheIfWeakConnect(
+      Request originalRequest, Exception e) async {
     return true;
   }
 

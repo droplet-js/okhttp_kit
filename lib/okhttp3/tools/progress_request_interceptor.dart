@@ -97,10 +97,10 @@ class _ProgressRequestBody extends RequestBody {
 
 class _ProgressByteStreamSink extends StreamSink<List<int>> {
   _ProgressByteStreamSink(
-      this.wrapped,
-      this.totalBytes,
-      this.callback,
-      );
+    this.wrapped,
+    this.totalBytes,
+    this.callback,
+  );
 
   final StreamSink<List<int>> wrapped;
   final int totalBytes;
@@ -150,6 +150,6 @@ class _ProgressByteStreamSink extends StreamSink<List<int>> {
   }
 
   @override
-  Future<dynamic> get done =>
-      Future<UnsupportedError>.error(UnsupportedError('$runtimeType#done is not supported!'));
+  Future<dynamic> get done => Future<UnsupportedError>.error(
+      UnsupportedError('$runtimeType#done is not supported!'));
 }
