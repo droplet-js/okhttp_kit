@@ -40,12 +40,8 @@ dependencies:
 * release
 
 ````
-latestVersion = 0.0.1+4
-````
-
-````
 dependencies:
-  fake_http: ^${latestVersion}
+  fake_http: ^${latestTag}
 ````
 
 * example
