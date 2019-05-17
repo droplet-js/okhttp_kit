@@ -1,6 +1,6 @@
 name: fake_http
 description: A powerful http package for Flutter.
-version: 0.0.1+4
+version: 0.1.0
 author: v7lin <v7lin@qq.com>
 homepage: https://github.com/v7lin/fake_http
 

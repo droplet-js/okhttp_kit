@@ -26,10 +26,12 @@ abstract class ResponseBody implements Closeable {
         ByteConversionSink.withCallback((List<int> accumulated) {
       completer.complete(accumulated);
     });
-    source().listen(sink.add,
-        onError: completer.completeError,
-        onDone: sink.close,
-        cancelOnError: true);
+    source().listen(
+      sink.add,
+      onError: completer.completeError,
+      onDone: sink.close,
+      cancelOnError: true,
+    );
     return completer.future;
   }
 
