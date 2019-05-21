@@ -125,6 +125,7 @@ class HttpHeadersExtension {
   }
 
   static Set<String> varyFields(Headers responseHeaders) {
+    // ignore: prefer_collection_literals
     Set<String> result = Set<String>();
     for (int i = 0, size = responseHeaders.size(); i < size; i++) {
       if (HttpHeaders.varyHeader != responseHeaders.nameAt(i)) {
