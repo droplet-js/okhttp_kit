@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:fake_http/okhttp3/call.dart';
-import 'package:fake_http/okhttp3/interceptor.dart';
-import 'package:fake_http/okhttp3/internal/cache/cache_interceptor.dart';
-import 'package:fake_http/okhttp3/internal/http/bridge_interceptor.dart';
-import 'package:fake_http/okhttp3/internal/http/call_server_interceptor.dart';
-import 'package:fake_http/okhttp3/internal/http/real_interceptor_chain.dart';
-import 'package:fake_http/okhttp3/internal/http/retry_and_follow_up_interceptor.dart';
-import 'package:fake_http/okhttp3/okhttp_client.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/call.dart';
+import 'package:fake_okhttp/okhttp3/interceptor.dart';
+import 'package:fake_okhttp/okhttp3/internal/cache/cache_interceptor.dart';
+import 'package:fake_okhttp/okhttp3/internal/http/bridge_interceptor.dart';
+import 'package:fake_okhttp/okhttp3/internal/http/call_server_interceptor.dart';
+import 'package:fake_okhttp/okhttp3/internal/http/real_interceptor_chain.dart';
+import 'package:fake_okhttp/okhttp3/internal/http/retry_and_follow_up_interceptor.dart';
+import 'package:fake_okhttp/okhttp3/okhttp_client.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
 
 class RealCall implements Call {
   RealCall.newRealCall(OkHttpClient client, Request originalRequest)

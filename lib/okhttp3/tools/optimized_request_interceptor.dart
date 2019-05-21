@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fake_http/okhttp3/cache_control.dart';
-import 'package:fake_http/okhttp3/interceptor.dart';
-import 'package:fake_http/okhttp3/internal/http/http_method.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/cache_control.dart';
+import 'package:fake_okhttp/okhttp3/interceptor.dart';
+import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
 import 'package:flutter/foundation.dart';
 
 /// 应用层拦截器

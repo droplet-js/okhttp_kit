@@ -1,20 +1,20 @@
-# fake_http
+# fake_okhttp
 
-[![Build Status](https://cloud.drone.io/api/badges/v7lin/fake_http/status.svg)](https://cloud.drone.io/v7lin/fake_http)
-[![Codecov](https://codecov.io/gh/v7lin/fake_http/branch/master/graph/badge.svg)](https://codecov.io/gh/v7lin/fake_http)
-[![GitHub Tag](https://img.shields.io/github/tag/v7lin/fake_http.svg)](https://github.com/v7lin/fake_http/releases)
-[![Pub Package](https://img.shields.io/pub/v/fake_http.svg)](https://pub.dartlang.org/packages/fake_http)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/v7lin/fake_http/blob/master/LICENSE)
+[![Build Status](https://cloud.drone.io/api/badges/v7lin/fake_okhttp/status.svg)](https://cloud.drone.io/v7lin/fake_okhttp)
+[![Codecov](https://codecov.io/gh/v7lin/fake_okhttp/branch/master/graph/badge.svg)](https://codecov.io/gh/v7lin/fake_okhttp)
+[![GitHub Tag](https://img.shields.io/github/tag/v7lin/fake_okhttp.svg)](https://github.com/v7lin/fake_okhttp/releases)
+[![Pub Package](https://img.shields.io/pub/v/fake_okhttp.svg)](https://pub.dartlang.org/packages/fake_okhttp)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/v7lin/fake_okhttp/blob/master/LICENSE)
 
 flutter版okhttp3
 
 ## 配套 cookie_jar
 
-[fake_http_cookie_jar](https://github.com/v7lin/fake_http_cookie_jar)
+[fake_okhttp_cookie_jar](https://github.com/v7lin/fake_okhttp_cookie_jar)
 
 ## fake 系列 libraries
 
-* [flutter版okhttp3](https://github.com/v7lin/fake_http)
+* [flutter版okhttp3](https://github.com/v7lin/fake_okhttp)
 * [flutter版微信SDK](https://github.com/v7lin/fake_wechat)
 * [flutter版腾讯(QQ)SDK](https://github.com/v7lin/fake_tencent)
 * [flutter版新浪微博SDK](https://github.com/v7lin/fake_weibo)
@@ -35,21 +35,21 @@ flutter版okhttp3
 
 ````
 dependencies:
-  fake_http:
+  fake_okhttp:
     git:
-      url: https://github.com/v7lin/fake_http.git
+      url: https://github.com/v7lin/fake_okhttp.git
 ````
 
 * release
 
 ````
 dependencies:
-  fake_http: ^${latestTag}
+  fake_okhttp: ^${latestTag}
 ````
 
 * example
 
-[示例](./test/fake_http_test.dart)
+[示例](./test/fake_okhttp_test.dart)
 
 ## Getting Started
 

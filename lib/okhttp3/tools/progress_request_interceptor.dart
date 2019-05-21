@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:fake_http/okhttp3/interceptor.dart';
-import 'package:fake_http/okhttp3/media_type.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/request_body.dart';
-import 'package:fake_http/okhttp3/response.dart';
-import 'package:fake_http/okhttp3/tools/progress_interceptor.dart';
+import 'package:fake_okhttp/okhttp3/interceptor.dart';
+import 'package:fake_okhttp/okhttp3/media_type.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/request_body.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/tools/progress_interceptor.dart';
 
 /// 网络层拦截器
 class ProgressRequestInterceptor implements ProgressInterceptor {

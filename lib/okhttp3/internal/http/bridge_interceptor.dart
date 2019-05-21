@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fake_http/okhttp3/cookie_jar.dart';
-import 'package:fake_http/okhttp3/headers.dart';
-import 'package:fake_http/okhttp3/interceptor.dart';
-import 'package:fake_http/okhttp3/internal/http_extension.dart';
-import 'package:fake_http/okhttp3/internal/util.dart';
-import 'package:fake_http/okhttp3/internal/version.dart';
-import 'package:fake_http/okhttp3/media_type.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/request_body.dart';
-import 'package:fake_http/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
+import 'package:fake_okhttp/okhttp3/headers.dart';
+import 'package:fake_okhttp/okhttp3/interceptor.dart';
+import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
+import 'package:fake_okhttp/okhttp3/internal/util.dart';
+import 'package:fake_okhttp/okhttp3/internal/version.dart';
+import 'package:fake_okhttp/okhttp3/media_type.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/request_body.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
 
 class BridgeInterceptor implements Interceptor {
   BridgeInterceptor(

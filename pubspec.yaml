@@ -1,8 +1,8 @@
-name: fake_http
+name: fake_okhttp
 description: A powerful http package for Flutter.
 version: 0.1.0
 author: v7lin <v7lin@qq.com>
-homepage: https://github.com/v7lin/fake_http
+homepage: https://github.com/v7lin/fake_okhttp
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"

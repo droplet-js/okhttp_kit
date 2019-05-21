@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
 
 abstract class Call {
   Request request();

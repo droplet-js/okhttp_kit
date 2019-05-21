@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:fake_http/okhttp3/media_type.dart';
-import 'package:fake_http/okhttp3/response_body.dart';
+import 'package:fake_okhttp/okhttp3/media_type.dart';
+import 'package:fake_okhttp/okhttp3/response_body.dart';
 
 class RealResponseBody extends ResponseBody {
   RealResponseBody(

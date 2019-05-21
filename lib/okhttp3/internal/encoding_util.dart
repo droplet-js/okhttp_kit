@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:fake_http/okhttp3/media_type.dart';
+import 'package:fake_okhttp/okhttp3/media_type.dart';
 
 class EncodingUtil {
   EncodingUtil._();

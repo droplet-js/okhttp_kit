@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:fake_http/okhttp3/cache.dart';
+import 'package:fake_okhttp/okhttp3/cache.dart';
 import 'package:flutter/services.dart';
 
 class AssetBundleCache implements RawCache {

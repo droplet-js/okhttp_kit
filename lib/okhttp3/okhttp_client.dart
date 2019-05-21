@@ -1,10 +1,10 @@
-import 'package:fake_http/okhttp3/authenticator.dart';
-import 'package:fake_http/okhttp3/cache.dart';
-import 'package:fake_http/okhttp3/call.dart';
-import 'package:fake_http/okhttp3/cookie_jar.dart';
-import 'package:fake_http/okhttp3/interceptor.dart';
-import 'package:fake_http/okhttp3/real_call.dart';
-import 'package:fake_http/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/authenticator.dart';
+import 'package:fake_okhttp/okhttp3/cache.dart';
+import 'package:fake_okhttp/okhttp3/call.dart';
+import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
+import 'package:fake_okhttp/okhttp3/interceptor.dart';
+import 'package:fake_okhttp/okhttp3/real_call.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
 
 class OkHttpClient implements Factory {
   OkHttpClient._(

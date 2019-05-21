@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fake_http/okhttp3/http_url.dart';
+import 'package:fake_okhttp/okhttp3/http_url.dart';
 
 abstract class CookieJar {
   static const CookieJar NO_COOKIES = _NoCookieJar();

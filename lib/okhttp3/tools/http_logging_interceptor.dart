@@ -2,16 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fake_http/okhttp3/headers.dart';
-import 'package:fake_http/okhttp3/interceptor.dart';
-import 'package:fake_http/okhttp3/internal/encoding_util.dart';
-import 'package:fake_http/okhttp3/internal/http_extension.dart';
-import 'package:fake_http/okhttp3/lang/character.dart';
-import 'package:fake_http/okhttp3/media_type.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/request_body.dart';
-import 'package:fake_http/okhttp3/response.dart';
-import 'package:fake_http/okhttp3/response_body.dart';
+import 'package:fake_okhttp/okhttp3/headers.dart';
+import 'package:fake_okhttp/okhttp3/interceptor.dart';
+import 'package:fake_okhttp/okhttp3/internal/encoding_util.dart';
+import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
+import 'package:fake_okhttp/okhttp3/lang/character.dart';
+import 'package:fake_okhttp/okhttp3/media_type.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/request_body.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/response_body.dart';
 import 'package:quiver/async.dart';
 
 /// 网络层拦截器

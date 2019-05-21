@@ -1,4 +1,4 @@
-library fake_http;
+library fake_okhttp;
 
 export 'dart:io'
     show

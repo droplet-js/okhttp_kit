@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:fake_http/okhttp3/cache.dart';
+import 'package:fake_okhttp/okhttp3/cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:file/file.dart';
 

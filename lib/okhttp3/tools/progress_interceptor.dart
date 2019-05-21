@@ -1,4 +1,4 @@
-import 'package:fake_http/okhttp3/interceptor.dart';
+import 'package:fake_okhttp/okhttp3/interceptor.dart';
 
 typedef void ProgressListener(
     String url, String method, int progressBytes, int totalBytes, bool isDone);

@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:charcode/ascii.dart' as ascii;
-import 'package:fake_http/okhttp3/cookie_jar.dart';
-import 'package:fake_http/okhttp3/headers.dart';
-import 'package:fake_http/okhttp3/http_url.dart';
-import 'package:fake_http/okhttp3/internal/http/http_method.dart';
-import 'package:fake_http/okhttp3/internal/util.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
+import 'package:fake_okhttp/okhttp3/headers.dart';
+import 'package:fake_okhttp/okhttp3/http_url.dart';
+import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
+import 'package:fake_okhttp/okhttp3/internal/util.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
 
 class HttpHeadersExtension {
   HttpHeadersExtension._();

@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fake_http/okhttp3/interceptor.dart';
-import 'package:fake_http/okhttp3/internal/http/real_interceptor_chain.dart';
-import 'package:fake_http/okhttp3/internal/http/unrepeatable_request_body.dart';
-import 'package:fake_http/okhttp3/internal/http_extension.dart';
-import 'package:fake_http/okhttp3/internal/util.dart';
-import 'package:fake_http/okhttp3/lang/integer.dart';
-import 'package:fake_http/okhttp3/okhttp_client.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/interceptor.dart';
+import 'package:fake_okhttp/okhttp3/internal/http/real_interceptor_chain.dart';
+import 'package:fake_okhttp/okhttp3/internal/http/unrepeatable_request_body.dart';
+import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
+import 'package:fake_okhttp/okhttp3/internal/util.dart';
+import 'package:fake_okhttp/okhttp3/lang/integer.dart';
+import 'package:fake_okhttp/okhttp3/okhttp_client.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
 
 class RetryAndFollowUpInterceptor implements Interceptor {
   RetryAndFollowUpInterceptor(

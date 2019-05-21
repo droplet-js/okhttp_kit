@@ -4,17 +4,17 @@ import 'dart:io';
 
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
-import 'package:fake_http/okhttp3/headers.dart';
-import 'package:fake_http/okhttp3/http_url.dart';
-import 'package:fake_http/okhttp3/internal/cache/cache_strategy.dart';
-import 'package:fake_http/okhttp3/internal/http/http_method.dart';
-import 'package:fake_http/okhttp3/internal/http_extension.dart';
-import 'package:fake_http/okhttp3/internal/util.dart';
-import 'package:fake_http/okhttp3/io/closeable.dart';
-import 'package:fake_http/okhttp3/media_type.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/response.dart';
-import 'package:fake_http/okhttp3/response_body.dart';
+import 'package:fake_okhttp/okhttp3/headers.dart';
+import 'package:fake_okhttp/okhttp3/http_url.dart';
+import 'package:fake_okhttp/okhttp3/internal/cache/cache_strategy.dart';
+import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
+import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
+import 'package:fake_okhttp/okhttp3/internal/util.dart';
+import 'package:fake_okhttp/okhttp3/io/closeable.dart';
+import 'package:fake_okhttp/okhttp3/media_type.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/response_body.dart';
 import 'package:quiver/async.dart';
 
 class Cache {

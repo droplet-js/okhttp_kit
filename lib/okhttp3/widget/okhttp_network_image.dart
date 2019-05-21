@@ -4,11 +4,11 @@ import 'dart:typed_data';
 
 import 'dart:ui' as ui show instantiateImageCodec, Codec;
 
-import 'package:fake_http/okhttp3/headers.dart';
-import 'package:fake_http/okhttp3/http_url.dart';
-import 'package:fake_http/okhttp3/okhttp_client.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/headers.dart';
+import 'package:fake_okhttp/okhttp3/http_url.dart';
+import 'package:fake_okhttp/okhttp3/okhttp_client.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide NetworkImage;
 

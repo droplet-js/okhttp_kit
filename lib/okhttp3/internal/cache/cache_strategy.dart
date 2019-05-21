@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:fake_http/okhttp3/cache_control.dart';
-import 'package:fake_http/okhttp3/headers.dart';
-import 'package:fake_http/okhttp3/internal/http_extension.dart';
-import 'package:fake_http/okhttp3/request.dart';
-import 'package:fake_http/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/cache_control.dart';
+import 'package:fake_okhttp/okhttp3/headers.dart';
+import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
 
 class CacheStrategy {
   CacheStrategy._(

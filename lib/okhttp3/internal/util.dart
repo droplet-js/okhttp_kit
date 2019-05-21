@@ -1,7 +1,7 @@
-import 'package:fake_http/okhttp3/http_url.dart';
-import 'package:fake_http/okhttp3/io/closeable.dart';
-import 'package:fake_http/okhttp3/request_body.dart';
-import 'package:fake_http/okhttp3/response_body.dart';
+import 'package:fake_okhttp/okhttp3/http_url.dart';
+import 'package:fake_okhttp/okhttp3/io/closeable.dart';
+import 'package:fake_okhttp/okhttp3/request_body.dart';
+import 'package:fake_okhttp/okhttp3/response_body.dart';
 
 class Util {
   Util._();

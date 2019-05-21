@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:fake_http/okhttp3/headers.dart';
-import 'package:fake_http/okhttp3/internal/http_extension.dart';
-import 'package:fake_http/okhttp3/lang/integer.dart';
+import 'package:fake_okhttp/okhttp3/headers.dart';
+import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
+import 'package:fake_okhttp/okhttp3/lang/integer.dart';
 
 class CacheControl {
   CacheControl._(
