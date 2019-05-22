@@ -86,9 +86,12 @@ void main() {
   });
 
   test('smoke test - cache', () async {
-    directory.listSync().forEach((FileSystemEntity entity) {
-      print(
-          'xxx - ${entity.path} - ${entity.basename} - ${entity.statSync().size}');
-    });
+    List<FileSystemEntity> list = directory.listSync();
+    if (list != null && list.isNotEmpty) {
+      list.forEach((FileSystemEntity entity) {
+        print(
+            'xxx - ${entity.path} - ${entity.basename} - ${entity.statSync().size}');
+      });
+    }
   });
 }
