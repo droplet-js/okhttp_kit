@@ -200,7 +200,7 @@ class CacheInterceptor implements Interceptor {
       cacheRequest.commit();
     });
 
-    Stream<List<int>> cacheWritingSource = source.transform(streamTransformer);
+    Stream<List<int>> cacheWritingSource = streamTransformer.bind(source);
 
     String contentType = response.header(HttpHeaders.contentTypeHeader);
     int contentLength = response.body().contentLength();

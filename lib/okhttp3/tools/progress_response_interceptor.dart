@@ -101,7 +101,7 @@ class _ProgressResponseBody extends ResponseBody {
         callback.onClose(progressBytes, totalBytes);
       }
     });
-    return wrapped.source().transform(streamTransformer);
+    return streamTransformer.bind(wrapped.source());
   }
 
   @override
