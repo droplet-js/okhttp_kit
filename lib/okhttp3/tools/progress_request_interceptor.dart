@@ -138,7 +138,7 @@ class _ProgressByteStreamSink extends StreamSink<List<int>> {
     }, handleDone: (EventSink<List<int>> sink) {
       sink.close();
     });
-    return wrapped.addStream(stream.transform(streamTransformer));
+    return wrapped.addStream(streamTransformer.bind(stream));
   }
 
   @override
