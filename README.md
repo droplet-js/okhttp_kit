@@ -10,6 +10,8 @@ dart版okhttp3
 
 ## Usage
 
+还是原来的配方，还是熟悉的味道
+
 ```dart
 import 'package:fake_okhttp/fake_okhttp.dart';
 ```
