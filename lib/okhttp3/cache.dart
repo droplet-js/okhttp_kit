@@ -10,27 +10,25 @@ import 'package:fake_okhttp/okhttp3/internal/cache/cache_strategy.dart';
 import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
 import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
 import 'package:fake_okhttp/okhttp3/internal/util.dart';
-import 'package:fake_okhttp/okhttp3/io/closeable.dart';
 import 'package:fake_okhttp/okhttp3/media_type.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
 import 'package:fake_okhttp/okhttp3/response_body.dart';
-import 'package:quiver/async.dart';
 
 class Cache {
   Cache(
     RawCache cache, [
-    KeyExtractor keyExtractor = _defaultKeyExtractor,
+    KeyExtractor keyExtractor,
   ])  : assert(cache != null),
         _cache = cache,
-        _keyExtractor = keyExtractor;
+        _keyExtractor = keyExtractor ?? _defaultKeyExtractor;
 
-  static const int VERSION = 201105;
-  static const int ENTRY_META_DATA = 0;
-  static const int ENTRY_BODY = 1;
-  static const int ENTRY_COUNT = 2;
+  static const int version = 201105;
+  static const int entryMetaData = 0;
+  static const int entryBody = 1;
+  static const int entryCount = 2;
 
-  static final RegExp _LEGAL_KEY_PATTERN = RegExp('[a-z0-9_-]{1,120}');
+  static final RegExp _legalKeyPattern = RegExp('[a-z0-9_-]{1,120}');
 
   final RawCache _cache;
   final KeyExtractor _keyExtractor;
@@ -55,111 +53,10 @@ class Cache {
     if (key == null || key.isEmpty) {
       throw AssertionError('key is null or empty');
     }
-    if (_LEGAL_KEY_PATTERN.stringMatch(key) != key) {
+    if (_legalKeyPattern.stringMatch(key) != key) {
       throw AssertionError('keys must match regex [a-z0-9_-]{1,120}: \"$key\"');
     }
     return key;
-  }
-
-  Future<Response> get(Request request, [Encoding encoding = utf8]) async {
-    String key = _key(request.url());
-    Snapshot snapshot;
-    _Entry entry;
-    try {
-      snapshot = await _cache.get(key);
-      if (snapshot == null) {
-        return null;
-      }
-    } catch (e) {
-      // Give up because the cache cannot be read.
-      return null;
-    }
-
-    try {
-      entry = await _Entry.sourceEntry(
-          snapshot.getSource(ENTRY_META_DATA), encoding);
-    } catch (e) {
-      Util.closeQuietly(snapshot);
-      return null;
-    }
-
-    Response response = entry.response(snapshot);
-
-    if (!entry.matches(request, response)) {
-      Util.closeQuietly(response.body());
-      return null;
-    }
-
-    return response;
-  }
-
-  Future<CacheRequest> put(Response response,
-      [Encoding encoding = utf8]) async {
-    String requestMethod = response.request().method();
-    if (HttpMethod.invalidatesCache(response.request().method())) {
-      try {
-        await remove(response.request());
-      } catch (e) {
-        // The cache cannot be written.
-      }
-      return null;
-    }
-    if (requestMethod != HttpMethod.GET) {
-      // Don't cache non-GET responses. We're technically allowed to cache
-      // HEAD requests and some POST requests, but the complexity of doing
-      // so is high and the benefit is low.
-      return null;
-    }
-
-    if (HttpHeadersExtension.hasVaryAll(response.headers())) {
-      return null;
-    }
-
-    _Entry entry = _Entry.responseEntry(response);
-    Editor editor;
-    try {
-      editor = await _cache.edit(_key(response.request().url()));
-      if (editor == null) {
-        return null;
-      }
-      await entry.writeTo(editor, encoding);
-      return CacheRequest(editor, encoding);
-    } catch (e) {
-      await _abortQuietly(editor);
-      return null;
-    }
-  }
-
-  Future<bool> remove(Request request) {
-    return _cache.remove(_key(request.url()));
-  }
-
-  Future<void> update(Response cached, Response network,
-      [Encoding encoding = utf8]) async {
-    _Entry entry = _Entry.responseEntry(network);
-    _CacheResponseBody body = cached.body() as _CacheResponseBody;
-    Snapshot snapshot = body.snapshot();
-    Editor editor;
-    try {
-      editor = await _cache.edit(snapshot.key(), snapshot.sequenceNumber());
-      if (editor != null) {
-        await entry.writeTo(editor, encoding);
-        editor.commit();
-      }
-    } catch (e) {
-      await _abortQuietly(editor);
-    }
-  }
-
-  Future<void> _abortQuietly(Editor editor) async {
-    // Give up because the cache cannot be written.
-    try {
-      if (editor != null) {
-        editor.abort();
-      }
-    } catch (e) {
-      // do nothing
-    }
   }
 
   Future<void> trackConditionalCacheHit() async {
@@ -177,32 +74,138 @@ class Cache {
       _hitCount++;
     }
   }
-}
 
-class CacheRequest {
-  CacheRequest(
-    Editor editor,
-    Encoding encoding,
-  )   : _editor = editor,
-        _encoding = encoding;
+  Future<Response> get(Request request) async {
+    String key = _key(request.url());
+    Snapshot snapshot;
+    Entry entry;
+    try {
+      snapshot = await _cache.get(key);
+      if (snapshot == null) {
+        return null;
+      }
+    } catch (e) {
+      // Give up because the cache cannot be read.
+      return null;
+    }
 
-  final Editor _editor;
-  final Encoding _encoding;
+    try {
+      entry = await Entry.sourceEntry(snapshot.getSource(entryMetaData));
+    } catch (e) {
+      return null;
+    }
 
-  StreamSink<List<int>> body() {
-    return _editor.newSink(Cache.ENTRY_BODY, _encoding);
+    Response response = entry.response(snapshot);
+
+    if (!entry.matches(request, response)) {
+      return null;
+    }
+
+    return response;
   }
 
-  void abort() {
+  Future<CacheRequest> put(Response response) async {
+    String requestMethod = response.request().method();
+    if (HttpMethod.invalidatesCache(requestMethod)) {
+      try {
+        await remove(response.request());
+      } catch (e) {
+        // The cache cannot be written.
+      }
+      return null;
+    }
+    if (requestMethod != HttpMethod.get) {
+      // Don't cache non-GET responses. We're technically allowed to cache
+      // HEAD requests and some POST requests, but the complexity of doing
+      // so is high and the benefit is low.
+      return null;
+    }
+
+    if (HttpHeadersExtension.hasVaryAll(response.headers())) {
+      return null;
+    }
+
+    Entry entry = Entry.responseEntry(response);
+    Editor editor;
     try {
-      _editor.abort();
+      editor = await _cache.edit(_key(response.request().url()));
+      if (editor == null) {
+        return null;
+      }
+      List<int> metaData = entry.metaData();
+      return CacheRequest(editor, metaData);
+    } catch (e) {
+      await _abortQuietly(editor);
+      return null;
+    }
+  }
+
+  Future<void> update(Response cached, Response network) async {
+    Entry entry = Entry.responseEntry(network);
+    _CacheResponseBody body = cached.body() as _CacheResponseBody;
+    Snapshot snapshot = body.snapshot();
+    Editor editor;
+    try {
+      editor = await _cache.edit(snapshot.key(), snapshot.sequenceNumber());
+      if (editor != null) {
+        List<int> metaData = entry.metaData();
+        EventSink<List<int>> sink = editor.newSink(Cache.entryMetaData, utf8);
+        sink.add(metaData);
+        editor.commit();
+      }
+    } catch (e) {
+      await _abortQuietly(editor);
+    }
+  }
+
+  Future<bool> remove(Request request) {
+    return _cache.remove(_key(request.url()));
+  }
+
+  Future<void> _abortQuietly(Editor editor) async {
+    // Give up because the cache cannot be written.
+    try {
+      if (editor != null) {
+        editor.abort();
+      }
     } catch (e) {
       // do nothing
     }
   }
+}
 
-  void commit() {
-    _editor.commit();
+class CacheRequest {
+  CacheRequest(this.editor, this.metaData);
+
+  final Editor editor;
+  final List<int> metaData;
+
+  EventSink<List<int>> body() {
+    EventSink<List<int>> bodySink;
+    StreamController<List<int>> streamController =
+        StreamController<List<int>>();
+    streamController.stream.listen(
+      (List<int> event) {
+        // add
+        if (bodySink == null) {
+          bodySink = editor.newSink(Cache.entryBody, utf8);
+        }
+        bodySink.add(event);
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        // detch
+        bodySink.addError(error, stackTrace);
+        editor.abort();
+      },
+      onDone: () {
+        // close
+        EventSink<List<int>> metaDataSink = editor.newSink(Cache.entryMetaData, utf8);
+        metaDataSink.add(metaData);
+        editor.commit();
+      },
+      cancelOnError: true,
+    );
+    return streamController;
   }
 }
 
@@ -214,12 +217,10 @@ abstract class Editor {
   void commit();
 
   void abort();
-
-  void detach();
 }
 
 abstract class RawCache {
-  static const int ANY_SEQUENCE_NUMBER = -1;
+  static const int anySequenceNumber = -1;
 
   Future<Snapshot> get(String key);
 
@@ -233,7 +234,7 @@ typedef String KeyExtractor(HttpUrl url);
 String _defaultKeyExtractor(HttpUrl url) =>
     hex.encode(md5.convert(utf8.encode(url.toString())).bytes);
 
-class Snapshot implements Closeable {
+class Snapshot {
   Snapshot(
     String key,
     int sequenceNumber,
@@ -264,13 +265,10 @@ class Snapshot implements Closeable {
   int getLength(int index) {
     return _lengths[index];
   }
-
-  @override
-  void close() {}
 }
 
-class _Entry {
-  _Entry(
+class Entry {
+  Entry(
     String url,
     String requestMethod,
     Headers varyHeaders,
@@ -288,8 +286,8 @@ class _Entry {
         _sentRequestMillis = sentRequestMillis,
         _receivedResponseMillis = receivedResponseMillis;
 
-  static const String _SENT_MILLIS = 'OkHttp-Sent-Millis';
-  static const String _RECEIVED_MILLIS = 'OkHttp-Received-Millis';
+  static const String _sentMillis = 'OkHttp-Sent-Millis';
+  static const String _receivedMillis = 'OkHttp-Received-Millis';
 
   final String _url;
   final String _requestMethod;
@@ -300,8 +298,7 @@ class _Entry {
   final int _sentRequestMillis;
   final int _receivedResponseMillis;
 
-  Future<void> writeTo(Editor editor, Encoding encoding) async {
-    assert(encoding != null);
+  List<int> metaData() {
     StringBuffer builder = StringBuffer();
     builder.writeln(_url);
     builder.writeln(_requestMethod);
@@ -312,25 +309,15 @@ class _Entry {
     builder.writeln('$_code $_message');
     Headers responseHeaders = _responseHeaders
         .newBuilder()
-        .set(_SENT_MILLIS, _sentRequestMillis.toString())
-        .set(_RECEIVED_MILLIS, _receivedResponseMillis.toString())
+        .set(_sentMillis, _sentRequestMillis.toString())
+        .set(_receivedMillis, _receivedResponseMillis.toString())
         .build();
     builder.writeln(responseHeaders.size().toString());
     for (int i = 0, size = responseHeaders.size(); i < size; i++) {
       builder.writeln(
           '${responseHeaders.nameAt(i)}: ${responseHeaders.valueAt(i)}');
     }
-    List<int> bytes = encoding.encode(builder.toString());
-
-    EventSink<List<int>> sink =
-        editor.newSink(Cache.ENTRY_META_DATA, encoding); // 用作 EventSink
-    try {
-      sink.add(bytes);
-    } catch (e) {
-      editor.abort();
-    } finally {
-      sink.close();
-    }
+    return utf8.encode(builder.toString());
   }
 
   Response response(Snapshot snapshot) {
@@ -364,16 +351,9 @@ class _Entry {
         HttpHeadersExtension.varyMatches(response, _varyHeaders, request);
   }
 
-  static Future<_Entry> sourceEntry(
-    Stream<List<int>> source,
-    Encoding encoding,
-  ) async {
-    assert(encoding != null);
-    StreamBuffer<int> sink = StreamBuffer<int>();
-    await sink.addStream(source);
-
-    List<String> lines = await sink.read(sink.buffered).then((List<int> bytes) {
-      return encoding.decode(bytes);
+  static Future<Entry> sourceEntry(Stream<List<int>> source) async {
+    List<String> lines = await Util.readAsBytes(source).then((List<int> bytes) {
+      return utf8.decode(bytes);
     }).then(const LineSplitter().convert);
 
     int cursor = 0;
@@ -400,14 +380,14 @@ class _Entry {
     }
     Headers responseHeaders = responseHeadersBuilder.build();
 
-    String sendRequestMillisString = responseHeaders.value(_SENT_MILLIS);
+    String sendRequestMillisString = responseHeaders.value(_sentMillis);
     String receivedResponseMillisString =
-        responseHeaders.value(_RECEIVED_MILLIS);
+        responseHeaders.value(_receivedMillis);
 
     responseHeaders = responseHeaders
         .newBuilder()
-        .removeAll(_SENT_MILLIS)
-        .removeAll(_RECEIVED_MILLIS)
+        .removeAll(_sentMillis)
+        .removeAll(_receivedMillis)
         .build();
 
     int sentRequestMillis = sendRequestMillisString != null
@@ -417,11 +397,11 @@ class _Entry {
         ? int.parse(receivedResponseMillisString)
         : 0;
 
-    return _Entry(url, requestMethod, varyHeaders, code, message,
+    return Entry(url, requestMethod, varyHeaders, code, message,
         responseHeaders, sentRequestMillis, receivedResponseMillis);
   }
 
-  static _Entry responseEntry(Response response) {
+  static Entry responseEntry(Response response) {
     String url = response.request().url().toString();
     Headers varyHeaders = HttpHeadersExtension.varyHeaders(response);
     String requestMethod = response.request().method();
@@ -430,7 +410,7 @@ class _Entry {
     Headers responseHeaders = response.headers();
     int sentRequestMillis = response.sentRequestAtMillis();
     int receivedResponseMillis = response.receivedResponseAtMillis();
-    return _Entry(url, requestMethod, varyHeaders, code, message,
+    return Entry(url, requestMethod, varyHeaders, code, message,
         responseHeaders, sentRequestMillis, receivedResponseMillis);
   }
 }
@@ -464,9 +444,6 @@ class _CacheResponseBody extends ResponseBody {
 
   @override
   Stream<List<int>> source() {
-    return _snapshot.getSource(Cache.ENTRY_BODY);
+    return _snapshot.getSource(Cache.entryBody);
   }
-
-  @override
-  void close() {}
 }

@@ -18,15 +18,15 @@ class MultipartBody extends RequestBody {
             MediaType.parse('${type.toString()}; boundary=$boundary'),
         _parts = parts;
 
-  static final MediaType MIXED = MediaType.parse('multipart/mixed');
-  static final MediaType ALTERNATIVE = MediaType.parse('multipart/alternative');
-  static final MediaType DIGEST = MediaType.parse('multipart/digest');
-  static final MediaType PARALLEL = MediaType.parse('multipart/parallel');
-  static final MediaType FORM = MediaType.parse('multipart/form-data');
+  static final MediaType mixed = MediaType.parse('multipart/mixed');
+  static final MediaType alternative = MediaType.parse('multipart/alternative');
+  static final MediaType digest = MediaType.parse('multipart/digest');
+  static final MediaType parallel = MediaType.parse('multipart/parallel');
+  static final MediaType form = MediaType.parse('multipart/form-data');
 
-  static const String _COLONSPACE = ': ';
-  static const String _CRLF = '\r\n';
-  static const String _DASHDASH = '--';
+  static const String _colonSpace = ': ';
+  static const String _crlf = '\r\n';
+  static const String _dashDash = '--';
 
   final String _boundary;
   final MediaType _originalType;
@@ -76,61 +76,64 @@ class MultipartBody extends RequestBody {
       Headers headers = part.headers();
       RequestBody body = part.body();
 
-      length += readAscii(_DASHDASH).length;
+      length += readAscii(_dashDash).length;
       length += readAscii(_boundary).length;
-      length += readAscii(_CRLF).length;
+      length += readAscii(_crlf).length;
 
       if (headers != null) {
         for (int h = 0, headerCount = headers.size(); h < headerCount; h++) {
           length += readUtf8(headers.nameAt(h)).length;
-          length += readAscii(_COLONSPACE).length;
+          length += readAscii(_colonSpace).length;
           length += readUtf8(headers.valueAt(h)).length;
-          length += readAscii(_CRLF).length;
+          length += readAscii(_crlf).length;
         }
       }
 
       MediaType contentType = body.contentType();
       if (contentType != null) {
         length += readUtf8(HttpHeaders.contentTypeHeader).length;
-        length += readAscii(_COLONSPACE).length;
+        length += readAscii(_colonSpace).length;
         length += readUtf8(contentType.toString()).length;
-        length += readAscii(_CRLF).length;
+        length += readAscii(_crlf).length;
       }
 
       int contentLength = body.contentLength();
       if (contentLength != -1) {
         length += readUtf8(HttpHeaders.contentLengthHeader).length;
-        length += readAscii(_COLONSPACE).length;
+        length += readAscii(_colonSpace).length;
         length += readUtf8('$contentLength').length;
-        length += readAscii(_CRLF).length;
+        length += readAscii(_crlf).length;
       } else {
         return -1;
       }
 
-      length += readAscii(_CRLF).length;
+      length += readAscii(_crlf).length;
 
       length += contentLength;
 
-      length += readAscii(_CRLF).length;
+      length += readAscii(_crlf).length;
     }
 
-    length += readAscii(_DASHDASH).length;
+    length += readAscii(_dashDash).length;
     length += readAscii(_boundary).length;
-    length += readAscii(_DASHDASH).length;
-    length += readAscii(_CRLF).length;
+    length += readAscii(_dashDash).length;
+    length += readAscii(_crlf).length;
 
     _contentLength = length;
     return _contentLength;
   }
 
   @override
-  Future<void> writeTo(StreamSink<List<int>> sink) async {
-    void writeAscii(String source) {
-      sink.add(ascii.encode(source));
+  Stream<List<int>> source() {
+    StreamController<List<int>> controller =
+        StreamController<List<int>>(sync: true);
+
+    void writeAscii(String string) {
+      controller.add(utf8.encode(string));
     }
 
     void writeUtf8(String source) {
-      sink.add(utf8.encode(source));
+      controller.add(utf8.encode(source));
     }
 
     for (int p = 0, partCount = _parts.length; p < partCount; p++) {
@@ -138,46 +141,48 @@ class MultipartBody extends RequestBody {
       Headers headers = part.headers();
       RequestBody body = part.body();
 
-      writeAscii(_DASHDASH);
+      writeAscii(_dashDash);
       writeAscii(_boundary);
-      writeAscii(_CRLF);
+      writeAscii(_crlf);
 
       if (headers != null) {
         for (int h = 0, headerCount = headers.size(); h < headerCount; h++) {
           writeUtf8(headers.nameAt(h));
-          writeAscii(_COLONSPACE);
+          writeAscii(_colonSpace);
           writeUtf8(headers.valueAt(h));
-          writeAscii(_CRLF);
+          writeAscii(_crlf);
         }
       }
 
       MediaType contentType = body.contentType();
       if (contentType != null) {
         writeUtf8(HttpHeaders.contentTypeHeader);
-        writeAscii(_COLONSPACE);
+        writeAscii(_colonSpace);
         writeUtf8(contentType.toString());
-        writeAscii(_CRLF);
+        writeAscii(_crlf);
       }
 
       int contentLength = body.contentLength();
       if (contentLength != -1) {
         writeUtf8(HttpHeaders.contentLengthHeader);
-        writeAscii(_COLONSPACE);
+        writeAscii(_colonSpace);
         writeUtf8('$contentLength');
-        writeAscii(_CRLF);
+        writeAscii(_crlf);
       }
 
-      writeAscii(_CRLF);
+      writeAscii(_crlf);
 
-      await body.writeTo(sink);
+      controller.addStream(body.source(), cancelOnError: true);
 
-      writeAscii(_CRLF);
+      writeAscii(_crlf);
     }
 
-    writeAscii(_DASHDASH);
+    writeAscii(_dashDash);
     writeAscii(_boundary);
-    writeAscii(_DASHDASH);
-    writeAscii(_CRLF);
+    writeAscii(_dashDash);
+    writeAscii(_crlf);
+
+    return controller.stream;
   }
 }
 
@@ -251,7 +256,7 @@ class MultipartBodyBuilder {
         _boundary = boundary;
 
   final String _boundary;
-  MediaType _type = MultipartBody.MIXED;
+  MediaType _type = MultipartBody.mixed;
   final List<Part> _parts = <Part>[];
 
   MultipartBodyBuilder setType(MediaType type) {

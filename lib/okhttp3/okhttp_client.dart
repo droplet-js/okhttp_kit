@@ -1,12 +1,10 @@
-import 'package:fake_okhttp/okhttp3/authenticator.dart';
 import 'package:fake_okhttp/okhttp3/cache.dart';
 import 'package:fake_okhttp/okhttp3/call.dart';
 import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';
-import 'package:fake_okhttp/okhttp3/real_call.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 
-class OkHttpClient implements Factory {
+class OkHttpClient {
   OkHttpClient._(
     OkHttpClientBuilder builder,
   )   : _interceptors = List<Interceptor>.unmodifiable(builder._interceptors),
@@ -14,10 +12,8 @@ class OkHttpClient implements Factory {
             List<Interceptor>.unmodifiable(builder._networkInterceptors),
         _cookieJar = builder._cookieJar,
         _cache = builder._cache,
-        _authenticator = builder._authenticator,
-        _proxyAuthenticator = builder._proxyAuthenticator,
         _followRedirects = builder._followRedirects,
-        _retryOnConnectionFailure = builder._retryOnConnectionFailure,
+        _maxRedirects = builder._maxRedirects,
         _idleTimeout = builder._idleTimeout,
         _connectionTimeout = builder._connectionTimeout;
 
@@ -27,11 +23,8 @@ class OkHttpClient implements Factory {
   final CookieJar _cookieJar;
   final Cache _cache;
 
-  final Authenticator _authenticator;
-  final ProxyAuthenticator _proxyAuthenticator;
-
   final bool _followRedirects;
-  final bool _retryOnConnectionFailure;
+  final int _maxRedirects;
 
   final Duration _idleTimeout;
   final Duration _connectionTimeout;
@@ -52,20 +45,12 @@ class OkHttpClient implements Factory {
     return _cache;
   }
 
-  Authenticator authenticator() {
-    return _authenticator;
-  }
-
-  ProxyAuthenticator proxyAuthenticator() {
-    return _proxyAuthenticator;
-  }
-
   bool followRedirects() {
     return _followRedirects;
   }
 
-  bool retryOnConnectionFailure() {
-    return _retryOnConnectionFailure;
+  int maxRedirects() {
+    return _maxRedirects;
   }
 
   Duration idleTimeout() {
@@ -76,7 +61,6 @@ class OkHttpClient implements Factory {
     return _connectionTimeout;
   }
 
-  @override
   Call newCall(Request request) {
     return RealCall.newRealCall(this, request);
   }
@@ -92,10 +76,8 @@ class OkHttpClientBuilder {
   OkHttpClientBuilder._(OkHttpClient client)
       : _cookieJar = client._cookieJar,
         _cache = client._cache,
-        _authenticator = client._authenticator,
-        _proxyAuthenticator = client._proxyAuthenticator,
         _followRedirects = client._followRedirects,
-        _retryOnConnectionFailure = client._retryOnConnectionFailure,
+        _maxRedirects = client._maxRedirects,
         _idleTimeout = client._idleTimeout,
         _connectionTimeout = client._connectionTimeout {
     _interceptors.addAll(client._interceptors);
@@ -105,14 +87,11 @@ class OkHttpClientBuilder {
   final List<Interceptor> _interceptors = <Interceptor>[];
   final List<Interceptor> _networkInterceptors = <Interceptor>[];
 
-  CookieJar _cookieJar = CookieJar.NO_COOKIES;
+  CookieJar _cookieJar = CookieJar.noCookies;
   Cache _cache;
 
-  Authenticator _authenticator = Authenticator.NONE;
-  ProxyAuthenticator _proxyAuthenticator = ProxyAuthenticator.NONE;
-
   bool _followRedirects = true;
-  bool _retryOnConnectionFailure = true;
+  int _maxRedirects = 5;
 
   Duration _idleTimeout = Duration(seconds: 15);
   Duration _connectionTimeout = Duration(seconds: 10);
@@ -140,35 +119,26 @@ class OkHttpClientBuilder {
     return this;
   }
 
-  OkHttpClientBuilder authenticator(Authenticator authenticator) {
-    assert(authenticator != null);
-    _authenticator = authenticator;
-    return this;
-  }
-
-  OkHttpClientBuilder proxyAuthenticator(
-      ProxyAuthenticator proxyAuthenticator) {
-    assert(proxyAuthenticator != null);
-    _proxyAuthenticator = proxyAuthenticator;
-    return this;
-  }
-
   OkHttpClientBuilder followRedirects(bool value) {
+    assert(value != null);
     _followRedirects = value;
     return this;
   }
 
-  OkHttpClientBuilder retryOnConnectionFailure(bool value) {
-    _retryOnConnectionFailure = value;
+  OkHttpClientBuilder maxRedirects(int value) {
+    assert(value != null);
+    _maxRedirects = value;
     return this;
   }
 
   OkHttpClientBuilder idleTimeout(Duration value) {
+    assert(value != null);
     _idleTimeout = value;
     return this;
   }
 
   OkHttpClientBuilder connectionTimeout(Duration value) {
+    assert(value != null);
     _connectionTimeout = value;
     return this;
   }

@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fake_okhttp/okhttp3/chain.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
-import 'package:flutter/foundation.dart';
 
 /// 应用层拦截器
 class UserAgentInterceptor implements Interceptor {
   UserAgentInterceptor(
-    AsyncValueGetter<String> userAgent,
+      FutureOr<String> userAgent(),
   )   : assert(userAgent != null),
         _userAgent = userAgent;
 
-  final AsyncValueGetter<String> _userAgent;
+  final FutureOr<String> Function() _userAgent;
 
   @override
   Future<Response> intercept(Chain chain) async {

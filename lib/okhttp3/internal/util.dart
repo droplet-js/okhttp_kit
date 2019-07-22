@@ -1,14 +1,18 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:fake_okhttp/okhttp3/http_url.dart';
-import 'package:fake_okhttp/okhttp3/io/closeable.dart';
 import 'package:fake_okhttp/okhttp3/request_body.dart';
 import 'package:fake_okhttp/okhttp3/response_body.dart';
 
 class Util {
   Util._();
 
-  static final ResponseBody EMPTY_RESPONSE =
-      ResponseBody.bytesBody(null, <int>[]);
-  static final RequestBody EMPTY_REQUEST = RequestBody.bytesBody(null, <int>[]);
+  static final ResponseBody emptyResponse =
+      ResponseBody.bytesBody(null, const <int>[]);
+
+  static final RequestBody emptyRequest =
+      RequestBody.bytesBody(null, const <int>[]);
 
   static String hostHeader(HttpUrl url, bool includeDefaultPort) {
     String host = url.host().contains(':') ? '[${url.host()}]' : url.host();
@@ -23,9 +27,18 @@ class Util {
         host;
   }
 
-  static void closeQuietly(Closeable closeable) {
-    if (closeable != null) {
-      closeable.close();
-    }
+  static Future<List<int>> readAsBytes(Stream<List<int>> source) {
+    Completer<List<int>> completer = Completer<List<int>>();
+    ByteConversionSink sink =
+        ByteConversionSink.withCallback((List<int> accumulated) {
+      completer.complete(accumulated);
+    });
+    source.listen(
+      sink.add,
+      onError: completer.completeError,
+      onDone: sink.close,
+      cancelOnError: true,
+    );
+    return completer.future;
   }
 }

@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
 import 'package:fake_okhttp/okhttp3/http_url.dart';
-import 'package:fake_okhttp/okhttp3/lang/integer.dart';
 
 class PersistentCookieJar implements CookieJar {
   PersistentCookieJar._(
@@ -42,7 +41,7 @@ class PersistentCookieJar implements CookieJar {
   }
 
   static PersistentCookieJar memory() {
-    return persistent(CookiePersistor.MEMORY);
+    return persistent(CookiePersistor._memory);
   }
 
   static PersistentCookieJar persistent(CookiePersistor persistor) {
@@ -97,7 +96,7 @@ class PersistentCookie {
               Duration.millisecondsPerSecond)
           .toInt();
     }
-    return Integer.MIN_VALUE;
+    return 0;
   }
 
   bool isExpired() {
@@ -192,7 +191,7 @@ class _PersistentCookieStore {
 }
 
 abstract class CookiePersistor {
-  static final CookiePersistor MEMORY = _MemoryCookiePersistor();
+  static final CookiePersistor _memory = _MemoryCookiePersistor();
 
   Future<List<PersistentCookie>> load(HttpUrl index);
 

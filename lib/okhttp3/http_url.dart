@@ -3,8 +3,8 @@ class HttpUrl {
     HttpUrlBuilder builder,
   ) : _uri = builder._uri;
 
-  static const String SCHEME_HTTP = 'http';
-  static const String SCHEME_HTTPS = 'https';
+  static const String schemeHttp = 'http';
+  static const String schemeHttps = 'https';
 
   final Uri _uri;
 
@@ -13,7 +13,7 @@ class HttpUrl {
   }
 
   bool isHttps() {
-    return _uri.isScheme(SCHEME_HTTPS);
+    return _uri.isScheme(schemeHttps);
   }
 
   String host() {
@@ -24,6 +24,10 @@ class HttpUrl {
     return _uri.port;
   }
 
+  String authority() {
+    return _uri.authority;
+  }
+
   String userInfo() {
     return _uri.userInfo;
   }
@@ -32,12 +36,16 @@ class HttpUrl {
     return _uri.path;
   }
 
-  List<String> pathSegments() {
-    return _uri.pathSegments;
-  }
-
   String query() {
     return _uri.query;
+  }
+
+  String fragment() {
+    return _uri.fragment;
+  }
+
+  List<String> pathSegments() {
+    return _uri.pathSegments;
   }
 
   String queryParameter(String name) {
@@ -94,9 +102,9 @@ class HttpUrl {
   }
 
   static int defaultPort(String scheme) {
-    if (scheme == SCHEME_HTTP) {
+    if (scheme == schemeHttp) {
       return 80;
-    } else if (scheme == SCHEME_HTTPS) {
+    } else if (scheme == schemeHttps) {
       return 443;
     } else {
       return -1;

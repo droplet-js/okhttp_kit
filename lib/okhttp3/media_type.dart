@@ -17,10 +17,10 @@ class MediaType {
     ContentType contentType,
   ) : _contentType = contentType;
 
-  static final MediaType TEXT = MediaType._(ContentType.text);
-  static final MediaType HTML = MediaType._(ContentType.html);
-  static final MediaType JSON = MediaType._(ContentType.json);
-  static final MediaType BINARY = MediaType._(ContentType.binary);
+  static final MediaType text = MediaType._(ContentType.text);
+  static final MediaType html = MediaType._(ContentType.html);
+  static final MediaType json = MediaType._(ContentType.json);
+  static final MediaType binary = MediaType._(ContentType.binary);
 
   final ContentType _contentType;
 

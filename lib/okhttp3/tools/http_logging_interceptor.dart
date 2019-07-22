@@ -2,17 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fake_okhttp/okhttp3/chain.dart';
+import 'package:fake_okhttp/okhttp3/foundation/character.dart';
 import 'package:fake_okhttp/okhttp3/headers.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';
 import 'package:fake_okhttp/okhttp3/internal/encoding_util.dart';
 import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
-import 'package:fake_okhttp/okhttp3/lang/character.dart';
+import 'package:fake_okhttp/okhttp3/internal/util.dart';
 import 'package:fake_okhttp/okhttp3/media_type.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 import 'package:fake_okhttp/okhttp3/request_body.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
 import 'package:fake_okhttp/okhttp3/response_body.dart';
-import 'package:quiver/async.dart';
 
 /// 网络层拦截器
 class HttpLoggingInterceptor implements Interceptor {
@@ -70,7 +71,7 @@ class HttpLoggingInterceptor implements Interceptor {
       logger.requestHeaders(requestHeaders);
 
       if (!logBody || !hasRequestBody) {
-        logger.requestOmitted(request.method());
+        logger.requestOmitted(null);
       } else if (_bodyEncoded(request.headers())) {
         logger.requestOmitted('encoded body omitted');
       } else {
@@ -78,10 +79,7 @@ class HttpLoggingInterceptor implements Interceptor {
         int contentLength = requestBody.contentLength();
 
         if (_isPlainContentType(contentType)) {
-          StreamBuffer<int> buffer = StreamBuffer<int>();
-          StreamSink<List<int>> sink = IOSink(buffer);
-          await requestBody.writeTo(sink);
-          List<int> bytes = await buffer.read(buffer.buffered);
+          List<int> bytes = await Util.readAsBytes(requestBody.source());
 
           Encoding encoding = EncodingUtil.encoding(contentType);
           String body = encoding.decode(bytes);
@@ -146,7 +144,7 @@ class HttpLoggingInterceptor implements Interceptor {
       logger.responseHeaders(responseHeaders);
 
       if (!logBody || !HttpHeadersExtension.hasBody(response)) {
-        logger.responseOmitted(response.request().method());
+        logger.responseOmitted(null);
       } else if (_bodyEncoded(response.headers())) {
         logger.responseOmitted('encoded body omitted');
       } else {

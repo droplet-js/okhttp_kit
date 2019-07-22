@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:charcode/ascii.dart' as ascii;
@@ -36,7 +35,7 @@ class HttpHeadersExtension {
 
   static Future<void> receiveHeaders(
       CookieJar cookieJar, HttpUrl url, Headers headers) async {
-    if (cookieJar == CookieJar.NO_COOKIES) {
+    if (cookieJar == CookieJar.noCookies) {
       return;
     }
     List<Cookie> cookies = CookieExtension.parseAllCookies(url, headers);
@@ -48,7 +47,7 @@ class HttpHeadersExtension {
 
   static bool hasBody(Response response) {
     // HEAD requests never yield a body regardless of the response headers.
-    if (response.request().method() == HttpMethod.HEAD) {
+    if (response.request().method() == HttpMethod.head) {
       return false;
     }
 
@@ -166,10 +165,4 @@ class CookieExtension {
     }
     return false;
   }
-}
-
-class HttpStatusExtension {
-  HttpStatusExtension._();
-
-  static const int permanentRedirect = 308;
 }

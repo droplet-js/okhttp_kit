@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fake_okhttp/okhttp3/chain.dart';
 import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
 import 'package:fake_okhttp/okhttp3/headers.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';

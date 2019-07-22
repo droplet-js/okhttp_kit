@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:fake_okhttp/okhttp3/http_url.dart';
 
 abstract class CookieJar {
-  static const CookieJar NO_COOKIES = _NoCookieJar();
+  static const CookieJar noCookies = _NoCookieJar();
 
   Future<void> saveFromResponse(HttpUrl url, List<Cookie> cookies);
 

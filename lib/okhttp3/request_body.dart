@@ -5,16 +5,16 @@ import 'dart:io';
 import 'package:fake_okhttp/okhttp3/internal/encoding_util.dart';
 import 'package:fake_okhttp/okhttp3/media_type.dart';
 
+/// buffer
 abstract class RequestBody {
   MediaType contentType();
 
-  int contentLength() {
-    return -1;
-  }
+  int contentLength();
 
-  Future<void> writeTo(StreamSink<List<int>> sink);
+  Stream<List<int>> source();
 
   static RequestBody bytesBody(MediaType contentType, List<int> bytes) {
+    assert(bytes != null);
     return _SimpleRequestBody(contentType, bytes.length, bytes);
   }
 
@@ -53,8 +53,8 @@ class _SimpleRequestBody extends RequestBody {
   }
 
   @override
-  Future<void> writeTo(StreamSink<List<int>> sink) {
-    return sink.addStream(Stream<List<int>>.fromIterable(<List<int>>[_bytes]));
+  Stream<List<int>> source() {
+    return Stream<List<int>>.fromIterable(<List<int>>[_bytes]);
   }
 }
 
@@ -79,7 +79,7 @@ class _FileRequestBody extends RequestBody {
   }
 
   @override
-  Future<void> writeTo(StreamSink<List<int>> sink) {
-    return sink.addStream(_file.openRead());
+  Stream<List<int>> source() {
+    return _file.openRead();
   }
 }

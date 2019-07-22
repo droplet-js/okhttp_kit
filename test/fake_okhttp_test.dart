@@ -1,10 +1,24 @@
-import 'package:fake_okhttp/fake_okhttp.dart';
+import 'dart:io';
+
+import 'package:fake_okhttp/okhttp3/cache.dart';
+import 'package:fake_okhttp/okhttp3/form_body.dart';
+import 'package:fake_okhttp/okhttp3/http_url.dart';
+import 'package:fake_okhttp/okhttp3/internal/cache/disk_cache.dart';
+import 'package:fake_okhttp/okhttp3/okhttp_client.dart';
+import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:fake_okhttp/okhttp3/request_body.dart';
+import 'package:fake_okhttp/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/tools/http_logging_interceptor.dart';
+import 'package:fake_okhttp/okhttp3/tools/optimized_request_interceptor.dart';
+import 'package:fake_okhttp/okhttp3/tools/persistent_cookie_jar.dart';
+import 'package:fake_okhttp/okhttp3/tools/progress_interceptor.dart';
+import 'package:fake_okhttp/okhttp3/tools/user_agent_interceptor.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:file/local.dart';
+import 'package:test/test.dart';
 
 void main() {
-  FileSystem fileSystem = MemoryFileSystem(); // const LocalFileSystem();
+  FileSystem fileSystem = const LocalFileSystem();
 
   print(
       '${fileSystem.currentDirectory.path} - ${fileSystem.systemTempDirectory.path}');
@@ -15,53 +29,53 @@ void main() {
   if (!directory.existsSync()) {
     directory.createSync(recursive: true);
   }
+
   OkHttpClient client = OkHttpClientBuilder()
-      .cache(Cache(DiskCache.create(() => Future<Directory>.value(directory))))
       .cookieJar(PersistentCookieJar.memory())
-      .addInterceptor(UserAgentInterceptor(() => Future<String>.value('xxx')))
-      .addInterceptor(
-          OptimizedRequestInterceptor(() => Future<bool>.value(true)))
-      .addNetworkInterceptor(OptimizedResponseInterceptor())
-      .addNetworkInterceptor(HttpLoggingInterceptor(level: LoggerLevel.BODY))
-      .addNetworkInterceptor(ProgressRequestInterceptor((String url,
+      .cache(Cache(DiskCache.create(() => directory)))
+      .addInterceptor(UserAgentInterceptor(() => 'xxx'))
+      .addInterceptor(OptimizedRequestInterceptor(() => true))
+//      .addNetworkInterceptor(OptimizedResponseInterceptor())
+      .addNetworkInterceptor(HttpLoggingInterceptor(level: LoggerLevel.HEADERS))
+      .addNetworkInterceptor(ProgressRequestInterceptor((HttpUrl url,
           String method, int progressBytes, int totalBytes, bool isDone) {
     print(
         'progress request - $method $url $progressBytes/$totalBytes done:$isDone');
-  })).addNetworkInterceptor(ProgressResponseInterceptor((String url,
+  })).addNetworkInterceptor(ProgressResponseInterceptor((HttpUrl url,
           String method, int progressBytes, int totalBytes, bool isDone) {
     print(
         'progress response - $method $url $progressBytes/$totalBytes done:$isDone');
   })).build();
 
-  test('smoke test - http get', () async {
-    print('${DateTime.now().toLocal()}');
-    HttpUrl url = HttpUrl.parse('https://www.baidu.com/');
-    Request request = RequestBuilder().url(url).get().build();
-    await client.newCall(request).enqueue().then((Response response) async {
-      print(
-          'resp: ${response.code()} - ${response.message()} - ${(await response.body().string())}');
-    }).catchError((dynamic error) {
-      print('error: $error');
-    });
-    print('${DateTime.now().toLocal()}');
+  test('pub.dev', () async {
+    Request request =
+        RequestBuilder().get().url(HttpUrl.parse('https://pub.dev/')).build();
+    Response response = await client.newCall(request).enqueue();
+    print(
+        '${response.code()} - ${response.message()} - ${response.cacheControl()}');
   });
 
-  test('smoke test - http get json', () async {
-    print('${DateTime.now().toLocal()}');
-    HttpUrl url =
-        HttpUrl.parse('https://www.apiopen.top/satinApi?type=1&page=1');
-    Request request = RequestBuilder().url(url).get().build();
-    await client.newCall(request).enqueue().then((Response response) async {
-      print(
-          'resp: ${response.code()} - ${response.message()} - ${(await response.body().string())}');
-    }).catchError((dynamic error) {
-      print('error: $error');
-    });
-    print('${DateTime.now().toLocal()}');
+  test('baidu.com', () async {
+    Request request = RequestBuilder()
+        .get()
+        .url(HttpUrl.parse('https://www.baidu.com/'))
+        .build();
+    Response response = await client.newCall(request).enqueue();
+    print(
+        '${response.code()} - ${response.message()} - ${response.cacheControl()}');
   });
 
-  test('smoke test - http post', () async {
-    print('${DateTime.now().toLocal()}');
+  test('taobao.com', () async {
+    Request request = RequestBuilder()
+        .get()
+        .url(HttpUrl.parse('https://www.taobao.com/'))
+        .build();
+    Response response = await client.newCall(request).enqueue();
+    print(
+        '${response.code()} - ${response.message()} - ${response.cacheControl()} - ${(await response.body().bytes()).length}');
+  });
+
+  test('fanyi.baidu.com', () async {
     HttpUrl url = HttpUrl.parse('http://fanyi.baidu.com/v2transapi');
     RequestBody body = FormBodyBuilder()
         .add('from', 'zh')
@@ -76,22 +90,8 @@ void main() {
         .header(HttpHeaders.refererHeader, 'http://fanyi.baidu.com/')
         .post(body)
         .build();
-    await client.newCall(request).enqueue().then((Response response) async {
-      print(
-          'resp: ${response.code()} - ${response.message()} - ${await response.body().string()}');
-    }).catchError((dynamic error) {
-      print('error: $error');
-    });
-    print('${DateTime.now().toLocal()}');
-  });
-
-  test('smoke test - cache', () async {
-    List<FileSystemEntity> list = directory.listSync();
-    if (list != null && list.isNotEmpty) {
-      list.forEach((FileSystemEntity entity) {
-        print(
-            'xxx - ${entity.path} - ${entity.basename} - ${entity.statSync().size}');
-      });
-    }
+    Response response = await client.newCall(request).enqueue();
+    print(
+        '${response.code()} - ${response.message()} - ${response.cacheControl()} - ${(await response.body().bytes()).length}');
   });
 }

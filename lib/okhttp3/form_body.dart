@@ -30,8 +30,8 @@ class FormBody extends RequestBody {
   }
 
   @override
-  Future<void> writeTo(StreamSink<List<int>> sink) async {
-    sink.add(_bytes);
+  Stream<List<int>> source() {
+    return Stream<List<int>>.fromIterable(<List<int>>[_bytes]);
   }
 
   static String _pairsToQuery(List<String> namesAndValues) {
@@ -51,7 +51,7 @@ class FormBodyBuilder {
   final List<String> _namesAndValues = <String>[];
 
   FormBodyBuilder add(String name, String value) {
-    assert(name != null);
+    assert(name != null && name.isNotEmpty);
     assert(value != null);
     _namesAndValues.add(Uri.encodeQueryComponent(name, encoding: _encoding));
     _namesAndValues.add(Uri.encodeQueryComponent(value, encoding: _encoding));

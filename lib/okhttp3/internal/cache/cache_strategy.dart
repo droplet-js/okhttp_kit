@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:fake_okhttp/okhttp3/cache_control.dart';
 import 'package:fake_okhttp/okhttp3/headers.dart';
-import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
 
@@ -30,7 +29,7 @@ class CacheStrategy {
       case HttpStatus.gone:
       case HttpStatus.requestUriTooLong:
       case HttpStatus.notImplemented:
-      case HttpStatusExtension.permanentRedirect:
+      case HttpStatus.permanentRedirect:
         // These codes can be cached unless headers forbid it.
         break;
       case HttpStatus.movedTemporarily:

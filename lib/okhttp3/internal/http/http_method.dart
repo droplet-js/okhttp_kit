@@ -1,25 +1,25 @@
 class HttpMethod {
   HttpMethod._();
 
-  static const String HEAD = 'HEAD';
-  static const String GET = 'GET';
-  static const String POST = 'POST';
-  static const String PUT = 'PUT';
-  static const String PATCH = 'PATCH';
-  static const String DELETE = 'DELETE';
+  static const String head = 'HEAD';
+  static const String get = 'GET';
+  static const String post = 'POST';
+  static const String put = 'PUT';
+  static const String patch = 'PATCH';
+  static const String delete = 'DELETE';
 
   static bool invalidatesCache(String method) {
-    return method == POST ||
-        method == PATCH ||
-        method == PUT ||
-        method == DELETE;
+    return method == post ||
+        method == patch ||
+        method == put ||
+        method == delete;
   }
 
   static bool requiresRequestBody(String method) {
-    return method == POST || method == PUT || method == PATCH;
+    return method == post || method == put || method == patch;
   }
 
   static bool permitsRequestBody(String method) {
-    return !(method == GET || method == HEAD);
+    return !(method == get || method == head);
   }
 }

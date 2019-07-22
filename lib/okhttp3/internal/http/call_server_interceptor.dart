@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fake_okhttp/okhttp3/chain.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';
 import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
-import 'package:fake_okhttp/okhttp3/internal/http/real_interceptor_chain.dart';
-import 'package:fake_okhttp/okhttp3/internal/http/real_response_body.dart';
 import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
+import 'package:fake_okhttp/okhttp3/media_type.dart';
 import 'package:fake_okhttp/okhttp3/okhttp_client.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/response_body.dart';
 
 class CallServerInterceptor implements Interceptor {
   CallServerInterceptor(
@@ -19,8 +20,10 @@ class CallServerInterceptor implements Interceptor {
 
   @override
   Future<Response> intercept(Chain chain) async {
-    RealInterceptorChain realChain = chain as RealInterceptorChain;
-    HttpClient httpClient = realChain.httpClient();
+    HttpClient httpClient = HttpClient();
+    httpClient.idleTimeout = _client.idleTimeout();
+    httpClient.connectionTimeout = _client.connectionTimeout();
+
     Request request = chain.request();
 
     int sentRequestMillis = DateTime.now().millisecondsSinceEpoch;
@@ -29,21 +32,18 @@ class CallServerInterceptor implements Interceptor {
         await httpClient.openUrl(request.method(), request.url().uri());
     ioRequest
       ..followRedirects = _client.followRedirects()
-      ..maxRedirects = 5
-      ..contentLength =
-          request.body() != null ? request.body().contentLength() : -1
+      ..maxRedirects = _client.maxRedirects()
+      ..contentLength = request.body()?.contentLength() ?? -1
       ..persistentConnection =
-          request.header(HttpHeaders.connectionHeader) == null ||
-              request.header(HttpHeaders.connectionHeader).toLowerCase() ==
-                  'keep-alive';
+          request.header(HttpHeaders.connectionHeader)?.toLowerCase() ==
+              'keep-alive';
     for (int i = 0, size = request.headers().size(); i < size; i++) {
       ioRequest.headers
           .add(request.headers().nameAt(i), request.headers().valueAt(i));
     }
-
     if (HttpMethod.permitsRequestBody(request.method()) &&
         request.body() != null) {
-      await request.body().writeTo(ioRequest);
+      await ioRequest.addStream(request.body().source());
     }
 
     HttpClientResponse ioResponse = await ioRequest.close();
@@ -66,19 +66,32 @@ class CallServerInterceptor implements Interceptor {
         .receivedResponseAtMillis(DateTime.now().millisecondsSinceEpoch)
         .build();
 
+    // 绑定 HttpClient 生命周期
+    Stream<List<int>> source =
+        StreamTransformer<List<int>, List<int>>.fromHandlers(
+            handleDone: (EventSink<List<int>> sink) {
+      sink.close();
+      httpClient.close(force: false); // keep alive
+    }).bind(ioResponse);
+
     String contentType = response.header(HttpHeaders.contentTypeHeader);
+    ;
     response = response
         .newBuilder()
-        .body(RealResponseBody(contentType,
-            HttpHeadersExtension.contentLength(response), ioResponse))
+        .body(ResponseBody.streamBody(
+            contentType != null ? MediaType.parse(contentType) : null,
+            HttpHeadersExtension.contentLength(response),
+            source))
         .build();
 
     if ((response.code() == HttpStatus.noContent ||
             response.code() == HttpStatus.resetContent) &&
         response.body() != null &&
         response.body().contentLength() > 0) {
-      throw Exception(
-          'HTTP ${response.code()} had non-zero Content-Length: ${response.body().contentLength()}');
+      throw HttpException(
+        'HTTP ${response.code()} had non-zero Content-Length: ${response.body().contentLength()}',
+        uri: request.url().uri(),
+      );
     }
     return response;
   }

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:fake_okhttp/okhttp3/headers.dart';
 import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
-import 'package:fake_okhttp/okhttp3/lang/integer.dart';
+import 'package:fixnum/fixnum.dart';
 
 class CacheControl {
   CacheControl._(
@@ -46,25 +46,26 @@ class CacheControl {
         _noTransform = builder._noTransform,
         _immutable = builder._immutable;
 
-  static final CacheControl FORCE_NETWORK =
+  static final CacheControl forceNetwork =
       CacheControlBuilder().noCache().build();
-  static final CacheControl FORCE_CACHE = CacheControlBuilder()
+
+  static final CacheControl forceCache = CacheControlBuilder()
       .onlyIfCached()
-      .maxStale(Duration(seconds: Integer.MAX_VALUE))
+      .maxStale(Duration(seconds: Int32.MAX_VALUE.toInt()))
       .build();
 
-  static const String _PARAMS_NO_CACHE = 'no-cache';
-  static const String _PARAMS_NO_STORE = 'no-store';
-  static const String _PARAMS_MAX_AGE = 'max-age';
-  static const String _PARAMS_S_MAXAGE = 's-maxage';
-  static const String _PARAMS_PRIVATE = 'private';
-  static const String _PARAMS_PUBLIC = 'public';
-  static const String _PARAMS_MUST_REVALIDATE = 'must-revalidate';
-  static const String _PARAMS_MAX_STALE = 'max-stale';
-  static const String _PARAMS_MIN_FRESH = 'min-fresh';
-  static const String _PARAMS_ONLY_IF_CACHED = 'only-if-cached';
-  static const String _PARAMS_NO_TRANSFORM = 'no-transform';
-  static const String _PARAMS_IMMUTABLE = 'immutable';
+  static const String _params_no_cache = 'no-cache';
+  static const String _params_no_store = 'no-store';
+  static const String _params_max_age = 'max-age';
+  static const String _params_s_maxage = 's-maxage';
+  static const String _params_private = 'private';
+  static const String _params_public = 'public';
+  static const String _params_must_revalidate = 'must-revalidate';
+  static const String _params_max_stale = 'max-stale';
+  static const String _params_min_fresh = 'min-fresh';
+  static const String _params_only_if_cached = 'only-if-cached';
+  static const String _params_no_transform = 'no-transform';
+  static const String _params_immutable = 'immutable';
 
   final bool _noCache;
   final bool _noStore;
@@ -135,40 +136,40 @@ class CacheControl {
   String _headerValue() {
     StringBuffer result = StringBuffer();
     if (_noCache) {
-      result.write('$_PARAMS_NO_CACHE, ');
+      result.write('$_params_no_cache, ');
     }
     if (_noStore) {
-      result.write('$_PARAMS_NO_STORE, ');
+      result.write('$_params_no_store, ');
     }
     if (_maxAgeSeconds >= 0) {
-      result.write('$_PARAMS_MAX_AGE=$_maxAgeSeconds, ');
+      result.write('$_params_max_age=$_maxAgeSeconds, ');
     }
     if (_sMaxAgeSeconds >= 0) {
-      result.write('$_PARAMS_S_MAXAGE=$_sMaxAgeSeconds, ');
+      result.write('$_params_s_maxage=$_sMaxAgeSeconds, ');
     }
     if (_isPrivate) {
-      result.write('$_PARAMS_PRIVATE, ');
+      result.write('$_params_private, ');
     }
     if (_isPublic) {
-      result.write('$_PARAMS_PUBLIC, ');
+      result.write('$_params_public, ');
     }
     if (_mustRevalidate) {
-      result.write('$_PARAMS_MUST_REVALIDATE, ');
+      result.write('$_params_must_revalidate, ');
     }
     if (_maxStaleSeconds >= 0) {
-      result.write('$_PARAMS_MAX_STALE=$_maxStaleSeconds, ');
+      result.write('$_params_max_stale=$_maxStaleSeconds, ');
     }
     if (_minFreshSeconds >= 0) {
-      result.write('$_PARAMS_MIN_FRESH=$_minFreshSeconds, ');
+      result.write('$_params_min_fresh=$_minFreshSeconds, ');
     }
     if (_onlyIfCached) {
-      result.write('$_PARAMS_ONLY_IF_CACHED, ');
+      result.write('$_params_only_if_cached, ');
     }
     if (_noTransform) {
-      result.write('$_PARAMS_NO_TRANSFORM, ');
+      result.write('$_params_no_transform, ');
     }
     if (_immutable) {
-      result.write('$_PARAMS_IMMUTABLE}, ');
+      result.write('$_params_immutable}, ');
     }
     return result.isNotEmpty
         ? result.toString().substring(0, result.length - 2)
@@ -224,30 +225,31 @@ class CacheControl {
             }
           }
 
-          if (_PARAMS_NO_CACHE == directive.toLowerCase()) {
+          if (_params_no_cache == directive.toLowerCase()) {
             noCache = true;
-          } else if (_PARAMS_NO_STORE == directive.toLowerCase()) {
+          } else if (_params_no_store == directive.toLowerCase()) {
             noStore = true;
-          } else if (_PARAMS_MAX_AGE == directive.toLowerCase()) {
-            maxAgeSeconds = parameter != null ? int.parse(parameter) : -1;
-          } else if (_PARAMS_S_MAXAGE == directive.toLowerCase()) {
-            sMaxAgeSeconds = parameter != null ? int.parse(parameter) : -1;
-          } else if (_PARAMS_PRIVATE == directive.toLowerCase()) {
+          } else if (_params_max_age == directive.toLowerCase()) {
+            maxAgeSeconds = parameter != null ? int.tryParse(parameter) : -1;
+          } else if (_params_s_maxage == directive.toLowerCase()) {
+            sMaxAgeSeconds = parameter != null ? int.tryParse(parameter) : -1;
+          } else if (_params_private == directive.toLowerCase()) {
             isPrivate = true;
-          } else if (_PARAMS_PUBLIC == directive.toLowerCase()) {
+          } else if (_params_public == directive.toLowerCase()) {
             isPublic = true;
-          } else if (_PARAMS_MUST_REVALIDATE == directive.toLowerCase()) {
+          } else if (_params_must_revalidate == directive.toLowerCase()) {
             mustRevalidate = true;
-          } else if (_PARAMS_MAX_STALE == directive.toLowerCase()) {
-            maxStaleSeconds =
-                parameter != null ? int.parse(parameter) : Integer.MAX_VALUE;
-          } else if (_PARAMS_MIN_FRESH == directive.toLowerCase()) {
-            minFreshSeconds = parameter != null ? int.parse(parameter) : -1;
-          } else if (_PARAMS_ONLY_IF_CACHED == directive.toLowerCase()) {
+          } else if (_params_max_stale == directive.toLowerCase()) {
+            maxStaleSeconds = parameter != null
+                ? int.tryParse(parameter)
+                : Int32.MAX_VALUE.toInt();
+          } else if (_params_min_fresh == directive.toLowerCase()) {
+            minFreshSeconds = parameter != null ? int.tryParse(parameter) : -1;
+          } else if (_params_only_if_cached == directive.toLowerCase()) {
             onlyIfCached = true;
-          } else if (_PARAMS_NO_TRANSFORM == directive.toLowerCase()) {
+          } else if (_params_no_transform == directive.toLowerCase()) {
             noTransform = true;
-          } else if (_PARAMS_IMMUTABLE == directive.toLowerCase()) {
+          } else if (_params_immutable == directive.toLowerCase()) {
             immutable = true;
           }
         }

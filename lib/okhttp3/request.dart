@@ -55,7 +55,7 @@ class Request {
 
 class RequestBuilder {
   RequestBuilder()
-      : _method = HttpMethod.GET,
+      : _method = HttpMethod.get,
         _headers = HeadersBuilder();
 
   RequestBuilder._(
@@ -96,7 +96,7 @@ class RequestBuilder {
   }
 
   RequestBuilder cacheControl(CacheControl cacheControl) {
-    String value = cacheControl != null ? cacheControl.toString() : '';
+    String value = cacheControl?.toString() ?? '';
     if (value.isEmpty) {
       return removeHeader(HttpHeaders.cacheControlHeader);
     }
@@ -104,27 +104,27 @@ class RequestBuilder {
   }
 
   RequestBuilder get() {
-    return method(HttpMethod.GET, null);
+    return method(HttpMethod.get, null);
   }
 
   RequestBuilder head() {
-    return method(HttpMethod.HEAD, null);
+    return method(HttpMethod.head, null);
   }
 
   RequestBuilder post(RequestBody body) {
-    return method(HttpMethod.POST, body);
+    return method(HttpMethod.post, body);
   }
 
   RequestBuilder delete(RequestBody body) {
-    return method(HttpMethod.DELETE, body);
+    return method(HttpMethod.delete, body);
   }
 
   RequestBuilder put(RequestBody body) {
-    return method(HttpMethod.PUT, body);
+    return method(HttpMethod.put, body);
   }
 
   RequestBuilder patch(RequestBody body) {
-    return method(HttpMethod.PATCH, body);
+    return method(HttpMethod.patch, body);
   }
 
   RequestBuilder method(String method, RequestBody body) {

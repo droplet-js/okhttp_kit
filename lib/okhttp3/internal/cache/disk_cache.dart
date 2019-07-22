@@ -2,17 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:fake_okhttp/okhttp3/cache.dart';
-import 'package:flutter/foundation.dart';
 import 'package:file/file.dart';
 
 class DiskCache implements RawCache {
   DiskCache._(
-    AsyncValueGetter<Directory> directory,
+    FutureOr<Directory> directory(),
     int valueCount,
   )   : _directory = directory,
         _valueCount = valueCount;
 
-  final AsyncValueGetter<Directory> _directory;
+  final FutureOr<Directory> Function() _directory;
   final int _valueCount;
 
   @override
@@ -36,9 +35,9 @@ class DiskCache implements RawCache {
     return await entry.remove();
   }
 
-  static DiskCache create(AsyncValueGetter<Directory> directory) {
+  static DiskCache create(FutureOr<Directory> directory()) {
     assert(directory != null);
-    return DiskCache._(directory, Cache.ENTRY_COUNT);
+    return DiskCache._(directory, Cache.entryCount);
   }
 }
 
@@ -74,7 +73,7 @@ class _Entry {
     List<int> lengths = _cacheFiles.map((File cacheFile) {
       return cacheFile.lengthSync();
     }).toList();
-    return Snapshot(_key, RawCache.ANY_SEQUENCE_NUMBER, sources, lengths);
+    return Snapshot(_key, RawCache.anySequenceNumber, sources, lengths);
   }
 
   Future<bool> remove() async {
@@ -144,8 +143,7 @@ class _EditorImpl implements Editor {
     _done = true;
   }
 
-  @override
-  void detach() {
+  void _detach() {
     for (File dirtyFile in _dirtyFiles) {
       if (dirtyFile.existsSync()) {
         dirtyFile.deleteSync();
@@ -167,7 +165,7 @@ class _EditorImpl implements Editor {
         }
       }
     } else {
-      detach();
+      _detach();
     }
   }
 }

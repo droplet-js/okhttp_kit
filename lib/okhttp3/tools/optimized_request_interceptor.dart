@@ -2,22 +2,22 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:fake_okhttp/okhttp3/cache_control.dart';
+import 'package:fake_okhttp/okhttp3/chain.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';
 import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
-import 'package:flutter/foundation.dart';
 
 /// 应用层拦截器
 ///
 /// 有缓存情况下，如果无网络/请求失败，就使用缓存
 class OptimizedRequestInterceptor implements Interceptor {
   OptimizedRequestInterceptor(
-    AsyncValueGetter<bool> connectivity,
+    FutureOr<bool> connectivity(),
   )   : assert(connectivity != null),
         _connectivity = connectivity;
 
-  AsyncValueGetter<bool> _connectivity;
+  final FutureOr<bool> Function() _connectivity;
 
   @override
   Future<Response> intercept(Chain chain) async {
@@ -25,24 +25,24 @@ class OptimizedRequestInterceptor implements Interceptor {
     if (!HttpMethod.invalidatesCache(originalRequest.method())) {
       // 强刷
       if (originalRequest.cacheControl().toString() ==
-          CacheControl.FORCE_NETWORK.toString()) {
+          CacheControl.forceNetwork.toString()) {
         Request originalFixedRequest = originalRequest
             .newBuilder()
             .removeHeader(HttpHeaders.cacheControlHeader)
             .removeHeader(HttpHeaders.pragmaHeader)
-            .cacheControl(CacheControl.FORCE_NETWORK)
+            .cacheControl(CacheControl.forceNetwork)
             .build();
         return await chain.proceed(originalFixedRequest);
       }
       if (originalRequest.cacheControl().toString() ==
-          CacheControl.FORCE_CACHE.toString()) {
+          CacheControl.forceCache.toString()) {
         Request originalFixedRequest = originalRequest
             .newBuilder()
             .removeHeader(HttpHeaders.cacheControlHeader)
             .removeHeader(HttpHeaders.pragmaHeader)
             .removeHeader(HttpHeaders.ifNoneMatchHeader)
             .removeHeader(HttpHeaders.ifModifiedSinceHeader)
-            .cacheControl(CacheControl.FORCE_CACHE)
+            .cacheControl(CacheControl.forceCache)
             .build();
         return await chain.proceed(originalFixedRequest);
       }
@@ -57,7 +57,7 @@ class OptimizedRequestInterceptor implements Interceptor {
               .newBuilder()
               .removeHeader(HttpHeaders.cacheControlHeader)
               .removeHeader(HttpHeaders.pragmaHeader)
-              .cacheControl(CacheControl.FORCE_NETWORK)
+              .cacheControl(CacheControl.forceNetwork)
               .build();
           response = await chain.proceed(originalRequest);
         }
@@ -69,7 +69,7 @@ class OptimizedRequestInterceptor implements Interceptor {
               .removeHeader(HttpHeaders.pragmaHeader)
               .removeHeader(HttpHeaders.ifNoneMatchHeader)
               .removeHeader(HttpHeaders.ifModifiedSinceHeader)
-              .cacheControl(CacheControl.FORCE_CACHE)
+              .cacheControl(CacheControl.forceCache)
               .build();
           return await chain.proceed(forceCacheRequest);
         } else {
@@ -84,7 +84,7 @@ class OptimizedRequestInterceptor implements Interceptor {
               .removeHeader(HttpHeaders.pragmaHeader)
               .removeHeader(HttpHeaders.ifNoneMatchHeader)
               .removeHeader(HttpHeaders.ifModifiedSinceHeader)
-              .cacheControl(CacheControl.FORCE_CACHE)
+              .cacheControl(CacheControl.forceCache)
               .build();
           return await chain.proceed(forceCacheRequest);
         } else {
@@ -100,7 +100,7 @@ class OptimizedRequestInterceptor implements Interceptor {
               .removeHeader(HttpHeaders.pragmaHeader)
               .removeHeader(HttpHeaders.ifNoneMatchHeader)
               .removeHeader(HttpHeaders.ifModifiedSinceHeader)
-              .cacheControl(CacheControl.FORCE_CACHE)
+              .cacheControl(CacheControl.forceCache)
               .build();
           response = await chain.proceed(forceCacheRequest);
           return response;

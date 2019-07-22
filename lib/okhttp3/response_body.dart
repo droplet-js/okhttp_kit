@@ -2,37 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:fake_okhttp/okhttp3/internal/encoding_util.dart';
-import 'package:fake_okhttp/okhttp3/io/closeable.dart';
+import 'package:fake_okhttp/okhttp3/internal/util.dart';
 import 'package:fake_okhttp/okhttp3/media_type.dart';
 
-abstract class ResponseBody implements Closeable {
+abstract class ResponseBody {
   MediaType contentType();
 
-  int contentLength() {
-    return -1;
-  }
+  int contentLength();
 
   Stream<List<int>> source();
 
-//  Future<List<int>> bytes() async {
-//    StreamBuffer<int> sink = StreamBuffer();
-//    await sink.addStream(source());
-//    return await sink.read(sink.buffered);
-//  }
-
   Future<List<int>> bytes() {
-    Completer<List<int>> completer = Completer<List<int>>();
-    ByteConversionSink sink =
-        ByteConversionSink.withCallback((List<int> accumulated) {
-      completer.complete(accumulated);
-    });
-    source().listen(
-      sink.add,
-      onError: completer.completeError,
-      onDone: sink.close,
-      cancelOnError: true,
-    );
-    return completer.future;
+    return Util.readAsBytes(source());
   }
 
   Future<String> string() async {
@@ -48,12 +29,12 @@ abstract class ResponseBody implements Closeable {
 
   static ResponseBody streamBody(
       MediaType contentType, int contentLength, Stream<List<int>> source) {
-    return _SimpleResponseBody(contentType, contentLength, source);
+    return _StreamResponseBody(contentType, contentLength, source);
   }
 }
 
-class _SimpleResponseBody extends ResponseBody {
-  _SimpleResponseBody(
+class _StreamResponseBody extends ResponseBody {
+  _StreamResponseBody(
     MediaType contentType,
     int contentLength,
     Stream<List<int>> source,
@@ -79,7 +60,4 @@ class _SimpleResponseBody extends ResponseBody {
   Stream<List<int>> source() {
     return _source;
   }
-
-  @override
-  void close() {}
 }
