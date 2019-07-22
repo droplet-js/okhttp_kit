@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fake_okhttp/okhttp3/cache.dart';
 import 'package:fake_okhttp/okhttp3/call.dart';
 import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
@@ -15,7 +17,8 @@ class OkHttpClient {
         _followRedirects = builder._followRedirects,
         _maxRedirects = builder._maxRedirects,
         _idleTimeout = builder._idleTimeout,
-        _connectionTimeout = builder._connectionTimeout;
+        _connectionTimeout = builder._connectionTimeout,
+        _findProxy = builder._findProxy;
 
   final List<Interceptor> _interceptors;
   final List<Interceptor> _networkInterceptors;
@@ -28,6 +31,8 @@ class OkHttpClient {
 
   final Duration _idleTimeout;
   final Duration _connectionTimeout;
+
+  final FutureOr<String Function(Uri url)> Function() _findProxy;
 
   List<Interceptor> interceptors() {
     return _interceptors;
@@ -61,6 +66,10 @@ class OkHttpClient {
     return _connectionTimeout;
   }
 
+  FutureOr<String Function(Uri url)> Function() findProxy() {
+    return _findProxy;
+  }
+
   Call newCall(Request request) {
     return RealCall.newRealCall(this, request);
   }
@@ -79,7 +88,8 @@ class OkHttpClientBuilder {
         _followRedirects = client._followRedirects,
         _maxRedirects = client._maxRedirects,
         _idleTimeout = client._idleTimeout,
-        _connectionTimeout = client._connectionTimeout {
+        _connectionTimeout = client._connectionTimeout,
+        _findProxy = client._findProxy {
     _interceptors.addAll(client._interceptors);
     _networkInterceptors.addAll(client._networkInterceptors);
   }
@@ -95,6 +105,8 @@ class OkHttpClientBuilder {
 
   Duration _idleTimeout = Duration(seconds: 15);
   Duration _connectionTimeout = Duration(seconds: 10);
+
+  FutureOr<String Function(Uri url)> Function() _findProxy;
 
   OkHttpClientBuilder addInterceptor(Interceptor interceptor) {
     assert(interceptor != null);
@@ -140,6 +152,12 @@ class OkHttpClientBuilder {
   OkHttpClientBuilder connectionTimeout(Duration value) {
     assert(value != null);
     _connectionTimeout = value;
+    return this;
+  }
+
+  OkHttpClientBuilder findProxy(FutureOr<String Function(Uri url)> Function() findProxy) {
+    assert(findProxy != null);
+    _findProxy = findProxy;
     return this;
   }
 

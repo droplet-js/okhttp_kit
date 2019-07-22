@@ -2,6 +2,7 @@ library fake_okhttp;
 
 export 'dart:io'
     show
+    HttpClient,
     HttpStatus,
     HttpHeaders,
     HeaderValue,

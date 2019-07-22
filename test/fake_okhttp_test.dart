@@ -33,19 +33,27 @@ void main() {
   OkHttpClient client = OkHttpClientBuilder()
       .cookieJar(PersistentCookieJar.memory())
       .cache(Cache(DiskCache.create(() => directory)))
+      .findProxy(() async {
+        return (Uri url) {
+          print('findProxy url: ${url.toString()}');
+          return HttpClient.findProxyFromEnvironment(url);
+        };
+      })
       .addInterceptor(UserAgentInterceptor(() => 'xxx'))
       .addInterceptor(OptimizedRequestInterceptor(() => true))
 //      .addNetworkInterceptor(OptimizedResponseInterceptor())
       .addNetworkInterceptor(HttpLoggingInterceptor(level: LoggerLevel.HEADERS))
       .addNetworkInterceptor(ProgressRequestInterceptor((HttpUrl url,
           String method, int progressBytes, int totalBytes, bool isDone) {
-    print(
-        'progress request - $method $url $progressBytes/$totalBytes done:$isDone');
-  })).addNetworkInterceptor(ProgressResponseInterceptor((HttpUrl url,
+        print(
+            'progress request - $method $url $progressBytes/$totalBytes done:$isDone');
+      }))
+      .addNetworkInterceptor(ProgressResponseInterceptor((HttpUrl url,
           String method, int progressBytes, int totalBytes, bool isDone) {
-    print(
-        'progress response - $method $url $progressBytes/$totalBytes done:$isDone');
-  })).build();
+        print(
+            'progress response - $method $url $progressBytes/$totalBytes done:$isDone');
+      }))
+      .build();
 
   test('pub.dev', () async {
     Request request =
