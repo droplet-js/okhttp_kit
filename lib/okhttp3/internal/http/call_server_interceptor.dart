@@ -79,7 +79,6 @@ class CallServerInterceptor implements Interceptor {
     }).bind(ioResponse);
 
     String contentType = response.header(HttpHeaders.contentTypeHeader);
-    ;
     response = response
         .newBuilder()
         .body(ResponseBody.streamBody(
