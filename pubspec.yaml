@@ -1,5 +1,5 @@
 name: fake_okhttp
-description: A starting point for Dart libraries or applications.
+description: A powerful http package for Dart/Flutter.
 version: 0.1.0
 author: v7lin <v7lin@qq.com>
 homepage: https://github.com/v7lin/fake_okhttp

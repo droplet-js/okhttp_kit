@@ -1,22 +1,21 @@
-A library for Dart developers.
+# fake_okhttp
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+[![Build Status](https://cloud.drone.io/api/badges/v7lin/fake_okhttp/status.svg)](https://cloud.drone.io/v7lin/fake_okhttp)
+[![Codecov](https://codecov.io/gh/v7lin/fake_okhttp/branch/master/graph/badge.svg)](https://codecov.io/gh/v7lin/fake_okhttp)
+[![GitHub Tag](https://img.shields.io/github/tag/v7lin/fake_okhttp.svg)](https://github.com/v7lin/fake_okhttp/releases)
+[![Pub Package](https://img.shields.io/pub/v/fake_okhttp.svg)](https://pub.dartlang.org/packages/fake_okhttp)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/v7lin/fake_okhttp/blob/master/LICENSE)
+
+dart版okhttp3
 
 ## Usage
 
-A simple usage example:
-
 ```dart
 import 'package:fake_okhttp/fake_okhttp.dart';
-
-main() {
-  var awesome = new Awesome();
-}
 ```
 
 ## Features and bugs
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
-[tracker]: http://example.com/issues/replaceme
+[tracker]: https://github.com/v7lin/fake_okhttp/issues
