@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fake_okhttp/fake_okhttp.dart';
 import 'package:fake_okhttp/okhttp3/cache.dart';
 import 'package:fake_okhttp/okhttp3/form_body.dart';
 import 'package:fake_okhttp/okhttp3/http_url.dart';
@@ -22,6 +23,8 @@ void main() {
 
   print(
       '${fileSystem.currentDirectory.path} - ${fileSystem.systemTempDirectory.path}');
+
+  print('${Util.boundaryString()}');
 
   Directory directory = fileSystem.currentDirectory
       .childDirectory('build')
