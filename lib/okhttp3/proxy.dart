@@ -2,4 +2,6 @@ import 'dart:async';
 
 typedef String Proxy(Uri url);
 
-typedef FutureOr<Proxy> ProxySelector();
+abstract class ProxySelector {
+  FutureOr<Proxy> select();
+}

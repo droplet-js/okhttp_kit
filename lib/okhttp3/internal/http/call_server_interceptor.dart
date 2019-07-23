@@ -27,7 +27,7 @@ class CallServerInterceptor implements Interceptor {
     if (_client.proxy() != null) {
       httpClient.findProxy = _client.proxy();
     } else if (_client.proxySelector() != null) {
-      httpClient.findProxy = await _client.proxySelector()();
+      httpClient.findProxy = await _client.proxySelector().select();
     }
 
     Request request = chain.request();

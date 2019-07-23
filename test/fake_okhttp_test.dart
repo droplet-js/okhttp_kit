@@ -36,11 +36,9 @@ void main() {
   OkHttpClient client = OkHttpClientBuilder()
       .cookieJar(PersistentCookieJar.memory())
       .cache(Cache(DiskCache.create(() => directory)))
-      .proxySelector(() async {
-        return (Uri url) {
-          print('Proxy Url: $url');
-          return HttpClient.findProxyFromEnvironment(url);
-        };
+      .proxy((Uri url) {
+        print('Proxy Url: $url');
+        return HttpClient.findProxyFromEnvironment(url);
       })
       .addInterceptor(UserAgentInterceptor(() => 'xxx'))
       .addInterceptor(OptimizedRequestInterceptor(() => true))
