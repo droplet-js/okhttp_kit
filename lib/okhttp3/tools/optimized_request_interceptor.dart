@@ -14,7 +14,7 @@ import 'package:fake_okhttp/okhttp3/response.dart';
 /// 有缓存情况下，如果无网络/请求失败，就使用缓存
 class OptimizedRequestInterceptor implements Interceptor {
   OptimizedRequestInterceptor(
-      AsyncValueGetter<bool> connectivity,
+    AsyncValueGetter<bool> connectivity,
   )   : assert(connectivity != null),
         _connectivity = connectivity;
 

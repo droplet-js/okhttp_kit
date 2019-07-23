@@ -2,16 +2,15 @@ library fake_okhttp;
 
 export 'dart:io'
     show
-    HttpClient,
-    HttpStatus,
-    HttpHeaders,
-    HeaderValue,
-    ContentType,
-    Cookie,
-    HttpDate,
-    HttpException,
-    RedirectException;
-
+        HttpClient,
+        HttpStatus,
+        HttpHeaders,
+        HeaderValue,
+        ContentType,
+        Cookie,
+        HttpDate,
+        HttpException,
+        RedirectException;
 
 export 'okhttp3/cache.dart';
 export 'okhttp3/cache_control.dart';

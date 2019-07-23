@@ -199,7 +199,8 @@ class CacheRequest {
       },
       onDone: () {
         // close
-        EventSink<List<int>> metaDataSink = editor.newSink(Cache.entryMetaData, utf8);
+        EventSink<List<int>> metaDataSink =
+            editor.newSink(Cache.entryMetaData, utf8);
         metaDataSink.add(metaData);
         editor.commit();
       },

@@ -18,13 +18,13 @@ steps:
 #  commands:
 #  - pub run build_runner build
 
-#- name: format
-#  image: google/dart:2.1.0
-#  volumes:
-#  - name: pub-cache
-#    path: /root/.pub-cache
-#  commands:
-#  - flutter format --dry-run --set-exit-if-changed .
+- name: format
+  image: google/dart:2.1.0
+  volumes:
+  - name: pub-cache
+    path: /root/.pub-cache
+  commands:
+  - dartfmt --dry-run --set-exit-if-changed .
 
 - name: analyze
   image: google/dart:2.1.0
@@ -32,31 +32,23 @@ steps:
   - name: pub-cache
     path: /root/.pub-cache
   commands:
-  - dartanalyzer .
+  - dartanalyzer --fatal-infos --fatal-warnings .
 
-#- name: test
-#  image: google/dart:2.1.0
-#  volumes:
-#  - name: pub-cache
-#    path: /root/.pub-cache
-#  commands:
-#  - flutter test --coverage
+- name: test
+  image: google/dart:2.1.0
+  volumes:
+  - name: pub-cache
+    path: /root/.pub-cache
+  commands:
+  - pub run test --run-skipped
 
-#- name: coverage
-#  image: plugins/codecov:2.0.3
-#  settings:
-#    token:
-#      from_secret: CODECOV_TOKEN
-#    files:
-#    - ./coverage/lcov.info
-
-#- name: publish-check
-#  image: v7lin/flutter:1.7.8-hotfix.3-stable
-#  volumes:
-#  - name: pub-cache
-#    path: /root/.pub-cache
-#  commands:
-#  - flutter packages pub publish --dry-run
+- name: publish-check
+  image: google/dart:2.1.0
+  volumes:
+  - name: pub-cache
+    path: /root/.pub-cache
+  commands:
+  - pub publish --dry-run
 
 volumes:
 - name: pub-cache

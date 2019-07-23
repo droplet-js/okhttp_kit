@@ -7,7 +7,7 @@ import 'package:file/file.dart';
 
 class DiskCache implements RawCache {
   DiskCache._(
-      AsyncValueGetter<Directory> directory,
+    AsyncValueGetter<Directory> directory,
     int valueCount,
   )   : _directory = directory,
         _valueCount = valueCount;

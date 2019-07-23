@@ -10,7 +10,7 @@ import 'package:fake_okhttp/okhttp3/response.dart';
 /// 应用层拦截器
 class UserAgentInterceptor implements Interceptor {
   UserAgentInterceptor(
-      AsyncValueGetter<String> userAgent,
+    AsyncValueGetter<String> userAgent,
   )   : assert(userAgent != null),
         _userAgent = userAgent;
 
