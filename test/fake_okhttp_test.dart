@@ -11,7 +11,6 @@ import 'package:fake_okhttp/okhttp3/request_body.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
 import 'package:fake_okhttp/okhttp3/tools/http_logging_interceptor.dart';
 import 'package:fake_okhttp/okhttp3/tools/optimized_request_interceptor.dart';
-import 'package:fake_okhttp/okhttp3/tools/optimized_response_interceptor.dart';
 import 'package:fake_okhttp/okhttp3/tools/persistent_cookie_jar.dart';
 import 'package:fake_okhttp/okhttp3/tools/progress_interceptor.dart';
 import 'package:fake_okhttp/okhttp3/tools/user_agent_interceptor.dart';
