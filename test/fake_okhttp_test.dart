@@ -36,9 +36,9 @@ void main() {
   OkHttpClient client = OkHttpClientBuilder()
       .cookieJar(PersistentCookieJar.memory())
       .cache(Cache(DiskCache.create(() => directory)))
-      .findProxy(() async {
+      .proxySelector(() async {
         return (Uri url) {
-          print('findProxy url: ${url.toString()}');
+          print('Proxy Url: $url');
           return HttpClient.findProxyFromEnvironment(url);
         };
       })

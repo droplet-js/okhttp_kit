@@ -2,16 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:fake_okhttp/okhttp3/cache.dart';
+import 'package:fake_okhttp/okhttp3/foundation/basic_types.dart';
 import 'package:file/file.dart';
 
 class DiskCache implements RawCache {
   DiskCache._(
-    FutureOr<Directory> directory(),
+      AsyncValueGetter<Directory> directory,
     int valueCount,
   )   : _directory = directory,
         _valueCount = valueCount;
 
-  final FutureOr<Directory> Function() _directory;
+  final AsyncValueGetter<Directory> _directory;
   final int _valueCount;
 
   @override
@@ -35,7 +36,7 @@ class DiskCache implements RawCache {
     return await entry.remove();
   }
 
-  static DiskCache create(FutureOr<Directory> directory()) {
+  static DiskCache create(AsyncValueGetter<Directory> directory) {
     assert(directory != null);
     return DiskCache._(directory, Cache.entryCount);
   }

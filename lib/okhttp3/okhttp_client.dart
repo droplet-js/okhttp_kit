@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:fake_okhttp/okhttp3/cache.dart';
 import 'package:fake_okhttp/okhttp3/call.dart';
 import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';
+import 'package:fake_okhttp/okhttp3/proxy.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 
 class OkHttpClient {
@@ -12,16 +11,20 @@ class OkHttpClient {
   )   : _interceptors = List<Interceptor>.unmodifiable(builder._interceptors),
         _networkInterceptors =
             List<Interceptor>.unmodifiable(builder._networkInterceptors),
+        _proxy = builder._proxy,
+        _proxySelector = builder._proxySelector,
         _cookieJar = builder._cookieJar,
         _cache = builder._cache,
         _followRedirects = builder._followRedirects,
         _maxRedirects = builder._maxRedirects,
         _idleTimeout = builder._idleTimeout,
-        _connectionTimeout = builder._connectionTimeout,
-        _findProxy = builder._findProxy;
+        _connectionTimeout = builder._connectionTimeout;
 
   final List<Interceptor> _interceptors;
   final List<Interceptor> _networkInterceptors;
+
+  final Proxy _proxy;
+  final ProxySelector _proxySelector;
 
   final CookieJar _cookieJar;
   final Cache _cache;
@@ -32,14 +35,20 @@ class OkHttpClient {
   final Duration _idleTimeout;
   final Duration _connectionTimeout;
 
-  final FutureOr<String Function(Uri url)> Function() _findProxy;
-
   List<Interceptor> interceptors() {
     return _interceptors;
   }
 
   List<Interceptor> networkInterceptors() {
     return _networkInterceptors;
+  }
+
+  Proxy proxy() {
+    return _proxy;
+  }
+
+  ProxySelector proxySelector() {
+    return _proxySelector;
   }
 
   CookieJar cookieJar() {
@@ -66,10 +75,6 @@ class OkHttpClient {
     return _connectionTimeout;
   }
 
-  FutureOr<String Function(Uri url)> Function() findProxy() {
-    return _findProxy;
-  }
-
   Call newCall(Request request) {
     return RealCall.newRealCall(this, request);
   }
@@ -83,19 +88,23 @@ class OkHttpClientBuilder {
   OkHttpClientBuilder();
 
   OkHttpClientBuilder._(OkHttpClient client)
-      : _cookieJar = client._cookieJar,
+      : _proxy = client._proxy,
+        _proxySelector = client._proxySelector,
+        _cookieJar = client._cookieJar,
         _cache = client._cache,
         _followRedirects = client._followRedirects,
         _maxRedirects = client._maxRedirects,
         _idleTimeout = client._idleTimeout,
-        _connectionTimeout = client._connectionTimeout,
-        _findProxy = client._findProxy {
+        _connectionTimeout = client._connectionTimeout {
     _interceptors.addAll(client._interceptors);
     _networkInterceptors.addAll(client._networkInterceptors);
   }
 
   final List<Interceptor> _interceptors = <Interceptor>[];
   final List<Interceptor> _networkInterceptors = <Interceptor>[];
+
+  Proxy _proxy;
+  ProxySelector _proxySelector;
 
   CookieJar _cookieJar = CookieJar.noCookies;
   Cache _cache;
@@ -105,8 +114,6 @@ class OkHttpClientBuilder {
 
   Duration _idleTimeout = Duration(seconds: 15);
   Duration _connectionTimeout = Duration(seconds: 10);
-
-  FutureOr<String Function(Uri url)> Function() _findProxy;
 
   OkHttpClientBuilder addInterceptor(Interceptor interceptor) {
     assert(interceptor != null);
@@ -120,8 +127,17 @@ class OkHttpClientBuilder {
     return this;
   }
 
+  OkHttpClientBuilder proxy(Proxy proxy) {
+    _proxy = proxy;
+    return this;
+  }
+
+  OkHttpClientBuilder proxySelector(ProxySelector proxySelector) {
+    _proxySelector = proxySelector;
+    return this;
+  }
+
   OkHttpClientBuilder cookieJar(CookieJar cookieJar) {
-    assert(cookieJar != null);
     _cookieJar = cookieJar;
     return this;
   }
@@ -152,12 +168,6 @@ class OkHttpClientBuilder {
   OkHttpClientBuilder connectionTimeout(Duration value) {
     assert(value != null);
     _connectionTimeout = value;
-    return this;
-  }
-
-  OkHttpClientBuilder findProxy(FutureOr<String Function(Uri url)> Function() findProxy) {
-    assert(findProxy != null);
-    _findProxy = findProxy;
     return this;
   }
 

@@ -28,6 +28,7 @@ export 'okhttp3/internal/version.dart';
 export 'okhttp3/media_type.dart';
 export 'okhttp3/multipart_body.dart';
 export 'okhttp3/okhttp_client.dart';
+export 'okhttp3/proxy.dart';
 export 'okhttp3/request.dart';
 export 'okhttp3/request_body.dart';
 export 'okhttp3/response.dart';

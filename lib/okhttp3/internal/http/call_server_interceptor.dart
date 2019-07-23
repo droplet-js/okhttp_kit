@@ -24,8 +24,10 @@ class CallServerInterceptor implements Interceptor {
     httpClient.idleTimeout = _client.idleTimeout();
     httpClient.connectionTimeout = _client.connectionTimeout();
 
-    if (_client.findProxy() != null) {
-      httpClient.findProxy = await _client.findProxy()();
+    if (_client.proxy() != null) {
+      httpClient.findProxy = _client.proxy();
+    } else if (_client.proxySelector() != null) {
+      httpClient.findProxy = await _client.proxySelector()();
     }
 
     Request request = chain.request();

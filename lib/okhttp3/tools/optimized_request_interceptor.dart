@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:fake_okhttp/okhttp3/cache_control.dart';
 import 'package:fake_okhttp/okhttp3/chain.dart';
+import 'package:fake_okhttp/okhttp3/foundation/basic_types.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';
 import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
@@ -13,11 +14,11 @@ import 'package:fake_okhttp/okhttp3/response.dart';
 /// 有缓存情况下，如果无网络/请求失败，就使用缓存
 class OptimizedRequestInterceptor implements Interceptor {
   OptimizedRequestInterceptor(
-    FutureOr<bool> connectivity(),
+      AsyncValueGetter<bool> connectivity,
   )   : assert(connectivity != null),
         _connectivity = connectivity;
 
-  final FutureOr<bool> Function() _connectivity;
+  final AsyncValueGetter<bool> _connectivity;
 
   @override
   Future<Response> intercept(Chain chain) async {
