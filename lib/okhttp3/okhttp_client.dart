@@ -7,18 +7,26 @@ import 'package:fake_okhttp/okhttp3/request.dart';
 
 class OkHttpClient {
   OkHttpClient._(
-    OkHttpClientBuilder builder,
-  )   : _interceptors = List<Interceptor>.unmodifiable(builder._interceptors),
-        _networkInterceptors =
-            List<Interceptor>.unmodifiable(builder._networkInterceptors),
-        _proxy = builder._proxy,
-        _proxySelector = builder._proxySelector,
-        _cookieJar = builder._cookieJar,
-        _cache = builder._cache,
-        _followRedirects = builder._followRedirects,
-        _maxRedirects = builder._maxRedirects,
-        _idleTimeout = builder._idleTimeout,
-        _connectionTimeout = builder._connectionTimeout;
+    List<Interceptor> interceptors,
+    List<Interceptor> networkInterceptors,
+    Proxy proxy,
+    ProxySelector proxySelector,
+    CookieJar cookieJar,
+    Cache cache,
+    bool followRedirects,
+    int maxRedirects,
+    Duration idleTimeout,
+    Duration connectionTimeout,
+  )   : _interceptors = interceptors,
+        _networkInterceptors = networkInterceptors,
+        _proxy = proxy,
+        _proxySelector = proxySelector,
+        _cookieJar = cookieJar,
+        _cache = cache,
+        _followRedirects = followRedirects,
+        _maxRedirects = maxRedirects,
+        _idleTimeout = idleTimeout,
+        _connectionTimeout = connectionTimeout;
 
   final List<Interceptor> _interceptors;
   final List<Interceptor> _networkInterceptors;
@@ -88,16 +96,16 @@ class OkHttpClientBuilder {
   OkHttpClientBuilder();
 
   OkHttpClientBuilder._(OkHttpClient client)
-      : _proxy = client._proxy,
-        _proxySelector = client._proxySelector,
-        _cookieJar = client._cookieJar,
-        _cache = client._cache,
-        _followRedirects = client._followRedirects,
-        _maxRedirects = client._maxRedirects,
-        _idleTimeout = client._idleTimeout,
-        _connectionTimeout = client._connectionTimeout {
-    _interceptors.addAll(client._interceptors);
-    _networkInterceptors.addAll(client._networkInterceptors);
+      : _proxy = client.proxy(),
+        _proxySelector = client.proxySelector(),
+        _cookieJar = client.cookieJar(),
+        _cache = client.cache(),
+        _followRedirects = client.followRedirects(),
+        _maxRedirects = client.maxRedirects(),
+        _idleTimeout = client.idleTimeout(),
+        _connectionTimeout = client.connectionTimeout() {
+    _interceptors.addAll(client.interceptors());
+    _networkInterceptors.addAll(client.networkInterceptors());
   }
 
   final List<Interceptor> _interceptors = <Interceptor>[];
@@ -172,6 +180,17 @@ class OkHttpClientBuilder {
   }
 
   OkHttpClient build() {
-    return OkHttpClient._(this);
+    return OkHttpClient._(
+      List<Interceptor>.unmodifiable(_interceptors),
+      List<Interceptor>.unmodifiable(_networkInterceptors),
+      _proxy,
+      _proxySelector,
+      _cookieJar,
+      _cache,
+      _followRedirects,
+      _maxRedirects,
+      _idleTimeout,
+      _connectionTimeout,
+    );
   }
 }
