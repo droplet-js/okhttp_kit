@@ -64,8 +64,9 @@ steps:
   volumes:
   - name: pub-cache
     path: /root/.pub-cache
+  environment:
+    PUB_CACHE: /root/.pub-cache
   commands:
-  - PUB_CACHE=/root/.pub-cache
   - wget -P $PUB_CACHE https://raw.githubusercontent.com/v7lin/pub_credentials/master/credentials.json.enc
 
 - name: restore-cache-openssl
@@ -74,12 +75,12 @@ steps:
   - name: pub-cache
     path: /root/.pub-cache
   environment:
+    PUB_CACHE: /root/.pub-cache
     ENC_METHOD:
       from_secret: ENC_METHOD
     ENC_PASSWORD:
       from_secret: ENC_PASSWORD
   commands:
-  - PUB_CACHE=/root/.pub-cache
   - openssl enc -d -$ENC_METHOD -k $ENC_PASSWORD -in $PUB_CACHE/credentials.json.enc -out $PUB_CACHE/credentials.json
   - rm $PUB_CACHE/credentials.json.enc
 
@@ -97,12 +98,12 @@ steps:
   - name: pub-cache
     path: /root/.pub-cache
   environment:
+    PUB_CACHE: /root/.pub-cache
     ENC_METHOD:
       from_secret: ENC_METHOD
     ENC_PASSWORD:
       from_secret: ENC_PASSWORD
   commands:
-  - PUB_CACHE=/root/.pub-cache
   - openssl enc -e -$ENC_METHOD -k $ENC_PASSWORD -in $PUB_CACHE/credentials.json -out $PUB_CACHE/credentials.json.enc
   - rm $PUB_CACHE/credentials.json
 
@@ -112,6 +113,7 @@ steps:
   - name: pub-cache
     path: /root/.pub-cache
   environment:
+    PUB_CACHE: /root/.pub-cache
     GIT_USER_EMAIL:
       from_secret: GIT_USER_EMAIL
     GIT_USER_NAME:
@@ -119,7 +121,6 @@ steps:
     GIT_USER_PASSWORD:
       from_secret: GIT_USER_PASSWORD # 密码含'@'，用'%40'替换 -> URLEncoder.encode("@","utf-8");
   commands:
-  - PUB_CACHE=/root/.pub-cache
   - git config --global user.email $GIT_USER_EMAIL
   - git config --global user.name $GIT_USER_NAME
   - git config --global credential.helper store
