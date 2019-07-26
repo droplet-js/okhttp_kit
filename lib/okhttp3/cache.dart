@@ -194,7 +194,7 @@ class CacheRequest {
       },
       onError: (Object error, StackTrace stackTrace) {
         // detch
-        bodySink.addError(error, stackTrace);
+        bodySink?.addError(error, stackTrace);
         editor.abort();
       },
       onDone: () {
