@@ -16,6 +16,7 @@ export 'okhttp3/cache.dart';
 export 'okhttp3/cache_control.dart';
 export 'okhttp3/cookie_jar.dart';
 export 'okhttp3/form_body.dart';
+export 'okhttp3/foundation/basic_types.dart';
 export 'okhttp3/headers.dart';
 export 'okhttp3/http_url.dart';
 export 'okhttp3/interceptor.dart';
