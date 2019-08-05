@@ -19,12 +19,9 @@ import 'package:fake_okhttp/okhttp3/response_body.dart';
 class HttpLoggingInterceptor implements Interceptor {
   HttpLoggingInterceptor({
     LoggerLevel level = LoggerLevel.BASIC,
-    LoggerFactory factory = LoggerFactory.PLATFORM,
-  })  : _level = level,
-        _factory = factory;
+  })  : _level = level;
 
   final LoggerLevel _level;
-  final LoggerFactory _factory;
 
   @override
   Future<Response> intercept(Chain chain) async {
@@ -33,30 +30,24 @@ class HttpLoggingInterceptor implements Interceptor {
       return await chain.proceed(request);
     }
 
-    Logger logger = _factory.logger(request.method(), request.url().toString());
-
     bool logBody = _level == LoggerLevel.BODY;
     bool logHeaders = logBody || _level == LoggerLevel.HEADERS;
 
     RequestBody requestBody = request.body();
     bool hasRequestBody = requestBody != null;
     if (!logHeaders && hasRequestBody) {
-      logger.start('${requestBody.contentLength()}-byte body');
+      print('--> ${request.method()} ${request.url().toString()} ${requestBody.contentLength()}-byte body');
     } else {
-      logger.start();
+      print('--> ${request.method()} ${request.url().toString()}');
     }
 
     if (logHeaders) {
-      Map<String, List<String>> requestHeaders = <String, List<String>>{};
       if (hasRequestBody) {
         if (requestBody.contentType() != null) {
-          requestHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
-              () => <String>[requestBody.contentType().toString()]);
+          print('${HttpHeaders.contentTypeHeader}: ${requestBody.contentType().toString()}');
         }
-        int contentLength = requestBody.contentLength();
-        if (contentLength != -1) {
-          requestHeaders.putIfAbsent(HttpHeaders.contentLengthHeader,
-              () => <String>[contentLength.toString()]);
+        if (requestBody.contentLength() != -1) {
+          print('${HttpHeaders.contentLengthHeader}: ${requestBody.contentLength()}');
         }
       }
 
@@ -64,19 +55,16 @@ class HttpLoggingInterceptor implements Interceptor {
       headers.names().forEach((String name) {
         if (HttpHeaders.contentTypeHeader != name &&
             HttpHeaders.contentLengthHeader != name) {
-          requestHeaders.putIfAbsent(name, () => headers.values(name));
+          print('$name: ${headers.value(name)}');
         }
       });
 
-      logger.requestHeaders(requestHeaders);
-
       if (!logBody || !hasRequestBody) {
-        logger.requestOmitted(null);
-      } else if (_bodyEncoded(request.headers())) {
-        logger.requestOmitted('encoded body omitted');
+        print('--> END ${request.method()}');
+      } else if (_bodyHasUnknownEncoding(request.headers())) {
+        print('--> END ${request.method()} (encoded body omitted)');
       } else {
         MediaType contentType = requestBody.contentType();
-        int contentLength = requestBody.contentLength();
 
         if (_isPlainContentType(contentType)) {
           List<int> bytes = await Util.readAsBytes(requestBody.source());
@@ -85,10 +73,10 @@ class HttpLoggingInterceptor implements Interceptor {
           String body = encoding.decode(bytes);
 
           if (_isPlainText(body)) {
-            logger.requestPlaintextBody(body);
-            logger.requestOmitted('plaintext ${bytes.length}-byte body');
+            print(body);
+            print('--> END ${request.method()} (${bytes.length}-byte body)');
           } else {
-            logger.requestOmitted('binary ${bytes.length}-byte body');
+            print('--> END ${request.method()} (binary ${bytes.length}-byte body omitted)');
           }
 
           request = request
@@ -97,8 +85,7 @@ class HttpLoggingInterceptor implements Interceptor {
                   request.method(), RequestBody.bytesBody(contentType, bytes))
               .build();
         } else {
-          logger.requestOmitted(
-              'binary ${contentLength != -1 ? '$contentLength-byte body' : 'unknown-length body'}');
+          print('--> END ${request.method()} (binary ${requestBody.contentLength()}-byte body omitted)');
         }
       }
     }
@@ -108,45 +95,36 @@ class HttpLoggingInterceptor implements Interceptor {
     try {
       response = await chain.proceed(request);
     } catch (e) {
-      logger.error(e);
-      logger.end();
+      print('<-- HTTP FAILED: ${e.toString()}');
       rethrow;
     }
     int tookMs = watch.elapsedMilliseconds;
     ResponseBody responseBody = response.body();
-    int contentLength = responseBody.contentLength();
-    String message = contentLength != -1
-        ? '$contentLength-byte body'
+    String bodySize = responseBody.contentLength() != -1
+        ? '${responseBody.contentLength()}-byte body'
         : 'unknown-length body';
-    logger.status(
-        response.code(), response.message(), contentLength, tookMs, message);
+    print('<-- ${response.code()} ${response.message() ?? ''} ${response.request().url().toString()} (${tookMs}ms${!logHeaders ? ', $bodySize body': ''})');
 
     if (logHeaders) {
-      Map<String, List<String>> responseHeaders = <String, List<String>>{};
       if (responseBody.contentType() != null) {
-        responseHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
-            () => <String>[responseBody.contentType().toString()]);
+        print('${HttpHeaders.contentTypeHeader}: ${responseBody.contentType().toString()}');
       }
-      int contentLength = responseBody.contentLength();
-      if (contentLength != -1) {
-        responseHeaders.putIfAbsent(HttpHeaders.contentLengthHeader,
-            () => <String>[contentLength.toString()]);
+      if (responseBody.contentLength() != -1) {
+        print('${HttpHeaders.contentLengthHeader}: ${responseBody.contentLength()}');
       }
 
       Headers headers = response.headers();
       headers.names().forEach((String name) {
         if (HttpHeaders.contentTypeHeader != name &&
             HttpHeaders.contentLengthHeader != name) {
-          responseHeaders.putIfAbsent(name, () => headers.values(name));
+          print('$name: ${headers.value(name)}');
         }
       });
 
-      logger.responseHeaders(responseHeaders);
-
       if (!logBody || !HttpHeadersExtension.hasBody(response)) {
-        logger.responseOmitted(null);
-      } else if (_bodyEncoded(response.headers())) {
-        logger.responseOmitted('encoded body omitted');
+        print('<-- END HTTP');
+      } else if (_bodyHasUnknownEncoding(response.headers())) {
+        print("<-- END HTTP (encoded body omitted)");
       } else {
         MediaType contentType = responseBody.contentType();
 
@@ -156,11 +134,10 @@ class HttpLoggingInterceptor implements Interceptor {
           Encoding encoding = EncodingUtil.encoding(contentType);
           String body = encoding.decode(bytes);
           if (_isPlainText(body)) {
-            logger.responsePlaintextBody(body);
-            logger
-                .responseOmitted('plaintext ${bytes.length}-byte body omitted');
+            print(body);
+            print('<-- END HTTP (${bytes.length}-byte body)');
           } else {
-            logger.responseOmitted('binary ${bytes.length}-byte body omitted');
+            print('<-- END HTTP (binary ${bytes.length}-byte body omitted)');
           }
 
           response = response
@@ -168,23 +145,16 @@ class HttpLoggingInterceptor implements Interceptor {
               .body(ResponseBody.bytesBody(contentType, bytes))
               .build();
         } else {
-          logger.responseOmitted(
-              'binary ${contentLength != -1 ? '$contentLength-byte body' : 'unknown-length body'}');
+          print('<-- END HTTP (binary ${responseBody.contentLength()}-byte body omitted)');
         }
       }
     }
-    logger.end();
     return response;
   }
 
-  bool _bodyEncoded(Headers headers) {
-    String header = headers != null
-        ? headers.value(HttpHeaders.contentEncodingHeader)
-        : null;
-    if (header != null && header.toLowerCase() == 'identity') {
-      return true;
-    }
-    return false;
+  bool _bodyHasUnknownEncoding(Headers headers) {
+    String contentEncoding = headers.value(HttpHeaders.contentEncodingHeader);
+    return contentEncoding != null && contentEncoding.toLowerCase() != 'identity' && contentEncoding.toLowerCase() != 'gzip';
   }
 
   static bool _isPlainContentType(MediaType contentType) {
@@ -210,126 +180,4 @@ enum LoggerLevel {
   BASIC,
   HEADERS,
   BODY,
-}
-
-abstract class Logger {
-  Logger(
-    this.method,
-    this.url,
-  );
-
-  final String method;
-  final String url;
-
-  void start([String message]);
-
-  void requestHeaders(Map<String, List<String>> requestHeaders);
-
-  void requestPlaintextBody(String plaintext);
-
-  void requestOmitted([String message]);
-
-  void response();
-
-  void error(Object e);
-
-  void status(int statusCode, String reasonPhrase, int contentLength,
-      int tookMs, String message);
-
-  void responseHeaders(Map<String, List<String>> responseHeaders);
-
-  void responsePlaintextBody(String plaintext);
-
-  void responseOmitted([String message]);
-
-  void end();
-}
-
-abstract class LoggerFactory {
-  static const LoggerFactory PLATFORM = _PlatformLoggerFactory();
-
-  Logger logger(
-    String method,
-    String url,
-  );
-}
-
-class _PlatformLoggerFactory implements LoggerFactory {
-  const _PlatformLoggerFactory();
-
-  @override
-  Logger logger(String method, String url) {
-    return _PlatformLogger(method, url);
-  }
-}
-
-class _PlatformLogger extends Logger {
-  _PlatformLogger(
-    String method,
-    String url,
-  ) : super(method, url);
-
-  @override
-  void start([String message]) {
-    print('--> $method $url ${message != null ? message : ''}');
-  }
-
-  @override
-  void requestHeaders(Map<String, List<String>> requestHeaders) {
-    requestHeaders.forEach((String name, List<String> values) {
-      values.forEach((String value) {
-        print('$name: $value');
-      });
-    });
-  }
-
-  @override
-  void requestPlaintextBody(String plaintext) {
-    if (plaintext != null && plaintext.isNotEmpty) {
-      print(plaintext);
-    }
-  }
-
-  @override
-  void requestOmitted([String message]) {
-    print('--> END $method ${message != null ? message : ''}');
-  }
-
-  @override
-  void response() {}
-
-  @override
-  void error(Object e) {
-    print('<-- HTTP FAILED: $url ${e.toString()}');
-  }
-
-  @override
-  void status(int statusCode, String reasonPhrase, int contentLength,
-      int tookMs, String message) {
-    print('<-- $statusCode $reasonPhrase $url (${tookMs}ms, $message)');
-  }
-
-  @override
-  void responseHeaders(Map<String, List<String>> responseHeaders) {
-    responseHeaders.forEach((String name, List<String> values) {
-      values.forEach((String value) {
-        print('$name: $value');
-      });
-    });
-  }
-
-  @override
-  void responsePlaintextBody(String plaintext) {
-    if (plaintext != null && plaintext.isNotEmpty) {
-      print(plaintext);
-    }
-  }
-
-  @override
-  void responseOmitted([String message]) {
-    print('<-- END $method ${message != null ? message : ''}');
-  }
-
-  @override
-  void end() {}
 }
