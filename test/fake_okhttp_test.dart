@@ -9,6 +9,7 @@ import 'package:fake_okhttp/okhttp3/okhttp_client.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 import 'package:fake_okhttp/okhttp3/request_body.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
+import 'package:fake_okhttp/okhttp3/tools/curl_interceptor.dart';
 import 'package:fake_okhttp/okhttp3/tools/http_logging_interceptor.dart';
 import 'package:fake_okhttp/okhttp3/tools/optimized_request_interceptor.dart';
 import 'package:fake_okhttp/okhttp3/tools/persistent_cookie_jar.dart';
@@ -43,6 +44,7 @@ void main() {
       .addInterceptor(UserAgentInterceptor(() => 'xxx'))
       .addInterceptor(OptimizedRequestInterceptor(() => true))
 //      .addNetworkInterceptor(OptimizedResponseInterceptor())
+      .addNetworkInterceptor(CurlInterceptor())
       .addNetworkInterceptor(HttpLoggingInterceptor(level: LoggerLevel.HEADERS))
       .addNetworkInterceptor(ProgressRequestInterceptor((HttpUrl url,
           String method, int progressBytes, int totalBytes, bool isDone) {
