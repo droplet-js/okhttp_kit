@@ -16,16 +16,16 @@ import 'package:fake_okhttp/okhttp3/response.dart';
 import 'package:fake_okhttp/okhttp3/response_body.dart';
 
 enum LoggingLevel {
-  NONE,
-  BASIC,
-  HEADERS,
-  BODY,
+  none,
+  basic,
+  headers,
+  body,
 }
 
 /// 网络层拦截器
 class HttpLoggingInterceptor implements Interceptor {
   HttpLoggingInterceptor({
-    LoggingLevel level = LoggingLevel.BASIC,
+    LoggingLevel level = LoggingLevel.basic,
   }) : _level = level;
 
   final LoggingLevel _level;
@@ -33,12 +33,12 @@ class HttpLoggingInterceptor implements Interceptor {
   @override
   Future<Response> intercept(Chain chain) async {
     Request request = chain.request();
-    if (_level == LoggingLevel.NONE) {
+    if (_level == LoggingLevel.none) {
       return await chain.proceed(request);
     }
 
-    bool logBody = _level == LoggingLevel.BODY;
-    bool logHeaders = logBody || _level == LoggingLevel.HEADERS;
+    bool logBody = _level == LoggingLevel.body;
+    bool logHeaders = logBody || _level == LoggingLevel.headers;
 
     RequestBody requestBody = request.body();
     bool hasRequestBody = requestBody != null;
