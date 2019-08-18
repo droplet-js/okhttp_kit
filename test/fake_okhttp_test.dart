@@ -45,7 +45,7 @@ void main() {
       .addInterceptor(OptimizedRequestInterceptor(() => true))
 //      .addNetworkInterceptor(OptimizedResponseInterceptor())
       .addNetworkInterceptor(CurlInterceptor())
-      .addNetworkInterceptor(HttpLoggingInterceptor(level: LoggerLevel.HEADERS))
+      .addNetworkInterceptor(HttpLoggingInterceptor(level: LoggingLevel.HEADERS))
       .addNetworkInterceptor(ProgressRequestInterceptor((HttpUrl url,
           String method, int progressBytes, int totalBytes, bool isDone) {
         print(

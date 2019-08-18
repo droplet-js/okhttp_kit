@@ -15,28 +15,36 @@ import 'package:fake_okhttp/okhttp3/request_body.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
 import 'package:fake_okhttp/okhttp3/response_body.dart';
 
+enum LoggingLevel {
+  NONE,
+  BASIC,
+  HEADERS,
+  BODY,
+}
+
 /// 网络层拦截器
 class HttpLoggingInterceptor implements Interceptor {
   HttpLoggingInterceptor({
-    LoggerLevel level = LoggerLevel.BASIC,
-  })  : _level = level;
+    LoggingLevel level = LoggingLevel.BASIC,
+  }) : _level = level;
 
-  final LoggerLevel _level;
+  final LoggingLevel _level;
 
   @override
   Future<Response> intercept(Chain chain) async {
     Request request = chain.request();
-    if (_level == LoggerLevel.NONE) {
+    if (_level == LoggingLevel.NONE) {
       return await chain.proceed(request);
     }
 
-    bool logBody = _level == LoggerLevel.BODY;
-    bool logHeaders = logBody || _level == LoggerLevel.HEADERS;
+    bool logBody = _level == LoggingLevel.BODY;
+    bool logHeaders = logBody || _level == LoggingLevel.HEADERS;
 
     RequestBody requestBody = request.body();
     bool hasRequestBody = requestBody != null;
     if (!logHeaders && hasRequestBody) {
-      print('--> ${request.method()} ${request.url().toString()} ${requestBody.contentLength()}-byte body');
+      print(
+          '--> ${request.method()} ${request.url().toString()} ${requestBody.contentLength()}-byte body');
     } else {
       print('--> ${request.method()} ${request.url().toString()}');
     }
@@ -44,10 +52,12 @@ class HttpLoggingInterceptor implements Interceptor {
     if (logHeaders) {
       if (hasRequestBody) {
         if (requestBody.contentType() != null) {
-          print('${HttpHeaders.contentTypeHeader}: ${requestBody.contentType().toString()}');
+          print(
+              '${HttpHeaders.contentTypeHeader}: ${requestBody.contentType().toString()}');
         }
         if (requestBody.contentLength() != -1) {
-          print('${HttpHeaders.contentLengthHeader}: ${requestBody.contentLength()}');
+          print(
+              '${HttpHeaders.contentLengthHeader}: ${requestBody.contentLength()}');
         }
       }
 
@@ -76,7 +86,8 @@ class HttpLoggingInterceptor implements Interceptor {
             print(body);
             print('--> END ${request.method()} (${bytes.length}-byte body)');
           } else {
-            print('--> END ${request.method()} (binary ${bytes.length}-byte body omitted)');
+            print(
+                '--> END ${request.method()} (binary ${bytes.length}-byte body omitted)');
           }
 
           request = request
@@ -85,7 +96,8 @@ class HttpLoggingInterceptor implements Interceptor {
                   request.method(), RequestBody.bytesBody(contentType, bytes))
               .build();
         } else {
-          print('--> END ${request.method()} (binary ${requestBody.contentLength()}-byte body omitted)');
+          print(
+              '--> END ${request.method()} (binary ${requestBody.contentLength()}-byte body omitted)');
         }
       }
     }
@@ -103,14 +115,17 @@ class HttpLoggingInterceptor implements Interceptor {
     String bodySize = responseBody.contentLength() != -1
         ? '${responseBody.contentLength()}-byte body'
         : 'unknown-length body';
-    print('<-- ${response.code()} ${response.message() ?? ''} ${response.request().url().toString()} (${tookMs}ms${!logHeaders ? ', $bodySize body': ''})');
+    print(
+        '<-- ${response.code()} ${response.message() ?? ''} ${response.request().url().toString()} (${tookMs}ms${!logHeaders ? ', $bodySize body' : ''})');
 
     if (logHeaders) {
       if (responseBody.contentType() != null) {
-        print('${HttpHeaders.contentTypeHeader}: ${responseBody.contentType().toString()}');
+        print(
+            '${HttpHeaders.contentTypeHeader}: ${responseBody.contentType().toString()}');
       }
       if (responseBody.contentLength() != -1) {
-        print('${HttpHeaders.contentLengthHeader}: ${responseBody.contentLength()}');
+        print(
+            '${HttpHeaders.contentLengthHeader}: ${responseBody.contentLength()}');
       }
 
       Headers headers = response.headers();
@@ -145,7 +160,8 @@ class HttpLoggingInterceptor implements Interceptor {
               .body(ResponseBody.bytesBody(contentType, bytes))
               .build();
         } else {
-          print('<-- END HTTP (binary ${responseBody.contentLength()}-byte body omitted)');
+          print(
+              '<-- END HTTP (binary ${responseBody.contentLength()}-byte body omitted)');
         }
       }
     }
@@ -154,7 +170,9 @@ class HttpLoggingInterceptor implements Interceptor {
 
   bool _bodyHasUnknownEncoding(Headers headers) {
     String contentEncoding = headers.value(HttpHeaders.contentEncodingHeader);
-    return contentEncoding != null && contentEncoding.toLowerCase() != 'identity' && contentEncoding.toLowerCase() != 'gzip';
+    return contentEncoding != null &&
+        contentEncoding.toLowerCase() != 'identity' &&
+        contentEncoding.toLowerCase() != 'gzip';
   }
 
   static bool _isPlainContentType(MediaType contentType) {
@@ -173,11 +191,4 @@ class HttpLoggingInterceptor implements Interceptor {
       return !Character.isIsoControl(rune) || Character.isWhitespace(rune);
     });
   }
-}
-
-enum LoggerLevel {
-  NONE,
-  BASIC,
-  HEADERS,
-  BODY,
 }

@@ -7,13 +7,11 @@ import 'package:fake_okhttp/okhttp3/foundation/character.dart';
 import 'package:fake_okhttp/okhttp3/headers.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';
 import 'package:fake_okhttp/okhttp3/internal/encoding_util.dart';
-import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
 import 'package:fake_okhttp/okhttp3/internal/util.dart';
 import 'package:fake_okhttp/okhttp3/media_type.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 import 'package:fake_okhttp/okhttp3/request_body.dart';
 import 'package:fake_okhttp/okhttp3/response.dart';
-import 'package:fake_okhttp/okhttp3/response_body.dart';
 
 /// 网络层拦截器
 class CurlInterceptor implements Interceptor {
@@ -50,7 +48,8 @@ class CurlInterceptor implements Interceptor {
           }
           request = request
               .newBuilder()
-              .method(request.method(), RequestBody.bytesBody(contentType, bytes))
+              .method(
+                  request.method(), RequestBody.bytesBody(contentType, bytes))
               .build();
         }
       }
@@ -65,7 +64,9 @@ class CurlInterceptor implements Interceptor {
 
   bool _bodyHasUnknownEncoding(Headers headers) {
     String contentEncoding = headers.value(HttpHeaders.contentEncodingHeader);
-    return contentEncoding != null && contentEncoding.toLowerCase() != 'identity' && contentEncoding.toLowerCase() != 'gzip';
+    return contentEncoding != null &&
+        contentEncoding.toLowerCase() != 'identity' &&
+        contentEncoding.toLowerCase() != 'gzip';
   }
 
   static bool _isPlainContentType(MediaType contentType) {
