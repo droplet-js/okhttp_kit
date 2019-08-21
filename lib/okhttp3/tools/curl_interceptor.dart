@@ -15,9 +15,10 @@ import 'package:fake_okhttp/okhttp3/response.dart';
 
 /// 网络层拦截器
 class CurlInterceptor implements Interceptor {
-  CurlInterceptor([this.enabled = true]);
+  CurlInterceptor([this.enabled = true, this.headerFilter]);
 
   bool enabled;
+  bool Function(String) headerFilter;
 
   @override
   Future<Response> intercept(Chain chain) async {
@@ -32,7 +33,9 @@ class CurlInterceptor implements Interceptor {
     parts.add('${request.url().toString()}');
     Headers headers = request.headers();
     headers.names().forEach((String name) {
-      parts.add('-H \'$name:${headers.value(name)}\'');
+      if (headerFilter == null || headerFilter(name)) {
+        parts.add('-H \'$name:${headers.value(name)}\'');
+      }
     });
     RequestBody requestBody = request.body();
     if (requestBody != null) {

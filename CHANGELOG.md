@@ -1,3 +1,7 @@
+## 0.1.2
+
+- curl add headerFilter
+
 ## 0.1.1
 
 - bugfix

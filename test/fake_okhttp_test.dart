@@ -44,7 +44,10 @@ void main() {
       .addInterceptor(UserAgentInterceptor(() => 'xxx'))
       .addInterceptor(OptimizedRequestInterceptor(() => true))
 //      .addNetworkInterceptor(OptimizedResponseInterceptor())
-      .addNetworkInterceptor(CurlInterceptor())
+      .addNetworkInterceptor(CurlInterceptor(true, (String name) {
+        return name != HttpHeaders.connectionHeader &&
+            name != HttpHeaders.acceptEncodingHeader;
+      }))
       .addNetworkInterceptor(
           HttpLoggingInterceptor(level: LoggingLevel.headers))
       .addNetworkInterceptor(ProgressRequestInterceptor((HttpUrl url,
