@@ -25,7 +25,7 @@ class RealCall implements Call {
   final Completer<Response> _completer = Completer<Response>();
 
   @override
-  Future<Response> enqueue() async {
+  Future<Response> enqueue() {
     List<Interceptor> interceptors = <Interceptor>[];
     interceptors.addAll(_client.interceptors());
     interceptors.add(BridgeInterceptor(_client.cookieJar()));
