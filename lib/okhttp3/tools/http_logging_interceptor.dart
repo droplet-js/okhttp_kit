@@ -63,8 +63,9 @@ class HttpLoggingInterceptor implements Interceptor {
 
       Headers headers = request.headers();
       headers.names().forEach((String name) {
-        if (HttpHeaders.contentTypeHeader != name &&
-            HttpHeaders.contentLengthHeader != name) {
+        if (!hasRequestBody ||
+            (HttpHeaders.contentTypeHeader != name &&
+                HttpHeaders.contentLengthHeader != name)) {
           print('$name: ${headers.value(name)}');
         }
       });
