@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fake_okhttp/okhttp3/chain.dart';
 import 'package:fake_okhttp/okhttp3/interceptor.dart';
 import 'package:fake_okhttp/okhttp3/internal/cache/cache_interceptor.dart';
@@ -9,6 +11,8 @@ import 'package:fake_okhttp/okhttp3/response.dart';
 
 abstract class Call {
   Future<Response> enqueue();
+
+  void cancel(Object error, [StackTrace stackTrace]);
 }
 
 class RealCall implements Call {
@@ -18,9 +22,10 @@ class RealCall implements Call {
 
   final OkHttpClient _client;
   final Request _originalRequest;
+  final Completer<Response> _completer = Completer<Response>();
 
   @override
-  Future<Response> enqueue() {
+  Future<Response> enqueue() async {
     List<Interceptor> interceptors = <Interceptor>[];
     interceptors.addAll(_client.interceptors());
     interceptors.add(BridgeInterceptor(_client.cookieJar()));
@@ -28,6 +33,12 @@ class RealCall implements Call {
     interceptors.addAll(_client.networkInterceptors());
     interceptors.add(CallServerInterceptor(_client));
     Chain chain = RealInterceptorChain(interceptors, 0, _originalRequest);
-    return chain.proceed(_originalRequest);
+    _completer.complete(chain.proceed(_originalRequest));
+    return _completer.future;
+  }
+
+  @override
+  void cancel(Object error, [StackTrace stackTrace]) {
+    _completer.completeError(error, stackTrace);
   }
 }
