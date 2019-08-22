@@ -32,6 +32,7 @@ export 'okhttp3/request.dart';
 export 'okhttp3/request_body.dart';
 export 'okhttp3/response.dart';
 export 'okhttp3/response_body.dart';
+export 'okhttp3/tools/curl_interceptor.dart';
 export 'okhttp3/tools/http_logging_interceptor.dart';
 export 'okhttp3/tools/optimized_request_interceptor.dart';
 export 'okhttp3/tools/optimized_response_interceptor.dart';

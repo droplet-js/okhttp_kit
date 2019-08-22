@@ -13,9 +13,9 @@ import 'package:fake_okhttp/okhttp3/response.dart';
 ///
 /// https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ
 class OptimizedResponseInterceptor implements Interceptor {
-  OptimizedResponseInterceptor({
+  OptimizedResponseInterceptor([
     int maxAgeSeconds = 3,
-  }) : _maxAgeSeconds = maxAgeSeconds;
+  ]) : _maxAgeSeconds = maxAgeSeconds;
 
   final int _maxAgeSeconds;
 

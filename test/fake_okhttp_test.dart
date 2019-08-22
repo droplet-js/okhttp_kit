@@ -48,8 +48,7 @@ void main() {
         return name != HttpHeaders.connectionHeader &&
             name != HttpHeaders.acceptEncodingHeader;
       }))
-      .addNetworkInterceptor(
-          HttpLoggingInterceptor(level: LoggingLevel.headers))
+      .addNetworkInterceptor(HttpLoggingInterceptor(LoggingLevel.headers))
       .addNetworkInterceptor(ProgressRequestInterceptor((HttpUrl url,
           String method, int progressBytes, int totalBytes, bool isDone) {
         print(

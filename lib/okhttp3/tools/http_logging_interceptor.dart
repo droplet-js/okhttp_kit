@@ -24,9 +24,9 @@ enum LoggingLevel {
 
 /// 网络层拦截器
 class HttpLoggingInterceptor implements Interceptor {
-  HttpLoggingInterceptor({
+  HttpLoggingInterceptor([
     LoggingLevel level = LoggingLevel.basic,
-  }) : _level = level;
+  ]) : _level = level;
 
   final LoggingLevel _level;
 
