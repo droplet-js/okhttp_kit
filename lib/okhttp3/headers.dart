@@ -21,7 +21,7 @@ class Headers {
     for (int i = 0; i < _namesAndValues.length; i += 2) {
       names.add(_namesAndValues[i]);
     }
-    return Set<String>.from(names);
+    return Set<String>.of(names);
   }
 
   String value(String name) {

@@ -54,7 +54,7 @@ class HttpUrl {
   }
 
   Set<String> queryParameterNames() {
-    return Set<String>.from(_uri.queryParametersAll.keys);
+    return Set<String>.of(_uri.queryParametersAll.keys);
   }
 
   List<String> queryParameterValues(String name) {
