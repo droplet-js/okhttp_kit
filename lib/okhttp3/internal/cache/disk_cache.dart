@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fake_okhttp/okhttp3/cache.dart';
 import 'package:fake_okhttp/okhttp3/foundation/basic_types.dart';
-import 'package:file/file.dart';
+import 'package:path/path.dart' as path;
 
 class DiskCache implements RawCache {
   DiskCache._(
@@ -49,7 +50,7 @@ class _Entry {
     String key,
   )   : _key = key,
         _cacheFiles = List<File>.generate(valueCount, (int index) {
-          return directory.childFile('$key.$index');
+          return File(path.join(directory.path, '$key.$index'));
         });
 
   final String _key;
@@ -92,8 +93,7 @@ class _EditorImpl implements Editor {
     _Entry entry,
   )   : _cleanFiles = entry.cacheFiles(),
         _dirtyFiles = entry.cacheFiles().map((File cacheFile) {
-          return cacheFile.parent.childFile(
-              '${cacheFile.basename}.${DateTime.now().millisecondsSinceEpoch}');
+          return File(path.join(path.dirname(cacheFile.path), '${path.basename(cacheFile.path)}.${DateTime.now().millisecondsSinceEpoch}'));
         }).toList();
 
   final List<File> _cleanFiles;

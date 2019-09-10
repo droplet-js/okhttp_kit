@@ -4,7 +4,6 @@ import 'package:fake_okhttp/okhttp3/cache.dart';
 import 'package:fake_okhttp/okhttp3/form_body.dart';
 import 'package:fake_okhttp/okhttp3/http_url.dart';
 import 'package:fake_okhttp/okhttp3/internal/cache/disk_cache.dart';
-import 'package:fake_okhttp/okhttp3/internal/util.dart';
 import 'package:fake_okhttp/okhttp3/okhttp_client.dart';
 import 'package:fake_okhttp/okhttp3/request.dart';
 import 'package:fake_okhttp/okhttp3/request_body.dart';
@@ -15,21 +14,11 @@ import 'package:fake_okhttp/okhttp3/tools/optimized_request_interceptor.dart';
 import 'package:fake_okhttp/okhttp3/tools/persistent_cookie_jar.dart';
 import 'package:fake_okhttp/okhttp3/tools/progress_interceptor.dart';
 import 'package:fake_okhttp/okhttp3/tools/user_agent_interceptor.dart';
-import 'package:file/file.dart';
-import 'package:file/local.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
-  FileSystem fileSystem = const LocalFileSystem();
-
-  print(
-      '${fileSystem.currentDirectory.path} - ${fileSystem.systemTempDirectory.path}');
-
-  print('${Util.boundaryString()}');
-
-  Directory directory = fileSystem.currentDirectory
-      .childDirectory('build')
-      .childDirectory('cache');
+  Directory directory = Directory(path.join(Directory.current.path, 'build', 'cache'));
   if (!directory.existsSync()) {
     directory.createSync(recursive: true);
   }
