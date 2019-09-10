@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fake_okhttp/okhttp3/cache.dart';
 import 'package:fake_okhttp/okhttp3/call.dart';
 import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
@@ -9,6 +11,7 @@ class OkHttpClient {
   OkHttpClient._(
     List<Interceptor> interceptors,
     List<Interceptor> networkInterceptors,
+    SecurityContext securityContext,
     Proxy proxy,
     ProxySelector proxySelector,
     CookieJar cookieJar,
@@ -19,6 +22,7 @@ class OkHttpClient {
     Duration connectionTimeout,
   )   : _interceptors = interceptors,
         _networkInterceptors = networkInterceptors,
+        _securityContext = securityContext,
         _proxy = proxy,
         _proxySelector = proxySelector,
         _cookieJar = cookieJar,
@@ -31,6 +35,7 @@ class OkHttpClient {
   final List<Interceptor> _interceptors;
   final List<Interceptor> _networkInterceptors;
 
+  final SecurityContext _securityContext;
   final Proxy _proxy;
   final ProxySelector _proxySelector;
 
@@ -49,6 +54,10 @@ class OkHttpClient {
 
   List<Interceptor> networkInterceptors() {
     return _networkInterceptors;
+  }
+
+  SecurityContext securityContext() {
+    return _securityContext;
   }
 
   Proxy proxy() {
@@ -96,7 +105,8 @@ class OkHttpClientBuilder {
   OkHttpClientBuilder();
 
   OkHttpClientBuilder._(OkHttpClient client)
-      : _proxy = client.proxy(),
+      : _securityContext = client.securityContext(),
+        _proxy = client.proxy(),
         _proxySelector = client.proxySelector(),
         _cookieJar = client.cookieJar(),
         _cache = client.cache(),
@@ -111,6 +121,7 @@ class OkHttpClientBuilder {
   final List<Interceptor> _interceptors = <Interceptor>[];
   final List<Interceptor> _networkInterceptors = <Interceptor>[];
 
+  SecurityContext _securityContext;
   Proxy _proxy;
   ProxySelector _proxySelector;
 
@@ -132,6 +143,11 @@ class OkHttpClientBuilder {
   OkHttpClientBuilder addNetworkInterceptor(Interceptor networkInterceptor) {
     assert(networkInterceptor != null);
     _networkInterceptors.add(networkInterceptor);
+    return this;
+  }
+
+  OkHttpClientBuilder securityContext(SecurityContext securityContext) {
+    _securityContext = securityContext;
     return this;
   }
 
@@ -183,6 +199,7 @@ class OkHttpClientBuilder {
     return OkHttpClient._(
       List<Interceptor>.unmodifiable(_interceptors),
       List<Interceptor>.unmodifiable(_networkInterceptors),
+      _securityContext,
       _proxy,
       _proxySelector,
       _cookieJar,

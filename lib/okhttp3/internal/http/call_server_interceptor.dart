@@ -20,7 +20,10 @@ class CallServerInterceptor implements Interceptor {
 
   @override
   Future<Response> intercept(Chain chain) async {
-    HttpClient httpClient = HttpClient();
+    HttpClient httpClient = _client.securityContext() != null
+        ? HttpClient(context: _client.securityContext())
+        : HttpClient();
+    httpClient.autoUncompress = true;
     httpClient.idleTimeout = _client.idleTimeout();
     httpClient.connectionTimeout = _client.connectionTimeout();
 
