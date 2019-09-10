@@ -93,7 +93,8 @@ class _EditorImpl implements Editor {
     _Entry entry,
   )   : _cleanFiles = entry.cacheFiles(),
         _dirtyFiles = entry.cacheFiles().map((File cacheFile) {
-          return File(path.join(path.dirname(cacheFile.path), '${path.basename(cacheFile.path)}.${DateTime.now().millisecondsSinceEpoch}'));
+          return File(path.join(path.dirname(cacheFile.path),
+              '${path.basename(cacheFile.path)}.${DateTime.now().millisecondsSinceEpoch}'));
         }).toList();
 
   final List<File> _cleanFiles;

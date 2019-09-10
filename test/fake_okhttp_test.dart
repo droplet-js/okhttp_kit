@@ -18,7 +18,8 @@ import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
-  Directory directory = Directory(path.join(Directory.current.path, 'build', 'cache'));
+  Directory directory =
+      Directory(path.join(Directory.current.path, 'build', 'cache'));
   if (!directory.existsSync()) {
     directory.createSync(recursive: true);
   }
