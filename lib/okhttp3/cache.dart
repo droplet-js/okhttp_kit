@@ -328,8 +328,9 @@ class Entry {
         contentTypeString != null ? MediaType.parse(contentTypeString) : null;
     String contentLengthString =
         _responseHeaders.value(HttpHeaders.contentLengthHeader);
-    int contentLength =
-        contentLengthString != null ? (int.tryParse(contentLengthString) ?? -1) : -1;
+    int contentLength = contentLengthString != null
+        ? (int.tryParse(contentLengthString) ?? -1)
+        : -1;
     Request cacheRequest = RequestBuilder()
         .url(HttpUrl.parse(_url))
         .method(_requestMethod, null)
