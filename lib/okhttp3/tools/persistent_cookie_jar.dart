@@ -61,7 +61,7 @@ class PersistentCookie {
   PersistentCookie.fromValue(String value) {
     List<String> params = value.split('; $_COOKIE_CTS=');
     _cookie = Cookie.fromSetCookieValue(params[0]);
-    _createTimestamp = int.parse(params[1]);
+    _createTimestamp = int.tryParse(params[1]);
   }
 
   static const String _COOKIE_CTS = '_CTS';

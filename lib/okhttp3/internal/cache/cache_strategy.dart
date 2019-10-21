@@ -78,7 +78,7 @@ class CacheStrategyFactory {
         } else if (name == HttpHeaders.etagHeader) {
           _etag = value;
         } else if (name == HttpHeaders.ageHeader) {
-          _ageSeconds = value != null ? int.parse(value) : -1;
+          _ageSeconds = value != null ? (int.tryParse(value) ?? -1) : -1;
         }
       }
     }

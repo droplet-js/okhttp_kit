@@ -73,7 +73,7 @@ class HttpHeadersExtension {
 
   static int contentLength(Response response) {
     String contentLength = response.header(HttpHeaders.contentLengthHeader);
-    return contentLength != null ? int.parse(contentLength) : -1;
+    return contentLength != null ? (int.tryParse(contentLength) ?? -1) : -1;
   }
 
   static bool varyMatches(

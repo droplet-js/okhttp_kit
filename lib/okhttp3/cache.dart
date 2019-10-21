@@ -329,7 +329,7 @@ class Entry {
     String contentLengthString =
         _responseHeaders.value(HttpHeaders.contentLengthHeader);
     int contentLength =
-        contentLengthString != null ? int.parse(contentLengthString) : -1;
+        contentLengthString != null ? (int.tryParse(contentLengthString) ?? -1) : -1;
     Request cacheRequest = RequestBuilder()
         .url(HttpUrl.parse(_url))
         .method(_requestMethod, null)
@@ -361,7 +361,7 @@ class Entry {
     String url = lines[cursor++];
     String requestMethod = lines[cursor++];
     HeadersBuilder varyHeadersBuilder = HeadersBuilder();
-    int varyRequestHeaderLineCount = int.parse(lines[cursor++]);
+    int varyRequestHeaderLineCount = int.tryParse(lines[cursor++]);
     for (int i = 0; i < varyRequestHeaderLineCount; i++) {
       varyHeadersBuilder.addLenientLine(lines[cursor++]);
     }
@@ -371,11 +371,11 @@ class Entry {
     if (statusLine == null || statusLine.length < 3) {
       throw Exception('Unexpected status line: $statusLine');
     }
-    int code = int.parse(statusLine.substring(0, 3));
+    int code = int.tryParse(statusLine.substring(0, 3));
     String message = statusLine.substring(3).replaceFirst(' ', '');
 
     HeadersBuilder responseHeadersBuilder = HeadersBuilder();
-    int responseHeaderLineCount = int.parse(lines[cursor++]);
+    int responseHeaderLineCount = int.tryParse(lines[cursor++]);
     for (int i = 0; i < responseHeaderLineCount; i++) {
       responseHeadersBuilder.addLenientLine(lines[cursor++]);
     }
@@ -391,12 +391,8 @@ class Entry {
         .removeAll(_receivedMillis)
         .build();
 
-    int sentRequestMillis = sendRequestMillisString != null
-        ? int.parse(sendRequestMillisString)
-        : 0;
-    int receivedResponseMillis = receivedResponseMillisString != null
-        ? int.parse(receivedResponseMillisString)
-        : 0;
+    int sentRequestMillis = int.tryParse(sendRequestMillisString);
+    int receivedResponseMillis = int.tryParse(receivedResponseMillisString);
 
     return Entry(url, requestMethod, varyHeaders, code, message,
         responseHeaders, sentRequestMillis, receivedResponseMillis);
