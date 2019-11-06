@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:fake_okhttp/okhttp3/cache.dart';
-import 'package:fake_okhttp/okhttp3/call.dart';
-import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
-import 'package:fake_okhttp/okhttp3/interceptor.dart';
-import 'package:fake_okhttp/okhttp3/proxy.dart';
-import 'package:fake_okhttp/okhttp3/request.dart';
+import 'package:okhttp_kit/okhttp3/cache.dart';
+import 'package:okhttp_kit/okhttp3/call.dart';
+import 'package:okhttp_kit/okhttp3/cookie_jar.dart';
+import 'package:okhttp_kit/okhttp3/interceptor.dart';
+import 'package:okhttp_kit/okhttp3/proxy.dart';
+import 'package:okhttp_kit/okhttp3/request.dart';
 
 class OkHttpClient {
   OkHttpClient._(

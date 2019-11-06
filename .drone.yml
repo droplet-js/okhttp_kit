@@ -3,7 +3,7 @@ name: default
 
 steps:
 - name: prepare
-  image: google/dart:2.2.0
+  image: google/dart:2.3.0
   volumes:
   - name: pub-cache
     path: /root/.pub-cache
@@ -11,7 +11,7 @@ steps:
   - pub get
 
 #- name: build_runner
-#  image: google/dart:2.2.0
+#  image: google/dart:2.3.0
 #  volumes:
 #  - name: pub-cache
 #    path: /root/.pub-cache
@@ -19,7 +19,7 @@ steps:
 #  - pub run build_runner build
 
 - name: format
-  image: google/dart:2.2.0
+  image: google/dart:2.3.0
   volumes:
   - name: pub-cache
     path: /root/.pub-cache
@@ -27,7 +27,7 @@ steps:
   - dartfmt --dry-run --set-exit-if-changed .
 
 - name: analyze
-  image: google/dart:2.2.0
+  image: google/dart:2.3.0
   volumes:
   - name: pub-cache
     path: /root/.pub-cache
@@ -35,7 +35,7 @@ steps:
   - dartanalyzer --fatal-infos --fatal-warnings .
 
 - name: test
-  image: google/dart:2.2.0
+  image: google/dart:2.3.0
   volumes:
   - name: pub-cache
     path: /root/.pub-cache
@@ -43,7 +43,7 @@ steps:
   - pub run test --run-skipped
 
 - name: publish-check
-  image: google/dart:2.2.0
+  image: google/dart:2.3.0
   volumes:
   - name: pub-cache
     path: /root/.pub-cache
@@ -85,7 +85,7 @@ steps:
   - rm $PUB_CACHE/credentials.json.enc
 
 - name: publish
-  image: google/dart:2.2.0
+  image: google/dart:2.3.0
   volumes:
   - name: pub-cache
     path: /root/.pub-cache

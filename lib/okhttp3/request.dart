@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:fake_okhttp/okhttp3/cache_control.dart';
-import 'package:fake_okhttp/okhttp3/headers.dart';
-import 'package:fake_okhttp/okhttp3/http_url.dart';
-import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
-import 'package:fake_okhttp/okhttp3/request_body.dart';
+import 'package:okhttp_kit/okhttp3/cache_control.dart';
+import 'package:okhttp_kit/okhttp3/headers.dart';
+import 'package:okhttp_kit/okhttp3/http_url.dart';
+import 'package:okhttp_kit/okhttp3/internal/http/http_method.dart';
+import 'package:okhttp_kit/okhttp3/request_body.dart';
 
 class Request {
   Request._(

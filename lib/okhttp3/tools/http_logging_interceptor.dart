@@ -2,18 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fake_okhttp/okhttp3/chain.dart';
-import 'package:fake_okhttp/okhttp3/foundation/character.dart';
-import 'package:fake_okhttp/okhttp3/headers.dart';
-import 'package:fake_okhttp/okhttp3/interceptor.dart';
-import 'package:fake_okhttp/okhttp3/internal/encoding_util.dart';
-import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
-import 'package:fake_okhttp/okhttp3/internal/util.dart';
-import 'package:fake_okhttp/okhttp3/media_type.dart';
-import 'package:fake_okhttp/okhttp3/request.dart';
-import 'package:fake_okhttp/okhttp3/request_body.dart';
-import 'package:fake_okhttp/okhttp3/response.dart';
-import 'package:fake_okhttp/okhttp3/response_body.dart';
+import 'package:okhttp_kit/okhttp3/chain.dart';
+import 'package:okhttp_kit/okhttp3/foundation/character.dart';
+import 'package:okhttp_kit/okhttp3/headers.dart';
+import 'package:okhttp_kit/okhttp3/interceptor.dart';
+import 'package:okhttp_kit/okhttp3/internal/encoding_util.dart';
+import 'package:okhttp_kit/okhttp3/internal/http_extension.dart';
+import 'package:okhttp_kit/okhttp3/internal/util.dart';
+import 'package:okhttp_kit/okhttp3/media_type.dart';
+import 'package:okhttp_kit/okhttp3/request.dart';
+import 'package:okhttp_kit/okhttp3/request_body.dart';
+import 'package:okhttp_kit/okhttp3/response.dart';
+import 'package:okhttp_kit/okhttp3/response_body.dart';
 
 enum LoggingLevel {
   none,

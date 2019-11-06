@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fake_okhttp/okhttp3/chain.dart';
-import 'package:fake_okhttp/okhttp3/interceptor.dart';
-import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
-import 'package:fake_okhttp/okhttp3/internal/http_extension.dart';
-import 'package:fake_okhttp/okhttp3/media_type.dart';
-import 'package:fake_okhttp/okhttp3/okhttp_client.dart';
-import 'package:fake_okhttp/okhttp3/request.dart';
-import 'package:fake_okhttp/okhttp3/response.dart';
-import 'package:fake_okhttp/okhttp3/response_body.dart';
+import 'package:okhttp_kit/okhttp3/chain.dart';
+import 'package:okhttp_kit/okhttp3/interceptor.dart';
+import 'package:okhttp_kit/okhttp3/internal/http/http_method.dart';
+import 'package:okhttp_kit/okhttp3/internal/http_extension.dart';
+import 'package:okhttp_kit/okhttp3/media_type.dart';
+import 'package:okhttp_kit/okhttp3/okhttp_client.dart';
+import 'package:okhttp_kit/okhttp3/request.dart';
+import 'package:okhttp_kit/okhttp3/response.dart';
+import 'package:okhttp_kit/okhttp3/response_body.dart';
 
 class CallServerInterceptor implements Interceptor {
   CallServerInterceptor(

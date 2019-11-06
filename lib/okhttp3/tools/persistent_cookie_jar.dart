@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fake_okhttp/okhttp3/cookie_jar.dart';
-import 'package:fake_okhttp/okhttp3/http_url.dart';
+import 'package:okhttp_kit/okhttp3/cookie_jar.dart';
+import 'package:okhttp_kit/okhttp3/http_url.dart';
 
 class PersistentCookieJar implements CookieJar {
   PersistentCookieJar._(

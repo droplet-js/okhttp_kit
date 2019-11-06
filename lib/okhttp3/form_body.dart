@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:fake_okhttp/okhttp3/media_type.dart';
-import 'package:fake_okhttp/okhttp3/request_body.dart';
+import 'package:okhttp_kit/okhttp3/media_type.dart';
+import 'package:okhttp_kit/okhttp3/request_body.dart';
 
 class FormBody extends RequestBody {
   FormBody._(

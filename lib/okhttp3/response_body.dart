@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:fake_okhttp/okhttp3/internal/encoding_util.dart';
-import 'package:fake_okhttp/okhttp3/internal/util.dart';
-import 'package:fake_okhttp/okhttp3/media_type.dart';
+import 'package:okhttp_kit/okhttp3/internal/encoding_util.dart';
+import 'package:okhttp_kit/okhttp3/internal/util.dart';
+import 'package:okhttp_kit/okhttp3/media_type.dart';
 
 abstract class ResponseBody {
   MediaType contentType();

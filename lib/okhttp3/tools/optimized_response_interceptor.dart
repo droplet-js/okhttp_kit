@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fake_okhttp/okhttp3/cache_control.dart';
-import 'package:fake_okhttp/okhttp3/chain.dart';
-import 'package:fake_okhttp/okhttp3/interceptor.dart';
-import 'package:fake_okhttp/okhttp3/internal/http/http_method.dart';
-import 'package:fake_okhttp/okhttp3/request.dart';
-import 'package:fake_okhttp/okhttp3/response.dart';
+import 'package:okhttp_kit/okhttp3/cache_control.dart';
+import 'package:okhttp_kit/okhttp3/chain.dart';
+import 'package:okhttp_kit/okhttp3/interceptor.dart';
+import 'package:okhttp_kit/okhttp3/internal/http/http_method.dart';
+import 'package:okhttp_kit/okhttp3/request.dart';
+import 'package:okhttp_kit/okhttp3/response.dart';
 
 /// 网络层拦截器
 /// 优化缓存

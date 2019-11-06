@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fake_okhttp/okhttp3/cache.dart';
-import 'package:fake_okhttp/okhttp3/foundation/basic_types.dart';
+import 'package:okhttp_kit/okhttp3/cache.dart';
+import 'package:okhttp_kit/okhttp3/foundation/basic_types.dart';
 import 'package:path/path.dart' as path;
 
 class DiskCache implements RawCache {

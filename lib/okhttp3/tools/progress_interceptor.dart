@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:fake_okhttp/okhttp3/chain.dart';
-import 'package:fake_okhttp/okhttp3/http_url.dart';
-import 'package:fake_okhttp/okhttp3/interceptor.dart';
-import 'package:fake_okhttp/okhttp3/media_type.dart';
-import 'package:fake_okhttp/okhttp3/request.dart';
-import 'package:fake_okhttp/okhttp3/request_body.dart';
-import 'package:fake_okhttp/okhttp3/response.dart';
-import 'package:fake_okhttp/okhttp3/response_body.dart';
+import 'package:okhttp_kit/okhttp3/chain.dart';
+import 'package:okhttp_kit/okhttp3/http_url.dart';
+import 'package:okhttp_kit/okhttp3/interceptor.dart';
+import 'package:okhttp_kit/okhttp3/media_type.dart';
+import 'package:okhttp_kit/okhttp3/request.dart';
+import 'package:okhttp_kit/okhttp3/request_body.dart';
+import 'package:okhttp_kit/okhttp3/response.dart';
+import 'package:okhttp_kit/okhttp3/response_body.dart';
 
 typedef void ProgressListener(
     HttpUrl url, String method, int progressBytes, int totalBytes, bool isDone);

@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:fake_okhttp/okhttp3/cache_control.dart';
-import 'package:fake_okhttp/okhttp3/headers.dart';
-import 'package:fake_okhttp/okhttp3/request.dart';
-import 'package:fake_okhttp/okhttp3/response_body.dart';
+import 'package:okhttp_kit/okhttp3/cache_control.dart';
+import 'package:okhttp_kit/okhttp3/headers.dart';
+import 'package:okhttp_kit/okhttp3/request.dart';
+import 'package:okhttp_kit/okhttp3/response_body.dart';
 
 class Response {
   Response._(

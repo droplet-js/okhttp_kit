@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:fake_okhttp/okhttp3/chain.dart';
-import 'package:fake_okhttp/okhttp3/interceptor.dart';
-import 'package:fake_okhttp/okhttp3/internal/cache/cache_interceptor.dart';
-import 'package:fake_okhttp/okhttp3/internal/http/bridge_interceptor.dart';
-import 'package:fake_okhttp/okhttp3/internal/http/call_server_interceptor.dart';
-import 'package:fake_okhttp/okhttp3/okhttp_client.dart';
-import 'package:fake_okhttp/okhttp3/request.dart';
-import 'package:fake_okhttp/okhttp3/response.dart';
+import 'package:okhttp_kit/okhttp3/chain.dart';
+import 'package:okhttp_kit/okhttp3/interceptor.dart';
+import 'package:okhttp_kit/okhttp3/internal/cache/cache_interceptor.dart';
+import 'package:okhttp_kit/okhttp3/internal/http/bridge_interceptor.dart';
+import 'package:okhttp_kit/okhttp3/internal/http/call_server_interceptor.dart';
+import 'package:okhttp_kit/okhttp3/okhttp_client.dart';
+import 'package:okhttp_kit/okhttp3/request.dart';
+import 'package:okhttp_kit/okhttp3/response.dart';
 
 abstract class Call {
   Future<Response> enqueue();
