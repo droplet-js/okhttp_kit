@@ -1,6 +1,6 @@
 name: okhttp_kit
 description: A powerful http package for Dart/Flutter.
-version: 1.0.0
+version: 1.0.1
 author: v7lin <v7lin@qq.com>
 homepage: https://github.com/v7lin/fake_okhttp
 
