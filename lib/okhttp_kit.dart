@@ -14,11 +14,13 @@ export 'dart:io'
 
 export 'okhttp3/cache.dart';
 export 'okhttp3/cache_control.dart';
+export 'okhttp3/chain.dart';
 export 'okhttp3/cookie_jar.dart';
 export 'okhttp3/form_body.dart';
 export 'okhttp3/headers.dart';
 export 'okhttp3/http_url.dart';
 export 'okhttp3/interceptor.dart';
+export 'okhttp3/internal/cache/cache_strategy.dart';
 export 'okhttp3/internal/cache/disk_cache.dart';
 export 'okhttp3/internal/encoding_util.dart';
 export 'okhttp3/internal/http/http_method.dart';
