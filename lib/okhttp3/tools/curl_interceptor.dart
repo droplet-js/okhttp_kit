@@ -13,9 +13,24 @@ import 'package:okhttp_kit/okhttp3/request.dart';
 import 'package:okhttp_kit/okhttp3/request_body.dart';
 import 'package:okhttp_kit/okhttp3/response.dart';
 
+const List<String> _headerFilters = <String>[
+  HttpHeaders.connectionHeader,
+  HttpHeaders.acceptEncodingHeader,
+  HttpHeaders.cacheControlHeader,
+  HttpHeaders.ifNoneMatchHeader,
+  HttpHeaders.ifModifiedSinceHeader,
+];
+
+bool _defaultHeaderFilter(String name) {
+  return !_headerFilters.contains(name);
+}
+
 /// 网络层拦截器
 class CurlInterceptor implements Interceptor {
-  CurlInterceptor([this.enabled = true, this.headerFilter]);
+  CurlInterceptor([
+    this.enabled = true,
+    this.headerFilter = _defaultHeaderFilter,
+  ]);
 
   bool enabled;
   bool Function(String) headerFilter;
