@@ -137,8 +137,15 @@ class MultipartBody extends RequestBody {
       controller.add(utf8.encode(source));
     }
 
-    for (int p = 0, partCount = _parts.length; p < partCount; p++) {
-      Part part = _parts[p];
+    Future<List<int>> writeStreamToSink(
+        Stream<List<int>> stream, EventSink<List<int>> sink) {
+      Completer<List<int>> completer = Completer<List<int>>();
+      stream.listen(sink.add,
+          onError: sink.addError, onDone: () => completer.complete());
+      return completer.future;
+    }
+
+    Future.forEach(_parts, (Part part) {
       Headers headers = part.headers();
       RequestBody body = part.body();
 
@@ -172,16 +179,16 @@ class MultipartBody extends RequestBody {
       }
 
       writeAscii(_crlf);
-
-      controller.addStream(body.source(), cancelOnError: true);
-
+      return writeStreamToSink(body.source(), controller).then((_) {
+        writeAscii(_crlf);
+      });
+    }).then((_) {
+      writeAscii(_dashDash);
+      writeAscii(_boundary);
+      writeAscii(_dashDash);
       writeAscii(_crlf);
-    }
-
-    writeAscii(_dashDash);
-    writeAscii(_boundary);
-    writeAscii(_dashDash);
-    writeAscii(_crlf);
+      controller.close();
+    });
 
     return controller.stream;
   }
